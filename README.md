@@ -1,8 +1,29 @@
-Dies ist ein [Next.js](https://nextjs.org) Projekt, das mit [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app) gestartet wurde.
+# Willkommen bei SmartSchedular!
+
+Diese Repository dient als die Code-Basis für die Entwicklung von SmartSchedular. SmartSchedular ist ein Tool, das die Erstellung von Stundenplänen für Schüler und Lehrer erleichtert. Es bietet eine einfache und intuitive Benutzeroberfläche, die es ermöglicht, Stundenpläne zu erstellen, zu bearbeiten und zu verwalten. Sm
+
+## Erste Schritte - Anwendung starten
+
+Zuerst sollte der Entwicklungsserver gestartet werden:
+
+```bash
+npm install
+# oder
+pnpm install
+```
+
+```bash
+npm run dev
+# oder
+pnpm dev
+```
+
+[http://localhost:3000](http://localhost:3000) sollte in deinem Browser geöffnet werden, um das Ergebnis zu sehen.
+
+Die Seite kann bearbeitet werden, indem `app/page.tsx` modifiziert wird. Die Seite wird automatisch aktualisiert, wenn die Datei bearbeitet wird.
 
 
-
-## Projektstruktur  (App Router und `src`-Ordner)
+## Struktur des Projekts
 
 ### `src/`
 - Enthält den gesamten Code deiner Anwendung.
@@ -26,7 +47,6 @@ Dies ist ein [Next.js](https://nextjs.org) Projekt, das mit [`create-next-app`](
 ### `next.config.js`
 - Konfigurationsdatei für dein Projekt (z. B. benutzerdefinierte Routen oder Umgebungsvariablen).
 
----
 
 ## ✏️ Neue Seite hinzufügen
 
@@ -63,28 +83,6 @@ Die Abhängigkeiten und Versionsnummern sind in der `package.json` Datei definie
 ```
 
 
-## Erste Schritte - Anwendung starten
-
-Zuerst sollte der Entwicklungsserver gestartet werden:
-
-```bash
-npm install
-# oder
-pnpm install
-```
-
-```bash
-npm run dev
-# oder
-pnpm dev
-```
-
-[http://localhost:3000](http://localhost:3000) sollte in deinem Browser geöffnet werden, um das Ergebnis zu sehen.
-
-Die Seite kann bearbeitet werden, indem `app/page.tsx` modifiziert wird. Die Seite wird automatisch aktualisiert, wenn die Datei bearbeitet wird.
-
-Dieses Projekt verwendet [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts), um [Geist](https://vercel.com/font), eine neue Schriftfamilie für Vercel, automatisch zu optimieren und zu laden.
-
 ## Mehr erfahren
 
 Um mehr über Next.js zu erfahren, sollten die folgenden Ressourcen angesehen werden:
@@ -92,6 +90,14 @@ Um mehr über Next.js zu erfahren, sollten die folgenden Ressourcen angesehen we
 - [Next.js Dokumentation](https://nextjs.org/docs) - mehr über die Funktionen und die API von Next.js lernen.
 - [Lerne Next.js](https://nextjs.org/learn) - ein interaktives Next.js Tutorial.
 
+
+## ShadCN Komponenten hinzufügen
+
+ShadCN bietet eine Reihe von Komponenten, die in dein Projekt eingefügt werden können. Die Komponenten können mit dem folgenden Befehl hinzugefügt werden:
+
+```bash
+npx shadcn add <gewünschte Komponente>
+```
 
 ## Auf Vercel bereitstellen
 
