@@ -68,13 +68,15 @@ Die Abhängigkeiten und Versionsnummern sind in der `package.json` Datei definie
 Zuerst sollte der Entwicklungsserver gestartet werden:
 
 ```bash
+npm install
+# oder
+pnpm install
+```
+
+```bash
 npm run dev
 # oder
-yarn dev
-# oder
 pnpm dev
-# oder
-bun dev
 ```
 
 [http://localhost:3000](http://localhost:3000) sollte in deinem Browser geöffnet werden, um das Ergebnis zu sehen.
