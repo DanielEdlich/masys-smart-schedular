@@ -99,6 +99,60 @@ ShadCN bietet eine Reihe von Komponenten, die in dein Projekt eingefügt werden 
 npx shadcn add <gewünschte Komponente>
 ```
 
+## Testing mit Jest
+
+Jest ist ein Test-Framework, das in Next.js integriert ist. Es kann verwendet werden, um Tests für deine Anwendung zu schreiben.
+
+```bash
+npm run test
+# oder
+pnpm test
+```
+
+Die Tests können in der `__tests__` Verzeichnis innerhalb des Projekts geschrieben werden. Weitere Informationen finden sich in der [Jest Dokumentation](https://jestjs.io/docs/getting-started).
+
+## Linting mit ESLint
+
+ESLint ist ein Linter für JavaScript und TypeScript. Es kann verwendet werden, um Code-Standards zu überprüfen und Fehler im Code zu finden.
+
+```bash
+npm run lint
+# oder
+pnpm lint
+```
+
+Die Regeln für ESLint können in der `.eslintrc.js` Datei konfiguriert werden. Weitere Informationen finden sich in der [ESLint Dokumentation](https://eslint.org/docs/user-guide/getting-started).
+
+## Styling mit Tailwind CSS
+
+Tailwind CSS ist ein Utility-First CSS-Framework, das in Next.js integriert ist. Es kann verwendet werden, um schnell und einfach benutzerdefinierte Styles für deine Anwendung zu erstellen.
+
+Die Styles können in der `src/styles` Verzeichnis innerhalb des Projekts geschrieben werden. Weitere Informationen finden sich in der [Tailwind CSS Dokumentation](https://tailwindcss.com/docs).
+
+## Testen der Anwendung mit Cypress
+
+Cypress ist ein End-to-End-Test-Framework, das in Next.js integriert ist. Es kann verwendet werden, um Tests für deine Anwendung zu schreiben.
+
+```bash
+npm run cypress:open
+# oder
+pnpm cypress:open
+```
+
+Die Tests können in der `cypress/integration` Verzeichnis innerhalb des Projekts geschrieben werden. Weitere Informationen finden sich in der [Cypress Dokumentation](https://docs.cypress.io/guides/overview/why-cypress).
+
+## Code formatieren mit Prettier
+
+Prettier ist ein Code-Formatter, der in Next.js integriert ist. Er kann verwendet werden, um den Code automatisch zu formatieren.
+
+```bash
+npm run format
+# oder
+pnpm format
+```
+
+Die Regeln für Prettier können in der `.prettierrc` Datei konfiguriert werden. Weitere Informationen finden sich in der [Prettier Dokumentation](https://prettier.io/docs/en/index.html).
+
 ## Auf Vercel bereitstellen
 
 Der einfachste Weg, die Next.js App bereitzustellen, ist die Verwendung der [Vercel Plattform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) von den Erstellern von Next.js.
