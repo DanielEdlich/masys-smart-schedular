@@ -98,3 +98,22 @@ Um mehr über Next.js zu erfahren, sollten die folgenden Ressourcen angesehen we
 Der einfachste Weg, die Next.js App bereitzustellen, ist die Verwendung der [Vercel Plattform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) von den Erstellern von Next.js.
 
 Die [Next.js Bereitstellungsdokumentation](https://nextjs.org/docs/app/building-your-application/deploying) sollte für weitere Details angesehen werden.
+
+
+## Architektur
+
+
+### Komponenten
+
+Das Projekt basiert auf einem modernen Tech-Stack, der schnelle Prototyp-Entwicklung und Skalierbarkeit ermöglicht:
+* Frontend: React und TypeScript für eine typsichere und modulare UI.
+* Backend: Next.js auf Node.js für serverseitiges Rendering und API-Integration.
+* Datenbank & Authentifizierung: PostgreSQL, Prisma (ORM) und NextAuth.js für sichere Datenverwaltung und Authentifizierung.
+  
+![Komponentendiagramm](docs/component.drawio.svg)
+_Komponentendiagramm_
+
+### Deployment
+![Deploymentdiagramm](docs/deployment.drawio.svg)  
+_Deploymentdiagramm_
+
