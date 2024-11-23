@@ -108,12 +108,13 @@ Die [Next.js Bereitstellungsdokumentation](https://nextjs.org/docs/app/building-
 Das Projekt basiert auf einem modernen Tech-Stack, der schnelle Prototyp-Entwicklung und Skalierbarkeit ermöglicht:
 * Frontend: React und TypeScript für eine typsichere und modulare UI.
 * Backend: Next.js auf Node.js für serverseitiges Rendering und API-Integration.
-* Datenbank & Authentifizierung: PostgreSQL, Prisma (ORM) und NextAuth.js für sichere Datenverwaltung und Authentifizierung.
+* Datenbank & Authentifizierung: PostgreSQL, Drizzle (ORM) und NextAuth.js für sichere Datenverwaltung und Authentifizierung.
   
 ![Komponentendiagramm](docs/component.drawio.svg)
 _Komponentendiagramm_
 
 ### Deployment
+Die Anwendung wird auf einer VPS in Docker Containern deployed werden und über Traefik als Reverse Proxy im Internet erreichbar sein.  
 ![Deploymentdiagramm](docs/deployment.drawio.svg)  
 _Deploymentdiagramm_
 
