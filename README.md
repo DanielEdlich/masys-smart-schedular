@@ -158,3 +158,23 @@ Die Regeln für Prettier können in der `.prettierrc` Datei konfiguriert werden.
 Der einfachste Weg, die Next.js App bereitzustellen, ist die Verwendung der [Vercel Plattform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) von den Erstellern von Next.js.
 
 Die [Next.js Bereitstellungsdokumentation](https://nextjs.org/docs/app/building-your-application/deploying) sollte für weitere Details angesehen werden.
+
+
+## Architektur
+
+
+### Komponenten
+
+Das Projekt basiert auf einem modernen Tech-Stack, der schnelle Prototyp-Entwicklung und Skalierbarkeit ermöglicht:
+* Frontend: React und TypeScript für eine typsichere und modulare UI.
+* Backend: Next.js auf Node.js für serverseitiges Rendering und API-Integration.
+* Datenbank & Authentifizierung: PostgreSQL, Drizzle (ORM) und NextAuth.js für sichere Datenverwaltung und Authentifizierung.
+  
+![Komponentendiagramm](docs/component.drawio.svg)
+_Komponentendiagramm_
+
+### Deployment
+Die Anwendung wird auf einer VPS in Docker Containern deployed werden und über Traefik als Reverse Proxy im Internet erreichbar sein.  
+![Deploymentdiagramm](docs/deployment.drawio.svg)  
+_Deploymentdiagramm_
+
