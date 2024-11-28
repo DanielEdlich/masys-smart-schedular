@@ -18,6 +18,8 @@ npm run dev
 pnpm dev
 ```
 
+Zudem sollte eine `.env` Datei mit den, wie in [.env.example](.env.example) beschrieben, Umgebungsvariablen angelegt werden.
+
 [http://localhost:3000](http://localhost:3000) sollte in deinem Browser geöffnet werden, um das Ergebnis zu sehen.
 
 Die Seite kann bearbeitet werden, indem `app/page.tsx` modifiziert wird. Die Seite wird automatisch aktualisiert, wenn die Datei bearbeitet wird.

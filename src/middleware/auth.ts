@@ -1,11 +1,15 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const username = process.env.BASIC_AUTH_USERNAME || "admin";
-const password = process.env.BASIC_AUTH_PASSWORD || "passwort";
+const username = process.env.BASIC_AUTH_USERNAME;
+const password = process.env.BASIC_AUTH_PASSWORD;
+
+if (!username || !password) {
+  throw new Error("BASIC_AUTH_USERNAME or BASIC_AUTH_PASSWORD is not set");
+}
 
 export function authMiddleware(request: NextRequest) {
-  const basicAuth = request.headers.get("authorization");
+  const basicAuth = request.headers.get("Authorization");
 
   if (basicAuth) {
     const authValue = basicAuth.split(" ")[1];
@@ -16,10 +20,11 @@ export function authMiddleware(request: NextRequest) {
     }
   }
 
-  return new NextResponse("Authentifizierung erforderlich", {
+  return new NextResponse("Authentication required", {
     status: 401,
     headers: {
-      "WWW-Authenticate": 'Basic realm="Geschützter Bereich"',
+      "WWW-Authenticate": 'Basic realm="Protected Area"',
     },
   });
+  
 }
