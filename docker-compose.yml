@@ -1,0 +1,28 @@
+services:
+  web:
+    image: harbor.hitabis.de/htw/schedular:prod #Eure Webanwendung
+    depends_on:
+      - postgres
+    environment: ...
+    volumes: ...
+    restart: unless-stopped
+    networks:
+      - traefik-net
+      - default
+    labels:
+      - traefik.enable=true
+      - traefik.port=80 # Hier den Port hinterlegen, auf dem eure Anwendung (ohne SSL!) hört. Also wahrscheinlich Port 80
+      - traefik.http.routers.schedular.entrypoints=websecure
+      - traefik.http.routers.schedular.rule=Host(`htw.hitabis.de`) # Beispiel für die Domain, die euch Hitabis zur Verfügung stellt
+      - traefik.http.routers.schedular.tls=true
+      - traefik.http.routers.schedular.tls.certresolver=letsencrypt
+      - traefik.docker.network=traefik-net
+      - traefik.http.routers.schedular.middlewares=schedular
+      - traefik.http.middlewares.schedular.headers.stsSeconds=15768000
+      - traefik.http.middlewares.schedular.headers.customResponseHeaders.X-Download-Options=noopen
+      - traefik.http.middlewares.schedular.headers.customResponseHeaders.X-Permitted-Cross-Domain-Policies=none
+
+networks:
+  traefik-net:
+    external:
+      name: traefik-net
