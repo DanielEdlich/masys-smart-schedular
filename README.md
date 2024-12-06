@@ -48,6 +48,13 @@ Die Seite kann bearbeitet werden, indem `app/page.tsx` modifiziert wird. Die Sei
 
 ### `next.config.js`
 - Konfigurationsdatei für dein Projekt (z. B. benutzerdefinierte Routen oder Umgebungsvariablen).
+- 
+### `drizzle.config.js`
+- Konfigurationsdatei für Drizzle
+
+### `.example.env`
+- Konfigurationsdatei für Secrets und Datenbankverbindungen  
+Die [`.env.example`](.env.example) sollte kopiert und in `.env.local` umbenannt werden für die lokale Entwicklung.
 
 
 ## ✏️ Neue Seite hinzufügen
@@ -161,6 +168,8 @@ Der einfachste Weg, die Next.js App bereitzustellen, ist die Verwendung der [Ver
 
 Die [Next.js Bereitstellungsdokumentation](https://nextjs.org/docs/app/building-your-application/deploying) sollte für weitere Details angesehen werden.
 
+## Schema erstellen und deployen mit Drizzle
+Um das Datenbank Schema anzupassen [schema.ts](src/db/schema.ts) bearbeiten. Im Anschluss können die Änderungen mit `npm run db` in die Datenbank gepushed werden.
 
 ## Architektur
 
