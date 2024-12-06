@@ -14,7 +14,6 @@ export const teacher = sqliteTable('teacher', {
   last_name: text('last_name').notNull(),    // Last name
   email: text('email').notNull(),            // Email
   phone_number: text('phone_number'),        // Phone number
-  avatar: text('avatar'),                    // Avatar
   priority: integer('priority')              // Priority
 });
 
@@ -42,7 +41,7 @@ export const teacherAvailability = sqliteTable('teacher_availability', {
 export const schoolClass = sqliteTable('school_class', {
   id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   name: text('name').notNull(),      // Class name
-  year: integer('year'),             // Year
+  year: text('year'),             // Year like 1-3 or 4-6
   grade: integer('grade')            // Grade level
 });
 
@@ -60,10 +59,9 @@ export const timetable = sqliteTable('timetable', {
 // ---------------------------------------
 export const lesson = sqliteTable('lesson', {
   id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-  date: text('date'),                         // Date (ISO-String, e.g. "2024-12-06")
-  timeslot_from: integer('timeslot_from').notNull(), // Timeslot start (e.g. 8)
-  timeslot_to: integer('timeslot_to').notNull(),     // Timeslot end (e.g. 10)
-  lesson_name: text('lesson_name'),     // Lesson content
+  date: text('date'),                         // Weekday as Enum (Monday, Tuesday, etc)
+  timeslot: integer('timeslot_from').notNull(), // Timeslot (e.g. 4)
+  lesson_name: text('lesson_name'),     // Lesson name
 
   timetable_id: integer('timetable_id').notNull(),
   school_class_id: integer('school_class_id').notNull(),
