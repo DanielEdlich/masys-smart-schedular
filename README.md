@@ -48,6 +48,13 @@ Die Seite kann bearbeitet werden, indem `app/page.tsx` modifiziert wird. Die Sei
 
 ### `next.config.js`
 - Konfigurationsdatei für dein Projekt (z. B. benutzerdefinierte Routen oder Umgebungsvariablen).
+- 
+### `drizzle.config.js`
+- Konfigurationsdatei für Drizzle
+
+### `.example.env`
+- Konfigurationsdatei für Secrets und Datenbankverbindungen  
+Die [`.env.example`](.env.example) sollte kopiert und in `.env.local` umbenannt werden für die lokale Entwicklung.
 
 
 ## ✏️ Neue Seite hinzufügen
@@ -160,6 +167,9 @@ Die Regeln für Prettier können in der `.prettierrc` Datei konfiguriert werden.
 Der einfachste Weg, die Next.js App bereitzustellen, ist die Verwendung der [Vercel Plattform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) von den Erstellern von Next.js.
 
 Die [Next.js Bereitstellungsdokumentation](https://nextjs.org/docs/app/building-your-application/deploying) sollte für weitere Details angesehen werden.
+
+## Schema erstellen und deployen mit Drizzle
+Um das Datenbank Schema anzupassen [schema.ts](src/db/schema.ts) bearbeiten. Im Anschluss können die Änderungen mit `npm run db` in die Datenbank gepushed werden.
 
 ## Architektur
 
