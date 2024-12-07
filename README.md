@@ -173,7 +173,6 @@ Um das Datenbank Schema anzupassen [schema.ts](src/db/schema.ts) bearbeiten. Im 
 
 ## Architektur
 
-
 ### Komponenten
 
 Das Projekt basiert auf einem modernen Tech-Stack, der schnelle Prototyp-Entwicklung und Skalierbarkeit ermöglicht:
@@ -189,3 +188,15 @@ Die Anwendung wird auf einer VPS in Docker Containern deployed werden und über 
 ![Deploymentdiagramm](docs/deployment.drawio.svg)  
 _Deploymentdiagramm_
 
+## Infrastruktur
+
+### Zugang zu Hitabis VM
+
+Zugangsdaten befinden sich in Confluence. Wir haben keine Sudo-Rechte auf dem Server.
+
+### Docker Registry
+Ein Harbor Docker Registry (harbor.hitabis.de/htw) wurde uns von Hitabis zur Verfügung gestellt. Potenzielle Docker Images können beispielsweise mit dem `harbor.hitabis.de/htw/schedular:production` Tag gepushed werden.
+Die Zugangsdaten dafür liegen auf der VM unter `/home/htw/harbor-registry-hitabis.txt`. 
+
+### Reverse Proxy
+Für die Verbinding ins Internet mit einem gültigen SSL-Zertifikat sollen wir `Traefik` nutzen, ein Container, sowie ein [Template](docker-compose.yml) wurde uns zur Verfügung gestellt.
