@@ -60,6 +60,7 @@ export const timetable = sqliteTable('timetable', {
 export const lesson = sqliteTable('lesson', {
   id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   date: text('date'),                         // Weekday as Enum (Monday, Tuesday, etc)
+  week: text('week'), // A or B week or maybe more later
   timeslot: integer('timeslot_from').notNull(), // Timeslot (e.g. 4)
   lesson_name: text('lesson_name'),     // Lesson name
 
