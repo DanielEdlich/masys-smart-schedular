@@ -1,10 +1,9 @@
-import { db } from '@/db/db';
 import { timetable } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { Timetable, NewTimetable } from '@/db/types';
 
 export class TimetableRepository {
-  constructor(private readonly dbClient = db) {}
+  constructor(private readonly dbClient ) {}
 
   async create(data: NewTimetable): Promise<Timetable | undefined> {
     const [result] = await this.dbClient.insert(timetable).values(data).returning();

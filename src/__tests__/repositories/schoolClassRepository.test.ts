@@ -9,9 +9,7 @@ import { SchoolClassRepository } from '@/repositories/schoolClassRepository';
 
 describe('SchoolClassRepository', () => {
   let repo: SchoolClassRepository;
-
   beforeAll(async () => {
-
     repo = new SchoolClassRepository((global as any).db);
   });
 
@@ -80,7 +78,6 @@ describe('SchoolClassRepository', () => {
       expect(updated).toBeDefined();
       expect(updated?.id).toBe(classId);
       expect(updated?.name).toBe('Biology 102');
-      // Teacher should remain unchanged
     });
 
     it('should return undefined if trying to update non-existing class', async () => {

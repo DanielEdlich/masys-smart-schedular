@@ -61,7 +61,7 @@ export const lesson = sqliteTable('lesson', {
   date: text('date'),                         // Weekday as Enum (Monday, Tuesday, etc)
   week: text('week'), // A or B week or maybe more later
   timeslot: integer('timeslot_from').notNull(), // Timeslot (e.g. 4)
-  lesson_name: text('lesson_name'),     // Lesson name
+  name: text('name'),     // Lesson name
 
   timetable_id: integer('timetable_id').notNull(),
   school_class_id: integer('school_class_id').notNull(),

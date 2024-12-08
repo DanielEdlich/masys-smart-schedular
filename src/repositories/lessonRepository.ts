@@ -1,10 +1,9 @@
-import { db } from '@/db/db';
 import { lesson } from '@/db/schema';
 import { eq, or } from 'drizzle-orm';
 import { Lesson, NewLesson } from '@/db/types';
 
 export class LessonRepository {
-  constructor(private readonly dbClient = db) {}
+  constructor(private readonly dbClient ) {}
 
   async create(data: NewLesson): Promise<Lesson | undefined> {
     const [result] = await this.dbClient.insert(lesson).values(data).returning();

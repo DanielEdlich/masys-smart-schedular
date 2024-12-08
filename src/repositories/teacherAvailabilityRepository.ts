@@ -1,10 +1,9 @@
-import { db } from '@/db/db';
 import { teacherAvailability } from '@/db/schema';
 import { eq, and, gte, lte } from 'drizzle-orm';
 import { TeacherAvailability, NewTeacherAvailability } from '@/db/types';
 
 export class TeacherAvailabilityRepository {
-  constructor(private readonly dbClient = db) {}
+  constructor(private readonly dbClient ) {}
 
   async create(data: NewTeacherAvailability): Promise<TeacherAvailability | undefined> {
     const [result] = await this.dbClient.insert(teacherAvailability).values(data).returning();
