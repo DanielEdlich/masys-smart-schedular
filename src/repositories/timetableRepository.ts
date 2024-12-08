@@ -1,4 +1,3 @@
-// repositories/timetableRepository.ts
 import { db } from '@/db/db';
 import { timetable } from '@/db/schema';
 import { eq } from 'drizzle-orm';

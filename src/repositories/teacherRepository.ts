@@ -1,4 +1,3 @@
-// repositories/teacherRepository.ts
 import { db } from '@/db/db';
 import { teacher } from '@/db/schema';
 import { eq } from 'drizzle-orm';

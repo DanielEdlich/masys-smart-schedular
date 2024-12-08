@@ -42,7 +42,6 @@ export const schoolClass = sqliteTable('school_class', {
   id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   name: text('name').notNull(),      // Class name
   year: text('year'),             // Year like 1-3 or 4-6
-  grade: integer('grade')            // Grade level
 });
 
 // ---------------------------------------

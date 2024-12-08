@@ -1,4 +1,3 @@
-// repositories/lessonRepository.ts
 import { db } from '@/db/db';
 import { lesson } from '@/db/schema';
 import { eq, or } from 'drizzle-orm';

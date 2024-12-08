@@ -1,4 +1,3 @@
-// repositories/teacherAvailabilityRepository.ts
 import { db } from '@/db/db';
 import { teacherAvailability } from '@/db/schema';
 import { eq, and, gte, lte } from 'drizzle-orm';

@@ -1,11 +1,11 @@
-// repositories/schoolClassRepository.ts
-import { db } from '@/db/db';
+
 import { schoolClass } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { SchoolClass, NewSchoolClass } from '@/db/types';
 
+
 export class SchoolClassRepository {
-  constructor(private readonly dbClient = db) {}
+  constructor(private readonly dbClient ) {}
 
   async create(data: NewSchoolClass): Promise<SchoolClass | undefined> {
     const [result] = await this.dbClient.insert(schoolClass).values(data).returning();
