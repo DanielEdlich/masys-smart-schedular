@@ -3,15 +3,15 @@
  * @jest-environment node
  */
 
-import { teacher, teacherAvailability } from '@/db/schema';
-import {  NewTeacherAvailability } from '@/db/types';
-import { TeacherAvailabilityRepository } from '@/repositories/teacherAvailabilityRepository';
+import { teacher, teacherBlocker } from '@/db/schema';
+import {  NewTeacherBlocker } from '@/db/types';
+import { TeacherBlockerRepository } from '@/repositories/teacherBlockerRepository';
 import { TeacherRepository } from '@/repositories/teacherRepository';
 
-describe('TeacherAvailabilityRepository', () => {
-  let repo: TeacherAvailabilityRepository;
+describe('TeacherBlockerRepository', () => {
+  let repo: TeacherBlockerRepository;
   beforeAll(async () => {
-    repo = new TeacherAvailabilityRepository((global as any).db);
+    repo = new TeacherBlockerRepository((global as any).db);
 
     const teacherRepo = new TeacherRepository((global as any).db);
     await (global as any).db.delete(teacher);
@@ -29,11 +29,11 @@ describe('TeacherAvailabilityRepository', () => {
     });
   });
 
-  afterAll(async () => await (global as any).db.delete(teacherAvailability));
+  afterAll(async () => await (global as any).db.delete(teacherBlocker));
 
   describe('create', () => {
     it('should create a new teacher availability and return it', async () => {
-      const newAvailability: NewTeacherAvailability = {
+      const newAvailability: NewTeacherBlocker = {
         teacher_id: 1,
         day: 'Monday',
         timeslot_from: 1,
@@ -121,7 +121,7 @@ describe('TeacherAvailabilityRepository', () => {
     });
   });
 
-  describe('isTeacherAvailableAtTimeslot', () => {
+  describe('isTeacherBlockerAtTimeslot', () => {
     beforeAll(async () => {
       await repo.create({
         teacher_id: 2,
@@ -132,12 +132,12 @@ describe('TeacherAvailabilityRepository', () => {
     });
 
     it('should return true if teacher is available at the given timeslot and day', async () => {
-      const isAvailable = await repo.isTeacherAvailableAtTimeslot(2, 11, 'Saturday');
+      const isAvailable = await repo.isTeacherBlockerAtTimeslot(2, 11, 'Saturday');
       expect(isAvailable).toBe(true);
     });
 
     it('should return false if teacher is not available at the given timeslot and day', async () => {
-      const isAvailable = await repo.isTeacherAvailableAtTimeslot(2, 13, 'Saturday');
+      const isAvailable = await repo.isTeacherBlockerAtTimeslot(2, 13, 'Saturday');
       expect(isAvailable).toBe(false);
     });
   });

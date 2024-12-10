@@ -18,9 +18,9 @@ export const teacher = sqliteTable('teacher', {
 });
 
 // ---------------------------------------
-// TEACHER_AVAILABILITY
+// TEACHER_BLOCKER
 // ---------------------------------------
-export const teacherAvailability = sqliteTable('teacher_availability', {
+export const teacherBlocker = sqliteTable('teacher_blocker', {
   id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   day: text('day').notNull(),                // Day (e.g. Monday, Tuesday...)
   timeslot_from: integer('timeslot_from').notNull(), // Timeslot start (e.g. 8)
