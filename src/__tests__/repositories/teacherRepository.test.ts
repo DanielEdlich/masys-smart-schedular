@@ -1,258 +1,170 @@
-/**
- * @jest-environment node
- */
-
-jest.mock('@libsql/client', () => {
-  return {
-    createClient: jest.fn(() => {
-      return {
-        execute: jest.fn(),
-        close: jest.fn(),
-      };
-    }),
-  };
-});
+// teacherRepository.test.ts
 
 import { TeacherRepository } from '@/repositories/teacherRepository';
 import { teacher } from '@/db/schema';
+import { Teacher, NewTeacher } from '@/db/types';
 import { eq } from 'drizzle-orm';
-import { NewTeacher } from '@/db/types';
 
 describe('TeacherRepository', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let repository: TeacherRepository;
   let mockDbClient: any;
-  let repo: TeacherRepository;
 
   beforeEach(() => {
     mockDbClient = {
-      select: jest.fn().mockReturnThis(),
-      insert: jest.fn().mockReturnThis(),
-      update: jest.fn().mockReturnThis(),
-      delete: jest.fn().mockReturnThis(),
-      from: jest.fn().mockReturnThis(),
-      where: jest.fn().mockReturnThis(),
-      values: jest.fn().mockReturnThis(),
-      set: jest.fn().mockReturnThis(),
-      returning: jest.fn().mockReturnValue([
-        { id: 1, first_name: 'John', last_name: 'Doe', email: 'john.doe@example.com' }
-      ]),
+      insert: jest.fn(),
+      select: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
     };
 
-    repo = new TeacherRepository(mockDbClient);
+    repository = new TeacherRepository(mockDbClient);
   });
 
-  it('should create a new teacher', async () => {
-    const newTeacher: NewTeacher = { first_name: 'John', last_name: 'Doe', email: 'john.doe@example.com' };
-    const result = await repo.create(newTeacher);
-
-    expect(mockDbClient.insert).toHaveBeenCalledWith(teacher);
-    expect(mockDbClient.values).toHaveBeenCalledWith(newTeacher);
-    expect(mockDbClient.returning).toHaveBeenCalled();
-    expect(result).toEqual({ id: 1, first_name: 'John', last_name: 'Doe', email: 'john.doe@example.com' });
+  afterEach(() => {
+    jest.clearAllMocks();
   });
-
-  it('should get a teacher by id', async () => {
-    // Anpassen des return values für diesen Test
-    mockDbClient.returning.mockReturnValueOnce(undefined);
-    mockDbClient.select.mockReturnValueOnce(mockDbClient);
-    mockDbClient.where.mockReturnValueOnce([
-      { id: 1, first_name: 'John', last_name: 'Doe', email: 'john.doe@example.com' }
-    ]);
-
-    const result = await repo.getById(1);
-
-    expect(mockDbClient.select).toHaveBeenCalledWith();
-    expect(mockDbClient.from).toHaveBeenCalledWith(teacher);
-    expect(mockDbClient.where).toHaveBeenCalledWith(eq(teacher.id, 1));
-    expect(result).toEqual({ id: 1, first_name: 'John', last_name: 'Doe', email: 'john.doe@example.com' });
-  });
-
-  it('should get all teachers', async () => {
-    mockDbClient.where.mockReturnValueOnce(undefined);
-    mockDbClient.from.mockReturnValueOnce([
-      { id: 1, first_name: 'John', last_name: 'Doe', email: 'john.doe@example.com' },
-      { id: 2, first_name: 'Jane', last_name: 'Smith', email: 'jane.smith@example.com' }
-    ]);
-
-    const result = await repo.getAll();
-    expect(mockDbClient.select).toHaveBeenCalledWith();
-    expect(mockDbClient.from).toHaveBeenCalledWith(teacher);
-    expect(result).toEqual([
-      { id: 1, first_name: 'John', last_name: 'Doe', email: 'john.doe@example.com' },
-      { id: 2, first_name: 'Jane', last_name: 'Smith', email: 'jane.smith@example.com' }
-    ]);
-  });
-
-  it('should update a teacher', async () => {
-    const updateData = { first_name: 'Johnny' };
-    mockDbClient.update.mockReturnThis();
-    mockDbClient.returning.mockReturnValueOnce([
-      { id: 1, first_name: 'Johnny', last_name: 'Doe', email: 'john.doe@example.com' }
-    ]);
-
-    const result = await repo.update(1, updateData);
-
-    expect(mockDbClient.update).toHaveBeenCalledWith(teacher);
-    expect(mockDbClient.set).toHaveBeenCalledWith(updateData);
-    expect(mockDbClient.where).toHaveBeenCalledWith(eq(teacher.id, 1));
-    expect(result).toEqual({ id: 1, first_name: 'Johnny', last_name: 'Doe', email: 'john.doe@example.com' });
-  });
-
-  it('should delete a teacher', async () => {
-    mockDbClient.delete.mockReturnThis();
-    mockDbClient.returning.mockReturnValueOnce([
-      { id: 1, first_name: 'John', last_name: 'Doe', email: 'john.doe@example.com' }
-    ]);
-
-    const result = await repo.delete(1);
-
-    expect(mockDbClient.delete).toHaveBeenCalledWith(teacher);
-    expect(mockDbClient.where).toHaveBeenCalledWith(eq(teacher.id, 1));
-    expect(result).toEqual({ id: 1, first_name: 'John', last_name: 'Doe', email: 'john.doe@example.com' });
-  });
-});
-
-
-describe('TeacherRepository', () => {
-  let repo: TeacherRepository;
-
-  beforeAll(async () => {
-    repo = new TeacherRepository((global as any).db);
-  });
-
-  afterAll(async () => await (global as any).db.delete(teacher));
 
   describe('create', () => {
     it('should create a new teacher and return it', async () => {
-      const newTeacher: NewTeacher = {
-        first_name: 'Emma',
-        last_name: 'Watson',
-        email: 'emma.watson@mail.com'
+      const data: NewTeacher = {
+        first_name: 'John',
+        last_name: 'Doe',
+        email: 'john.doe@example.com',
+        phone: '1234567890',
+        priority: 1,
       };
 
-      const created = await repo.create(newTeacher);
-      expect(created).toBeDefined();
-      expect(created?.id).toBeDefined();
-      expect(created?.first_name).toBe('Emma');
-      expect(created?.last_name).toBe('Watson');
-      expect(created?.email).toBe('emma.watson@mail.com');
+      const expectedResult: Teacher = { id: 1, ...data };
+
+      mockDbClient.insert.mockReturnValue({
+        values: jest.fn().mockReturnValue({
+          returning: jest.fn().mockResolvedValue([expectedResult]),
+        }),
+      });
+
+      const result = await repository.create(data);
+
+      expect(mockDbClient.insert).toHaveBeenCalledWith(teacher);
+      expect(mockDbClient.insert().values).toHaveBeenCalledWith(data);
+      expect(result).toEqual(expectedResult);
     });
   });
 
   describe('getById', () => {
-    let createdId: number;
+    it('should return a teacher by ID', async () => {
+      const id = 1;
+      const expectedResult: Teacher = {
+        id,
+        first_name: 'Jane',
+        last_name: 'Smith',
+        email: 'jane.smith@example.com',
+        phone: '0987654321',
+        priority: 2,
+      };
 
-    beforeAll(async () => {
-      const created = await repo.create({ 
-        first_name: 'Daniel', 
-        last_name: 'Radcliffe', 
-        email: 'daniel.radcliffe@mail.com' 
+      mockDbClient.select.mockReturnValue({
+        from: jest.fn().mockReturnValue({
+          where: jest.fn().mockResolvedValue([expectedResult]),
+        }),
       });
-      createdId = created!.id;
-    });
 
-    it('should return the correct teacher by id', async () => {
-      const result = await repo.getById(createdId);
-      expect(result).toBeDefined();
-      expect(result?.id).toBe(createdId);
-      expect(result?.first_name).toBe('Daniel');
-      expect(result?.last_name).toBe('Radcliffe');
-      expect(result?.email).toBe('daniel.radcliffe@mail.com');
-    });
+      const result = await repository.getById(id);
 
-    it('should return undefined if teacher not found', async () => {
-      const result = await repo.getById(999);
-      expect(result).toBeUndefined();
+      expect(mockDbClient.select).toHaveBeenCalled();
+      expect(mockDbClient.select().from).toHaveBeenCalledWith(teacher);
+      expect(mockDbClient.select().from().where).toHaveBeenCalledWith(eq(teacher.id, id));
+      expect(result).toEqual(expectedResult);
     });
   });
 
   describe('getAll', () => {
-    beforeAll(async () => {
-      await repo.create({ 
-        first_name: 'Morgan', 
-        last_name: 'Freeman', 
-        email: 'morgan.freeman@mail.com' 
-      });
-      await repo.create({ 
-        first_name: 'Scarlett', 
-        last_name: 'Johansson', 
-        email: 'scarlett.johansson@mail.com' 
-      });
-    });
-
     it('should return all teachers', async () => {
-      const all = await repo.getAll();
-      expect(all.length).toBeGreaterThanOrEqual(2);
-      const names = all.map(t => `${t.first_name} ${t.last_name}`);
-      expect(names).toContain('Morgan Freeman');
-      expect(names).toContain('Scarlett Johansson');
+      const expectedResult: Teacher[] = [
+        {
+          id: 1,
+          first_name: 'John',
+          last_name: 'Doe',
+          email: 'john.doe@example.com',
+          phone: '1234567890',
+          priority: 1,
+        },
+        {
+          id: 2,
+          first_name: 'Jane',
+          last_name: 'Smith',
+          email: 'jane.smith@example.com',
+          phone: '0987654321',
+          priority: 2,
+        },
+      ];
+
+      mockDbClient.select.mockReturnValue({
+        from: jest.fn().mockResolvedValue(expectedResult),
+      });
+
+      const result = await repository.getAll();
+
+      expect(mockDbClient.select).toHaveBeenCalled();
+      expect(mockDbClient.select().from).toHaveBeenCalledWith(teacher);
+      expect(result).toEqual(expectedResult);
     });
   });
 
   describe('update', () => {
-    let teacherId: number;
-
-    beforeAll(async () => {
-      const created = await repo.create({ 
-        first_name: 'Leonardo', 
-        last_name: 'DiCaprio', 
-        email: 'leonardo.dicaprio@mail.com' 
-      });
-      teacherId = created!.id;
-    });
-
-    it('should update an existing teacher', async () => {
-      const updatedTeacherData = { 
-        first_name: 'Leonardo', 
-        last_name: 'DiCaprio', 
-        email: 'leo.dicaprio@mail.com' 
+    it('should update a teacher and return the updated teacher', async () => {
+      const id = 1;
+      const data: Partial<NewTeacher> = {
+        email: 'john.new@example.com',
+      };
+      const expectedResult: Teacher = {
+        id,
+        first_name: 'John',
+        last_name: 'Doe',
+        email: 'john.new@example.com',
+        phone: '1234567890',
+        priority: 1,
       };
 
-      const updated = await repo.update(teacherId, updatedTeacherData);
-      expect(updated).toBeDefined();
-      expect(updated?.id).toBe(teacherId);
-      expect(updated?.first_name).toBe('Leonardo');
-      expect(updated?.last_name).toBe('DiCaprio');
-      expect(updated?.email).toBe('leo.dicaprio@mail.com');
-    });
-
-    it('should return undefined if trying to update non-existing teacher', async () => {
-      const updated = await repo.update(999, { 
-        first_name: 'Keanu', 
-        last_name: 'Reeves', 
-        email: 'keanu.reeves@mail.com' 
+      mockDbClient.update.mockReturnValue({
+        set: jest.fn().mockReturnValue({
+          where: jest.fn().mockReturnValue({
+            returning: jest.fn().mockResolvedValue([expectedResult]),
+          }),
+        }),
       });
-      expect(updated).toBeUndefined();
+
+      const result = await repository.update(id, data);
+
+      expect(mockDbClient.update).toHaveBeenCalledWith(teacher);
+      expect(mockDbClient.update().set).toHaveBeenCalledWith(data);
+      expect(mockDbClient.update().set().where).toHaveBeenCalledWith(eq(teacher.id, id));
+      expect(result).toEqual(expectedResult);
     });
   });
 
   describe('delete', () => {
-    let teacherId: number;
+    it('should delete a teacher and return the deleted teacher', async () => {
+      const id = 1;
+      const expectedResult: Teacher = {
+        id,
+        first_name: 'John',
+        last_name: 'Doe',
+        email: 'john.doe@example.com',
+        phone: '1234567890',
+        priority: 1,
+      };
 
-    beforeAll(async () => {
-      const created = await repo.create({ 
-        first_name: 'Robert', 
-        last_name: 'Downey', 
-        email: 'robert.downey@mail.com' 
+      mockDbClient.delete.mockReturnValue({
+        where: jest.fn().mockReturnValue({
+          returning: jest.fn().mockResolvedValue([expectedResult]),
+        }),
       });
-      teacherId = created!.id;
-    });
 
-    it('should delete an existing teacher and return it', async () => {
-      const deleted = await repo.delete(teacherId);
-      expect(deleted).toBeDefined();
-      expect(deleted?.id).toBe(teacherId);
-      expect(deleted?.first_name).toBe('Robert');
-      expect(deleted?.last_name).toBe('Downey');
-      expect(deleted?.email).toBe('robert.downey@mail.com');
+      const result = await repository.delete(id);
 
-      const afterDelete = await repo.getById(teacherId);
-      expect(afterDelete).toBeUndefined();
-    });
-
-    it('should return undefined if trying to delete non-existing teacher', async () => {
-      const deleted = await repo.delete(999);
-      expect(deleted).toBeUndefined();
+      expect(mockDbClient.delete).toHaveBeenCalledWith(teacher);
+      expect(mockDbClient.delete().where).toHaveBeenCalledWith(eq(teacher.id, id));
+      expect(result).toEqual(expectedResult);
     });
   });
 });

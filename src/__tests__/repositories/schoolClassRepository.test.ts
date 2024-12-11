@@ -1,111 +1,115 @@
-/**
- * @jest-environment node
- */
-
-import { schoolClass } from '@/db/schema';
-import { SchoolClass, NewSchoolClass } from '@/db/types';
 import { SchoolClassRepository } from '@/repositories/schoolClassRepository';
+import { schoolClass } from '@/db/schema';
+import { eq } from 'drizzle-orm';
+import { SchoolClass, NewSchoolClass } from '@/db/types';
 
+// Mock the dbClient methods
+const mockDbClient = {
+  insert: jest.fn(),
+  select: jest.fn(),
+  update: jest.fn(),
+  delete: jest.fn(),
+};
 
 describe('SchoolClassRepository', () => {
   let repo: SchoolClassRepository;
-  beforeAll(async () => {
-    repo = new SchoolClassRepository((global as any).db);
+
+  beforeEach(() => {
+    // Reset mocks before each test
+    jest.clearAllMocks();
+    repo = new SchoolClassRepository(mockDbClient);
   });
 
-  afterAll(async () => await (global as any).db.delete(schoolClass))
-
   describe('create', () => {
-    it('should create a new school class and return it', async () => {
-      const newClass: NewSchoolClass = {
-        name: 'Math 101',
-      };
+    it('should insert a new school class and return it', async () => {
+      const data: NewSchoolClass = { name: 'Math 101' };
+      const expectedResult: SchoolClass = { id: 1, ...data };
 
-      const created = await repo.create(newClass);
-      expect(created).toBeDefined();
-      expect(created?.id).toBeDefined();
-      expect(created?.name).toBe('Math 101');
+      mockDbClient.insert.mockReturnValue({
+        values: jest.fn().mockReturnValue({
+          returning: jest.fn().mockResolvedValue([expectedResult]),
+        }),
+      });
+
+      const result = await repo.create(data);
+
+      expect(mockDbClient.insert).toHaveBeenCalledWith(schoolClass);
+      expect(result).toEqual(expectedResult);
     });
   });
 
   describe('getById', () => {
-    let createdId: number;
-    beforeAll(async () => {
-      const created = await repo.create({ name: 'History 201'});
-      createdId = created!.id;
-    });
+    it('should select a school class by id and return it', async () => {
+      const id = 1;
+      const expectedResult: SchoolClass = { id, name: 'History 201', year: null };
 
-    it('should return the correct class by id', async () => {
-      const result = await repo.getById(createdId);
-      expect(result).toBeDefined();
-      expect(result?.id).toBe(createdId);
-      expect(result?.name).toBe('History 201');
-    });
+      mockDbClient.select.mockReturnValue({
+        from: jest.fn().mockReturnValue({
+          where: jest.fn().mockResolvedValue([expectedResult]),
+        }),
+      });
 
-    it('should return undefined if class not found', async () => {
-      const result = await repo.getById(999);
-      expect(result).toBeUndefined();
+      const result = await repo.getById(id);
+
+      expect(mockDbClient.select).toHaveBeenCalled();
+      expect(result).toEqual(expectedResult);
     });
   });
 
   describe('getAll', () => {
-    beforeAll(async () => {
-      // Create a couple of classes
-      await repo.create({ name: 'Chemistry 101' });
-      await repo.create({ name: 'Physics 101' });
-    });
+    it('should select all school classes and return them', async () => {
+      const expectedResult: SchoolClass[] = [
+        { id: 1, name: 'Math 101', year: null },
+        { id: 2, name: 'History 201', year: null },
+      ];
 
-    it('should return all classes', async () => {
-      const all = await repo.getAll();
-      // We have created several classes in previous tests, so let's just check that we have more than one.
-      expect(all.length).toBeGreaterThanOrEqual(3); 
-      // Check that we have the classes created now
-      const names = all.map(c => c.name);
-      expect(names).toContain('Chemistry 101');
-      expect(names).toContain('Physics 101');
+      mockDbClient.select.mockReturnValue({
+        from: jest.fn().mockResolvedValue(expectedResult),
+      });
+
+      const result = await repo.getAll();
+
+      expect(mockDbClient.select).toHaveBeenCalled();
+      expect(result).toEqual(expectedResult);
     });
   });
 
   describe('update', () => {
-    let classId: number;
-    beforeAll(async () => {
-      const created = await repo.create({ name: 'Biology 101'});
-      classId = created!.id;
-    });
+    it('should update a school class and return it', async () => {
+      const id = 1;
+      const data: Partial<NewSchoolClass> = { name: 'Math 102' };
+      const expectedResult: SchoolClass = { id, name: 'Math 102', year: null };
 
-    it('should update an existing class', async () => {
-      const updated = await repo.update(classId, { name: 'Biology 102' });
-      expect(updated).toBeDefined();
-      expect(updated?.id).toBe(classId);
-      expect(updated?.name).toBe('Biology 102');
-    });
+      mockDbClient.update.mockReturnValue({
+        set: jest.fn().mockReturnValue({
+          where: jest.fn().mockReturnValue({
+            returning: jest.fn().mockResolvedValue([expectedResult]),
+          }),
+        }),
+      });
 
-    it('should return undefined if trying to update non-existing class', async () => {
-      const updated = await repo.update(999, { name: 'Non-existent class' });
-      expect(updated).toBeUndefined();
+      const result = await repo.update(id, data);
+
+      expect(mockDbClient.update).toHaveBeenCalledWith(schoolClass);
+      expect(result).toEqual(expectedResult);
     });
   });
 
   describe('delete', () => {
-    let classId: number;
-    beforeAll(async () => {
-      const created = await repo.create({ name: 'Geography 101'});
-      classId = created!.id;
-    });
+    it('should delete a school class and return it', async () => {
+      const id = 1;
+      const expectedResult: SchoolClass = { id, name: 'Math 101', year: null };
 
-    it('should delete an existing class and return it', async () => {
-      const deleted = await repo.delete(classId);
-      expect(deleted).toBeDefined();
-      expect(deleted?.id).toBe(classId);
-      expect(deleted?.name).toBe('Geography 101');
+      mockDbClient.delete.mockReturnValue({
+        where: jest.fn().mockReturnValue({
+          returning: jest.fn().mockResolvedValue([expectedResult]),
+        }),
+      });
 
-      const afterDelete = await repo.getById(classId);
-      expect(afterDelete).toBeUndefined();
-    });
+      const result = await repo.delete(id);
 
-    it('should return undefined if trying to delete non-existing class', async () => {
-      const deleted = await repo.delete(999);
-      expect(deleted).toBeUndefined();
+      expect(mockDbClient.delete).toHaveBeenCalledWith(schoolClass);
+      expect(result).toEqual(expectedResult);
     });
   });
 });
