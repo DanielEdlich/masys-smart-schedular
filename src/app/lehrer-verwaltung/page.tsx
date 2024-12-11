@@ -3,11 +3,12 @@
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { PlusCircle, Pencil, Trash2 } from 'lucide-react'
+import { Pencil, PlusCircle, Trash2 } from 'lucide-react'
 import { TeacherAvatar } from "@/components/TeacherAvatar"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Navbar } from "@/components/Navbar"
+import TeacherForm from "@/components/TeacherForm";
 
 type Availability = {
   day: string
@@ -15,7 +16,7 @@ type Availability = {
   bis: number
 }
 
-type Teacher = {
+export type Teacher = {
   id: number
   firstName: string
   lastName: string
@@ -148,7 +149,9 @@ const teachers: Teacher[] = [
   }
 ]
 
+
 export default function Lehrerverwaltung() {
+
   return (
     <>
     <Navbar />
@@ -174,8 +177,7 @@ export default function Lehrerverwaltung() {
               <DialogTitle>Neuen Lehrer erstellen</DialogTitle>
             </DialogHeader>
             <div className="grid gap-4 py-4">
-              {/* Placeholder for the form content */}
-              <p>TODO: Hier wird später das Formular implementiert.</p>
+              <TeacherForm></TeacherForm>
             </div>
           </DialogContent>
         </Dialog>
