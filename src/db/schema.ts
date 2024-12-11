@@ -13,18 +13,18 @@ export const teacher = sqliteTable('teacher', {
   first_name: text('first_name').notNull(),  // First name
   last_name: text('last_name').notNull(),    // Last name
   email: text('email').notNull(),            // Email
-  phone_number: text('phone_number'),        // Phone number
-  priority: integer('priority')              // Priority
+  phone: text('phone_number').notNull(),        // Phone number
+  priority: integer('priority').notNull()            // Priority
 });
 
 // ---------------------------------------
-// TEACHER_BLOCKER
+// AVAILABILITY
 // ---------------------------------------
-export const teacherBlocker = sqliteTable('teacher_blocker', {
+export const availability = sqliteTable('availability', {
   id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   day: text('day').notNull(),                // Day (e.g. Monday, Tuesday...)
-  timeslot_from: integer('timeslot_from').notNull(), // Timeslot start (e.g. 8)
-  timeslot_to: integer('timeslot_to').notNull(),     // Timeslot end (e.g. 10)
+  von: integer('timeslot_from').notNull(), // Timeslot start (e.g. 8)
+  bis: integer('timeslot_to').notNull(),     // Timeslot end (e.g. 10)
   teacher_id: integer('teacher_id').notNull()
 }, (table) => {
   return {

@@ -3,7 +3,10 @@ import { Calendar, Clock, Users } from 'lucide-react'
 import { Navbar } from '@/components/Navbar'
 import { Button } from '@/components/ui/button'
 
+
 export default function LandingPage() {
+
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="bg-yellow-300 text-black p-2 text-center">

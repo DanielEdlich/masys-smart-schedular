@@ -1,12 +1,12 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 
 interface TeacherAvatarProps {
-  firstName: string
-  lastName: string
+  first_name: string
+  last_name: string
 }
 
-export function TeacherAvatar({ firstName, lastName }: TeacherAvatarProps) {
-  const initials = `${firstName[0]}${lastName[0]}`.toUpperCase()
+export function TeacherAvatar({ first_name, last_name }: TeacherAvatarProps) {
+  const initials = `${first_name[0]}${last_name[0]}`.toUpperCase()
 
   return (
     <Avatar>

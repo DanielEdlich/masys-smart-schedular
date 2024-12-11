@@ -5,7 +5,7 @@ import { Calendar } from 'lucide-react'
 export const Navbar = () => {
     
     return (
-        <header className="sticky top-0 z-10 bg-white dark:bg-gray-800 shadow-sm px-4 lg:px-6 py-4">
+        <header className="sticky top-0 z-10 bg-purple-50 border-b-2 border-purple-100 dark:bg-gray-800 shadow-sm px-4 lg:px-6 py-4">
         <div className="container mx-auto flex items-center justify-between">
           <Link className="flex items-center justify-center" href="/">
             <Calendar className="h-8 w-8 text-primary" />
