@@ -1,6 +1,5 @@
 import { SchoolClassRepository } from '@/repositories/schoolClassRepository';
 import { schoolClass } from '@/db/schema';
-import { eq } from 'drizzle-orm';
 import { SchoolClass, NewSchoolClass } from '@/db/types';
 
 // Mock the dbClient methods

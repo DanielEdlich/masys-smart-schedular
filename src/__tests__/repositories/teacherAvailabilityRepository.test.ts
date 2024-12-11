@@ -2,7 +2,6 @@
 
 import { TeacherAvailabilityRepository } from '@/repositories/teacherAvailabilityRepository';
 import { availability } from '@/db/schema';
-import { eq, and, gte, lte } from 'drizzle-orm';
 import { Availability, NewAvailability } from '@/db/types';
 
 // Mock the dbClient methods
