@@ -46,4 +46,9 @@ export class TeacherBlockerRepository {
     const [result] = await this.dbClient.delete(blocker).where(eq(blocker.id, id)).returning();
     return result;
   }
+
+  async deleteByTeacherId(teacherId: number): Promise<Blocker[] | undefined> {
+    const result = await this.dbClient.delete(blocker).where(eq(blocker.teacher_id, teacherId)).returning();
+    return result;
+  }
 }
