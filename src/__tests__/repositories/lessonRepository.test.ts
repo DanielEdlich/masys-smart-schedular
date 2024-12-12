@@ -1,7 +1,6 @@
 /**
  * @jest-environment node
  */
-
 import { lesson, teacher, timetable, schoolClass } from '@/db/schema';
 import { LessonRepository } from '@/repositories/lessonRepository';
 import { NewLesson } from '@/db/types';
@@ -18,7 +17,7 @@ describe('LessonRepository', () => {
     await (global as any).db.delete(timetable);
     await (global as any).db.delete(schoolClass);
 
-    await (global as any).db.insert(teacher).values({ id: 1, first_name: 'John', last_name: 'Doe', email: 'john.doe@mail.com' });
+    await (global as any).db.insert(teacher).values({ id: 1, first_name: 'John', last_name: 'Doe', email: 'john.doe@mail.com', phone: "012344534", priority: "1", weekly_capacity: 30 });
     await (global as any).db.insert(timetable).values({ id: 1, name: '2024 Timetable', school_year: '2024/2025' });
     await (global as any).db.insert(schoolClass).values({ id: 1, name: 'Class 1A', year: '1' });
     

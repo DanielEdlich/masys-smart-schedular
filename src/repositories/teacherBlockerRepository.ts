@@ -1,35 +1,35 @@
-import { teacherBlocker } from '@/db/schema';
 import { eq, and, gte, lte } from 'drizzle-orm';
-import { TeacherBlocker, NewTeacherBlocker, DbClient } from '@/db/types';
+import { Blocker, NewBlocker, DbClient } from '@/db/types';
+import { blocker } from '@/db/schema';
 
 export class TeacherBlockerRepository {
   constructor(private readonly dbClient: DbClient ) {}
 
-  async create(data: NewTeacherBlocker): Promise<TeacherBlocker | undefined> {
-    const [result] = await this.dbClient.insert(teacherBlocker).values(data).returning();
+  async create(data: NewBlocker): Promise<Blocker | undefined> {
+    const [result] = await this.dbClient.insert(blocker).values(data).returning();
     return result;
   }
 
-  async getById(id: number): Promise<TeacherBlocker | undefined> {
-    const [result] = await this.dbClient.select().from(teacherBlocker).where(eq(teacherBlocker.id, id));
+  async getById(id: number): Promise<Blocker | undefined> {
+    const [result] = await this.dbClient.select().from(blocker).where(eq(blocker.id, id));
     return result;
   }
 
-  async getAll(): Promise<TeacherBlocker[]> {
-    return this.dbClient.select().from(teacherBlocker);
+  async getAll(): Promise<Blocker[]> {
+    return this.dbClient.select().from(blocker);
   }
 
-  async getForTeacher(teacherId: number): Promise<TeacherBlocker[]> {
-    return this.dbClient.select().from(teacherBlocker).where(eq(teacherBlocker.teacher_id, teacherId));
+  async getForTeacher(teacherId: number): Promise<Blocker[]> {
+    return this.dbClient.select().from(blocker).where(eq(blocker.teacher_id, teacherId));
   }
 
   async isTeacherBlockerAtTimeslot(teacherId: number, timeslot: number, day: string): Promise<boolean> {
-    const query = this.dbClient.select().from(teacherBlocker).where(
+    const query = this.dbClient.select().from(blocker).where(
       and(
-        eq(teacherBlocker.teacher_id, teacherId),
-        lte(teacherBlocker.timeslot_from, timeslot),
-        gte(teacherBlocker.timeslot_to, timeslot),
-        eq(teacherBlocker.day, day)
+        eq(blocker.teacher_id, teacherId),
+        lte(blocker.timeslot_from, timeslot),
+        gte(blocker.timeslot_to, timeslot),
+        eq(blocker.day, day)
       )
     );
 
@@ -37,13 +37,13 @@ export class TeacherBlockerRepository {
     return results.length > 0;
   }
 
-  async update(id: number, data: Partial<NewTeacherBlocker>): Promise<TeacherBlocker | undefined> {
-    const [result] = await this.dbClient.update(teacherBlocker).set(data).where(eq(teacherBlocker.id, id)).returning();
+  async update(id: number, data: Partial<NewBlocker>): Promise<Blocker | undefined> {
+    const [result] = await this.dbClient.update(blocker).set(data).where(eq(blocker.id, id)).returning();
     return result;
   }
 
-  async delete(id: number): Promise<TeacherBlocker | undefined> {
-    const [result] = await this.dbClient.delete(teacherBlocker).where(eq(teacherBlocker.id, id)).returning();
+  async delete(id: number): Promise<Blocker | undefined> {
+    const [result] = await this.dbClient.delete(blocker).where(eq(blocker.id, id)).returning();
     return result;
   }
 }

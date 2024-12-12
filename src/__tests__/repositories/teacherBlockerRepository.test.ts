@@ -3,41 +3,45 @@
  * @jest-environment node
  */
 
-import { teacher, teacherBlocker } from '@/db/schema';
-import {  NewTeacherBlocker } from '@/db/types';
+import { teacher, blocker } from '@/db/schema';
+import {  NewBlocker } from '@/db/types';
 import { TeacherBlockerRepository } from '@/repositories/teacherBlockerRepository';
-import { TeacherRepository } from '@/repositories/teacherRepository';
 
-describe('TeacherBlockerRepository', () => {
+describe('blockerRepository', () => {
   let repo: TeacherBlockerRepository;
   beforeAll(async () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     repo = new TeacherBlockerRepository((global as any).db);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const teacherRepo = new TeacherRepository((global as any).db);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await (global as any).db.delete(teacher);
-    await teacherRepo.create({
+    
+    await (global as any).db.insert(teacher).values({
       first_name: 'Emma',
       last_name: 'Watson',
       email: 'emma.watson@mail.com',
-      id: 1
+      id: 1,
+      phone: '',
+      priority: 0,
+      weekly_capacity: 0
     });
-    await teacherRepo.create({ 
-      first_name: 'Daniel', 
-      last_name: 'Radcliffe', 
+    await (global as any).db.insert(teacher).values({
+      first_name: 'Daniel',
+      last_name: 'Radcliffe',
       email: 'daniel.radcliffe@mail.com',
-      id: 2
+      id: 2,
+      phone: '',
+      priority: 0,
+      weekly_capacity: 0
     });
   });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    afterAll(async () => await (global as any).db.delete(teacherBlocker));
+    afterAll(async () => await (global as any).db.delete(blocker));
 
   describe('create', () => {
     it('should create a new teacher blocker and return it', async () => {
-      const newblocker: NewTeacherBlocker = {
+      const newblocker: NewBlocker = {
         teacher_id: 1,
         day: 'Monday',
         timeslot_from: 1,
@@ -125,7 +129,7 @@ describe('TeacherBlockerRepository', () => {
     });
   });
 
-  describe('isTeacherBlockerAtTimeslot', () => {
+  describe('isblockerAtTimeslot', () => {
     beforeAll(async () => {
       await repo.create({
         teacher_id: 2,

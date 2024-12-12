@@ -42,7 +42,12 @@ describe('TeacherRepository', () => {
   });
 
   it('should create a new teacher', async () => {
-    const newTeacher: NewTeacher = { first_name: 'John', last_name: 'Doe', email: 'john.doe@example.com' };
+    const newTeacher: NewTeacher = {
+      first_name: 'John', last_name: 'Doe', email: 'john.doe@example.com',
+      phone: '',
+      priority: 0,
+      weekly_capacity: 0
+    };
     const result = await repo.create(newTeacher);
 
     expect(mockDbClient.insert).toHaveBeenCalledWith(teacher);
@@ -129,7 +134,10 @@ describe('TeacherRepository', () => {
       const newTeacher: NewTeacher = {
         first_name: 'Emma',
         last_name: 'Watson',
-        email: 'emma.watson@mail.com'
+        email: 'emma.watson@mail.com',
+        phone: '',
+        priority: 0,
+        weekly_capacity: 0
       };
 
       const created = await repo.create(newTeacher);
@@ -145,10 +153,13 @@ describe('TeacherRepository', () => {
     let createdId: number;
 
     beforeAll(async () => {
-      const created = await repo.create({ 
-        first_name: 'Daniel', 
-        last_name: 'Radcliffe', 
-        email: 'daniel.radcliffe@mail.com' 
+      const created = await repo.create({
+        first_name: 'Daniel',
+        last_name: 'Radcliffe',
+        email: 'daniel.radcliffe@mail.com',
+        phone: '',
+        priority: 0,
+        weekly_capacity: 0
       });
       createdId = created!.id;
     });
@@ -170,15 +181,21 @@ describe('TeacherRepository', () => {
 
   describe('getAll', () => {
     beforeAll(async () => {
-      await repo.create({ 
-        first_name: 'Morgan', 
-        last_name: 'Freeman', 
-        email: 'morgan.freeman@mail.com' 
+      await repo.create({
+        first_name: 'Morgan',
+        last_name: 'Freeman',
+        email: 'morgan.freeman@mail.com',
+        phone: '',
+        priority: 0,
+        weekly_capacity: 0
       });
-      await repo.create({ 
-        first_name: 'Scarlett', 
-        last_name: 'Johansson', 
-        email: 'scarlett.johansson@mail.com' 
+      await repo.create({
+        first_name: 'Scarlett',
+        last_name: 'Johansson',
+        email: 'scarlett.johansson@mail.com',
+        phone: '',
+        priority: 0,
+        weekly_capacity: 0
       });
     });
 
@@ -195,10 +212,13 @@ describe('TeacherRepository', () => {
     let teacherId: number;
 
     beforeAll(async () => {
-      const created = await repo.create({ 
-        first_name: 'Leonardo', 
-        last_name: 'DiCaprio', 
-        email: 'leonardo.dicaprio@mail.com' 
+      const created = await repo.create({
+        first_name: 'Leonardo',
+        last_name: 'DiCaprio',
+        email: 'leonardo.dicaprio@mail.com',
+        phone: '',
+        priority: 0,
+        weekly_capacity: 0
       });
       teacherId = created!.id;
     });
@@ -232,10 +252,13 @@ describe('TeacherRepository', () => {
     let teacherId: number;
 
     beforeAll(async () => {
-      const created = await repo.create({ 
-        first_name: 'Robert', 
-        last_name: 'Downey', 
-        email: 'robert.downey@mail.com' 
+      const created = await repo.create({
+        first_name: 'Robert',
+        last_name: 'Downey',
+        email: 'robert.downey@mail.com',
+        phone: '',
+        priority: 0,
+        weekly_capacity: 0
       });
       teacherId = created!.id;
     });

@@ -1,7 +1,6 @@
 /**
  * @jest-environment node
  */
-
 import { timetable } from '@/db/schema';
 import { NewTimetable } from '@/db/types';
 import { TimetableRepository } from '@/repositories/timetableRepository';
