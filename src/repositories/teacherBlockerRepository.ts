@@ -1,9 +1,9 @@
 import { teacherBlocker } from '@/db/schema';
 import { eq, and, gte, lte } from 'drizzle-orm';
-import { TeacherBlocker, NewTeacherBlocker } from '@/db/types';
+import { TeacherBlocker, NewTeacherBlocker, DbClient } from '@/db/types';
 
 export class TeacherBlockerRepository {
-  constructor(private readonly dbClient ) {}
+  constructor(private readonly dbClient: DbClient ) {}
 
   async create(data: NewTeacherBlocker): Promise<TeacherBlocker | undefined> {
     const [result] = await this.dbClient.insert(teacherBlocker).values(data).returning();

@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 import Database from 'better-sqlite3';
 import { drizzle } from 'drizzle-orm/better-sqlite3';
 
@@ -11,5 +14,6 @@ module.exports = async () => {
   const db = drizzle(sqlite);
 
   // Repository bereitstellen (global zugänglich)
-  global.db = db;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (global as any).db = db;
 };
