@@ -10,10 +10,12 @@ import { SchoolClassRepository } from '@/repositories/schoolClassRepository';
 describe('SchoolClassRepository', () => {
   let repo: SchoolClassRepository;
   beforeAll(async () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     repo = new SchoolClassRepository((global as any).db);
   });
 
-  afterAll(async () => await (global as any).db.delete(schoolClass))
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    afterAll(async () => await (global as any).db.delete(schoolClass))
 
   describe('create', () => {
     it('should create a new school class and return it', async () => {

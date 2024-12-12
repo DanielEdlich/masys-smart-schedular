@@ -117,9 +117,11 @@ describe('TeacherRepository', () => {
   let repo: TeacherRepository;
 
   beforeAll(async () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     repo = new TeacherRepository((global as any).db);
   });
-
+  
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   afterAll(async () => await (global as any).db.delete(teacher));
 
   describe('create', () => {

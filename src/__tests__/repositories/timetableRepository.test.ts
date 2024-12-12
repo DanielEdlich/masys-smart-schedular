@@ -8,12 +8,14 @@ import { TimetableRepository } from '@/repositories/timetableRepository';
 
 describe('TimetableRepository', () => {
   let repo: TimetableRepository;
-
+  
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   beforeAll(async () => {
     repo = new TimetableRepository((global as any).db);
   });
 
   afterAll(async () => await (global as any).db.delete(timetable));
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   describe('create', () => {
     it('should create a new timetable and return it', async () => {

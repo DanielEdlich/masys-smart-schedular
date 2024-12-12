@@ -11,9 +11,12 @@ import { TeacherRepository } from '@/repositories/teacherRepository';
 describe('TeacherBlockerRepository', () => {
   let repo: TeacherBlockerRepository;
   beforeAll(async () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     repo = new TeacherBlockerRepository((global as any).db);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const teacherRepo = new TeacherRepository((global as any).db);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await (global as any).db.delete(teacher);
     await teacherRepo.create({
       first_name: 'Emma',
@@ -29,7 +32,8 @@ describe('TeacherBlockerRepository', () => {
     });
   });
 
-  afterAll(async () => await (global as any).db.delete(teacherBlocker));
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    afterAll(async () => await (global as any).db.delete(teacherBlocker));
 
   describe('create', () => {
     it('should create a new teacher blocker and return it', async () => {

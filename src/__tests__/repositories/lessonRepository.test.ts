@@ -9,6 +9,7 @@ import { NewLesson } from '@/db/types';
 describe('LessonRepository', () => {
   let repo: LessonRepository;
 
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   beforeAll(async () => {
     repo = new LessonRepository((global as any).db);
 
@@ -20,9 +21,12 @@ describe('LessonRepository', () => {
     await (global as any).db.insert(teacher).values({ id: 1, first_name: 'John', last_name: 'Doe', email: 'john.doe@mail.com' });
     await (global as any).db.insert(timetable).values({ id: 1, name: '2024 Timetable', school_year: '2024/2025' });
     await (global as any).db.insert(schoolClass).values({ id: 1, name: 'Class 1A', year: '1' });
+    
   });
-
+  
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   afterAll(async () => await (global as any).db.delete(lesson));
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   describe('create', () => {
     it('should create a new lesson and return it', async () => {
