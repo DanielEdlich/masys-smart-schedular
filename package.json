@@ -10,7 +10,7 @@
     "lint:fix": "next lint --fix",
     "cypress:open": "cypress open",
     "format": "prettier --write .",
-    "test": "jest",
+    "test": "DB_FILE_NAME=file:test.db npx drizzle-kit push && jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "db": "DB_FILE_NAME=file:local.db npx drizzle-kit push"

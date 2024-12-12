@@ -3,7 +3,7 @@
  */
 
 import { schoolClass } from '@/db/schema';
-import { SchoolClass, NewSchoolClass } from '@/db/types';
+import { NewSchoolClass } from '@/db/types';
 import { SchoolClassRepository } from '@/repositories/schoolClassRepository';
 
 

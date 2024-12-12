@@ -32,15 +32,15 @@ describe('TeacherBlockerRepository', () => {
   afterAll(async () => await (global as any).db.delete(teacherBlocker));
 
   describe('create', () => {
-    it('should create a new teacher availability and return it', async () => {
-      const newAvailability: NewTeacherBlocker = {
+    it('should create a new teacher blocker and return it', async () => {
+      const newblocker: NewTeacherBlocker = {
         teacher_id: 1,
         day: 'Monday',
         timeslot_from: 1,
         timeslot_to: 2,
       };
 
-      const created = await repo.create(newAvailability);
+      const created = await repo.create(newblocker);
       expect(created).toBeDefined();
       expect(created?.id).toBeDefined();
       expect(created?.teacher_id).toBe(1);
@@ -62,7 +62,7 @@ describe('TeacherBlockerRepository', () => {
       createdId = created!.id;
     });
 
-    it('should return the correct availability by id', async () => {
+    it('should return the correct blocker by id', async () => {
       const result = await repo.getById(createdId);
       expect(result).toBeDefined();
       expect(result?.id).toBe(createdId);
@@ -72,7 +72,7 @@ describe('TeacherBlockerRepository', () => {
       expect(result?.timeslot_to).toBe(4);
     });
 
-    it('should return undefined if availability not found', async () => {
+    it('should return undefined if blocker not found', async () => {
       const result = await repo.getById(999);
       expect(result).toBeUndefined();
     });
@@ -143,7 +143,7 @@ describe('TeacherBlockerRepository', () => {
   });
 
   describe('update', () => {
-    let availabilityId: number;
+    let blockerId: number;
     beforeAll(async () => {
       const created = await repo.create({
         teacher_id: 1,
@@ -151,24 +151,24 @@ describe('TeacherBlockerRepository', () => {
         timeslot_from: 13,
         timeslot_to: 14,
       });
-      availabilityId = created!.id;
+      blockerId = created!.id;
     });
 
-    it('should update an existing teacher availability', async () => {
-      const updated = await repo.update(availabilityId, { day: 'UpdatedDay' });
+    it('should update an existing teacher blocker', async () => {
+      const updated = await repo.update(blockerId, { day: 'Tuesday' });
       expect(updated).toBeDefined();
-      expect(updated?.id).toBe(availabilityId);
-      expect(updated?.day).toBe('UpdatedDay');
+      expect(updated?.id).toBe(blockerId);
+      expect(updated?.day).toBe('Tuesday');
     });
 
-    it('should return undefined if trying to update non-existing availability', async () => {
-      const updated = await repo.update(999, { day: 'Non-existent day' });
+    it('should return undefined if trying to update non-existing blocker', async () => {
+      const updated = await repo.update(999, { day: 'Sunday' });
       expect(updated).toBeUndefined();
     });
   });
 
   describe('delete', () => {
-    let availabilityId: number;
+    let blockerId: number;
     beforeAll(async () => {
       const created = await repo.create({
         teacher_id: 1,
@@ -176,20 +176,20 @@ describe('TeacherBlockerRepository', () => {
         timeslot_from: 15,
         timeslot_to: 16,
       });
-      availabilityId = created!.id;
+      blockerId = created!.id;
     });
 
-    it('should delete an existing teacher availability and return it', async () => {
-      const deleted = await repo.delete(availabilityId);
+    it('should delete an existing teacher blocker and return it', async () => {
+      const deleted = await repo.delete(blockerId);
       expect(deleted).toBeDefined();
-      expect(deleted?.id).toBe(availabilityId);
+      expect(deleted?.id).toBe(blockerId);
       expect(deleted?.day).toBe('Monday');
 
-      const afterDelete = await repo.getById(availabilityId);
+      const afterDelete = await repo.getById(blockerId);
       expect(afterDelete).toBeUndefined();
     });
 
-    it('should return undefined if trying to delete non-existing availability', async () => {
+    it('should return undefined if trying to delete non-existing blocker', async () => {
       const deleted = await repo.delete(999);
       expect(deleted).toBeUndefined();
     });
