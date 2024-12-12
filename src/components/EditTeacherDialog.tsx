@@ -15,8 +15,8 @@ import { useToast } from "@/hooks/use-toast"
 type Blocker = {
   id?: number
   day: string
-  von: number
-  bis: number
+  timeslot_from: number
+  timeslot_to: number
 }
 
 type Teacher = {
@@ -77,7 +77,7 @@ export function EditTeacherDialog({ teacher }: { teacher: Teacher }) {
   const addBlocker = () => {
     setFormData({
       ...formData,
-      blocker: [...formData.blocker, { day: 'Montag', von: 1, bis: 2 }]
+      blocker: [...formData.blocker, { day: 'Montag', timeslot_from: 1, timeslot_to: 2 }]
     })
   }
 
@@ -184,15 +184,15 @@ export function EditTeacherDialog({ teacher }: { teacher: Teacher }) {
                   </Select>
                   <Input
                     type="number"
-                    value={blocker.von}
-                    onChange={(e) => handleBlockerChange(index, 'von', parseInt(e.target.value))}
+                    value={blocker.timeslot_from}
+                    onChange={(e) => handleBlockerChange(index, 'timeslot_from', parseInt(e.target.value))}
                     min={1}
                     max={10}
                   />
                   <Input
                     type="number"
-                    value={blocker.bis}
-                    onChange={(e) => handleBlockerChange(index, 'bis', parseInt(e.target.value))}
+                    value={blocker.timeslot_to}
+                    onChange={(e) => handleBlockerChange(index, 'timeslot_to', parseInt(e.target.value))}
                     min={1}
                     max={10}
                   />

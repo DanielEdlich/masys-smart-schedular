@@ -13,8 +13,8 @@ import { useToast } from "@/hooks/use-toast"
 
 type Blocker = {
   day: string
-  von: number
-  bis: number
+  timeslot_from: number
+  timeslot_to: number
 }
 
 export function CreateTeacherDialog() {
@@ -26,7 +26,7 @@ export function CreateTeacherDialog() {
     email: '',
     phone: '',
     priority: 1,
-    blocker: [{ day: 'Montag', von: 1, bis: 2 }]
+    blocker: [{ day: 'Montag', timeslot_from: 1, timeslot_to: 2 }]
   })
   const { toast } = useToast()
 
@@ -51,7 +51,7 @@ export function CreateTeacherDialog() {
         email: '',
         phone: '',
         priority: 1,
-        blocker: [{ day: 'Montag', von: 1, bis: 2 }]
+        blocker: [{ day: 'Montag', timeslot_from: 1, timeslot_to: 2 }]
       })
     } catch (error) {
       toast({
@@ -82,7 +82,7 @@ export function CreateTeacherDialog() {
   const addBlocker = () => {
     setFormData({
       ...formData,
-      blocker: [...formData.blocker, { day: 'Montag', von: 1, bis: 2 }]
+      blocker: [...formData.blocker, { day: 'Montag', timeslot_from: 1, timeslot_to: 2 }]
     })
   }
 
@@ -189,15 +189,15 @@ export function CreateTeacherDialog() {
                   </Select>
                   <Input
                     type="number"
-                    value={blocker.von}
-                    onChange={(e) => handleBlockerChange(index, 'von', parseInt(e.target.value))}
+                    value={blocker.timeslot_from}
+                    onChange={(e) => handleBlockerChange(index, 'timeslot_from', parseInt(e.target.value))}
                     min={1}
                     max={10}
                   />
                   <Input
                     type="number"
-                    value={blocker.bis}
-                    onChange={(e) => handleBlockerChange(index, 'bis', parseInt(e.target.value))}
+                    value={blocker.timeslot_to}
+                    onChange={(e) => handleBlockerChange(index, 'timeslot_to', parseInt(e.target.value))}
                     min={1}
                     max={10}
                   />

@@ -24,8 +24,8 @@ describe('TeacherBlockerRepository', () => {
     it('should insert a new blocker record and return it', async () => {
       const data: NewBlocker = {
         day: 'Monday',
-        von: 8,
-        bis: 10,
+        timeslot_from: 8,
+        timeslot_to: 10,
         teacher_id: 1,
       };
       const expectedResult: Blocker = { id: 1, ...data };
@@ -49,8 +49,8 @@ describe('TeacherBlockerRepository', () => {
       const expectedResult: Blocker = {
         id,
         day: 'Monday',
-        von: 8,
-        bis: 10,
+        timeslot_from: 8,
+        timeslot_to: 10,
         teacher_id: 1,
       };
 
@@ -73,15 +73,15 @@ describe('TeacherBlockerRepository', () => {
         {
           id: 1,
           day: 'Monday',
-          von: 8,
-          bis: 10,
+          timeslot_from: 8,
+          timeslot_to: 10,
           teacher_id: 1,
         },
         {
           id: 2,
           day: 'Tuesday',
-          von: 9,
-          bis: 11,
+          timeslot_from: 9,
+          timeslot_to: 11,
           teacher_id: 2,
         },
       ];
@@ -104,15 +104,15 @@ describe('TeacherBlockerRepository', () => {
         {
           id: 1,
           day: 'Monday',
-          von: 8,
-          bis: 10,
+          timeslot_from: 8,
+          timeslot_to: 10,
           teacher_id: teacherId,
         },
         {
           id: 3,
           day: 'Wednesday',
-          von: 10,
-          bis: 12,
+          timeslot_from: 10,
+          timeslot_to: 12,
           teacher_id: teacherId,
         },
       ];
@@ -139,8 +139,8 @@ describe('TeacherBlockerRepository', () => {
         {
           id: 1,
           day,
-          von: 8,
-          bis: 10,
+          timeslot_from: 8,
+          timeslot_to: 10,
           teacher_id: teacherId,
         },
       ];
@@ -179,14 +179,14 @@ describe('TeacherBlockerRepository', () => {
     it('should update an blocker record and return it', async () => {
       const id = 1;
       const data: Partial<NewBlocker> = {
-        von: 9,
-        bis: 11,
+        timeslot_from: 9,
+        timeslot_to: 11,
       };
       const expectedResult: Blocker = {
         id,
         day: 'Monday',
-        von: 9,
-        bis: 11,
+        timeslot_from: 9,
+        timeslot_to: 11,
         teacher_id: 1,
       };
 
@@ -211,8 +211,8 @@ describe('TeacherBlockerRepository', () => {
       const expectedResult: Blocker = {
         id,
         day: 'Monday',
-        von: 8,
-        bis: 10,
+        timeslot_from: 8,
+        timeslot_to: 10,
         teacher_id: 1,
       };
 
@@ -236,15 +236,15 @@ describe('TeacherBlockerRepository', () => {
         {
           id: 1,
           day: 'Monday',
-          von: 8,
-          bis: 10,
+          timeslot_from: 8,
+          timeslot_to: 10,
           teacher_id: teacherId,
         },
         {
           id: 3,
           day: 'Wednesday',
-          von: 10,
-          bis: 12,
+          timeslot_from: 10,
+          timeslot_to: 12,
           teacher_id: teacherId,
         },
       ];

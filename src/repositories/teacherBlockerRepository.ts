@@ -27,8 +27,8 @@ export class TeacherBlockerRepository {
     const query = this.dbClient.select().from(blocker).where(
       and(
         eq(blocker.teacher_id, teacherId),
-        lte(blocker.von, timeslot),
-        gte(blocker.bis, timeslot),
+        lte(blocker.timeslot_from, timeslot),
+        gte(blocker.timeslot_to, timeslot),
         eq(blocker.day, day)
       )
     );

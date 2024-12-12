@@ -23,8 +23,8 @@ export const teacher = sqliteTable('teacher', {
 export const blocker = sqliteTable('blocker', {
   id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   day: text('day').notNull(),                // Day (e.g. Monday, Tuesday...)
-  von: integer('timeslot_from').notNull(), // Timeslot start (e.g. 8)
-  bis: integer('timeslot_to').notNull(),     // Timeslot end (e.g. 10)
+  timeslot_from: integer('timeslot_from').notNull(), // Timeslot start (e.g. 8)
+  timeslot_to: integer('timeslot_to').notNull(),     // Timeslot end (e.g. 10)
   teacher_id: integer('teacher_id').notNull()
 }, (table) => {
   return {

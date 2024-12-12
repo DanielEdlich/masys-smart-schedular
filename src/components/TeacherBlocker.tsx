@@ -4,8 +4,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 
 type Blocker = {
   day: string
-  von: number
-  bis: number
+  timeslot_from: number
+  timeslot_to: number
 }
 
 export function TeacherBlocker({ blocker }: { blocker: Blocker[] }) {
@@ -19,7 +19,7 @@ export function TeacherBlocker({ blocker }: { blocker: Blocker[] }) {
           <ul>
             {blocker.map((a, index) => (
               <li key={index}>
-                {a.day}: Block {a.von} - {a.bis}
+                {a.day}: Block {a.timeslot_from} - {a.timeslot_to}
               </li>
             ))}
           </ul>
