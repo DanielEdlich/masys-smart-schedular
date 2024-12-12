@@ -107,7 +107,7 @@ export function CreateTeacherDialog() {
           <div className="space-y-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="first_name" className="text-right">
-                Vorname
+                Vorname*
               </Label>
               <Input
                 id="first_name"
@@ -118,7 +118,7 @@ export function CreateTeacherDialog() {
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="last_name" className="text-right">
-                Nachname
+                Nachname*
               </Label>
               <Input
                 id="last_name"
@@ -129,7 +129,7 @@ export function CreateTeacherDialog() {
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="email" className="text-right">
-                E-Mail
+                E-Mail*
               </Label>
               <Input
                 id="email"
@@ -141,7 +141,7 @@ export function CreateTeacherDialog() {
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="phone" className="text-right">
-                Telefon
+                Telefon*
               </Label>
               <Input
                 id="phone"

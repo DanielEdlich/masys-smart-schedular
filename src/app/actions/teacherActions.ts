@@ -16,7 +16,7 @@ export async function createTeacher(data: any) {
   
   if (blockerData && blockerData.length > 0) {
 
-    blockerRepository.create(blockerData.map((a: any) => ({ ...a, teacher_id: newTeacher.id })))
+    blockerRepository.create(blockerData.map((singleBlock: any) => ({ ...singleBlock, teacher_id: newTeacher.id })))
     
   }
 }
@@ -33,8 +33,8 @@ export async function updateTeacher(data: any) {
   
   // 3: Insert new blocker
   if (blockerData && blockerData.length > 0) {
-    blockerData.forEach((a: any) => {  
-       blockerRepository.create({ ...a, teacher_id: id }) 
+    blockerData.forEach((block: any) => {  
+       blockerRepository.create({ ...block, teacher_id: id }) 
     })
   }
 
