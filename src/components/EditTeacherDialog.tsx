@@ -26,6 +26,7 @@ type Teacher = {
   email: string
   phone: string
   priority: number
+  weekly_capacity: number
   blocker: Blocker[]
 }
 
@@ -58,10 +59,10 @@ export function EditTeacherDialog({ teacher }: { teacher: Teacher }) {
   }
 
   const validateFormData = (data: typeof formData): boolean => {
-    if (!data.first_name.trim() || !data.last_name.trim() || !data.email.trim()) {
+    if (!data.first_name.trim() || !data.last_name.trim() || !data.email.trim() || !data.phone.trim()) {
       toast({
         title: "Leere Felder",
-        description: "Bitte füllen Sie alle erforderlichen Felder aus (Vorname, Nachname, E-Mail)."
+        description: "Bitte füllen Sie alle erforderlichen Felder aus (Vorname, Nachname, E-Mail und Telefonnummer)."
       })
       return false
     }
@@ -162,6 +163,17 @@ export function EditTeacherDialog({ teacher }: { teacher: Teacher }) {
                   <SelectItem value="3">3</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="weekly_capacity" className="text-right">
+                Wöchentliche Kapazität
+              </Label>
+              <Input
+                id="weekly_capacity"
+                value={formData.weekly_capacity}
+                onChange={(e) => setFormData({ ...formData, weekly_capacity: e.target.value })}
+                className="col-span-3"
+              />
             </div>
             <div className="grid gap-4">
               <Label>Verfügbarkeit</Label>

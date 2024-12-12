@@ -14,7 +14,8 @@ export const teacher = sqliteTable('teacher', {
   last_name: text('last_name').notNull(),    // Last name
   email: text('email').notNull(),            // Email
   phone: text('phone_number').notNull(),        // Phone number
-  priority: integer('priority').notNull()            // Priority
+  priority: integer('priority').notNull(),          // Priority
+  weekly_capacity: integer('weekly_capacity').notNull()  //capacity
 });
 
 // ---------------------------------------

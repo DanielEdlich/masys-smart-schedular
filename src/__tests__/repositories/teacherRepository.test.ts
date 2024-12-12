@@ -87,6 +87,7 @@ describe('TeacherRepository', () => {
           email: 'john.doe@example.com',
           phone: '1234567890',
           priority: 1,
+          weekly_capacity: 10
         },
         {
           id: 2,
@@ -95,6 +96,7 @@ describe('TeacherRepository', () => {
           email: 'jane.smith@example.com',
           phone: '0987654321',
           priority: 2,
+          weekly_capacity: 10
         },
       ];
 

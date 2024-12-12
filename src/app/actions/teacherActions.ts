@@ -26,7 +26,6 @@ export async function updateTeacher(data: any) {
   
   // 1: Update teacher
   await teacherRepository.update(id, teacherData)
-  //await db.update(teacher).set(teacherData).where(eq(teacher.id, id))
   
   // 2: Delete existing blocker
   await blockerRepository.deleteByTeacherId(id)

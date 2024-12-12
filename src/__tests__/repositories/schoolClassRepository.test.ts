@@ -22,7 +22,7 @@ describe('SchoolClassRepository', () => {
   describe('create', () => {
     it('should insert a new school class and return it', async () => {
       const data: NewSchoolClass = { name: 'Math 101' };
-      const expectedResult: SchoolClass = { id: 1, ...data };
+      const expectedResult: SchoolClass = { id: 1, ...data, year: null };
 
       mockDbClient.insert.mockReturnValue({
         values: jest.fn().mockReturnValue({

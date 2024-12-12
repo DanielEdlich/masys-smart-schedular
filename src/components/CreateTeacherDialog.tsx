@@ -26,6 +26,7 @@ export function CreateTeacherDialog() {
     email: '',
     phone: '',
     priority: 1,
+    weekly_capacity: 40,
     blocker: [{ day: 'Montag', timeslot_from: 1, timeslot_to: 2 }]
   })
   const { toast } = useToast()
@@ -51,6 +52,7 @@ export function CreateTeacherDialog() {
         email: '',
         phone: '',
         priority: 1,
+        weekly_capacity: 40,
         blocker: [{ day: 'Montag', timeslot_from: 1, timeslot_to: 2 }]
       })
     } catch (error) {
@@ -167,6 +169,17 @@ export function CreateTeacherDialog() {
                   <SelectItem value="3">3</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="weekly_capacity" className="text-right">
+              Wöchentliche Kapazität
+              </Label>
+              <Input
+                id="weekly_capacity"
+                value={formData.weekly_capacity}
+                onChange={(e) => setFormData({ ...formData, weekly_capacity: e.target.value })}
+                className="col-span-3"
+              />
             </div>
             <div className="grid gap-4">
               <Label>Verfügbarkeit (von bis)</Label>

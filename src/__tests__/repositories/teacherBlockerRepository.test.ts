@@ -151,7 +151,7 @@ describe('TeacherBlockerRepository', () => {
         }),
       });
 
-      const result = await repository.isAvailableAtTimeslot(teacherId, timeslot, day);
+      const result = await repository.isBlockedAtTimeslot(teacherId, timeslot, day);
 
       expect(mockDbClient.select).toHaveBeenCalled();
       expect(result).toBe(true);
@@ -168,7 +168,7 @@ describe('TeacherBlockerRepository', () => {
         }),
       });
 
-      const result = await repository.isAvailableAtTimeslot(teacherId, timeslot, day);
+      const result = await repository.isBlockedAtTimeslot(teacherId, timeslot, day);
 
       expect(mockDbClient.select).toHaveBeenCalled();
       expect(result).toBe(false);

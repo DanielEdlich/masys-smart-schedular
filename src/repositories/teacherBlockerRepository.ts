@@ -23,7 +23,7 @@ export class TeacherBlockerRepository {
     return this.dbClient.select().from(blocker).where(eq(blocker.teacher_id, teacherId));
   }
 
-  async isAvailableAtTimeslot(teacherId: number, timeslot: number, day: string): Promise<boolean> {
+  async isBlockedAtTimeslot(teacherId: number, timeslot: number, day: string): Promise<boolean> {
     const query = this.dbClient.select().from(blocker).where(
       and(
         eq(blocker.teacher_id, teacherId),
