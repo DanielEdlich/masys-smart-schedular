@@ -169,7 +169,7 @@ export function CreateTeacherDialog() {
               </Select>
             </div>
             <div className="grid gap-4">
-              <Label>Verfügbarkeit</Label>
+              <Label>Verfügbarkeit (von bis)</Label>
               {formData.blocker.map((blocker, index) => (
                 <div key={index} className="grid grid-cols-4 items-center gap-4">
                   <Select
