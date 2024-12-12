@@ -14,7 +14,7 @@ on:
     branches: [ "main" ]
 
 env:
-  DB_FILE_NAME=: "file:local.db"
+  DB_FILE_NAME: "file:local.db"
 
 
 jobs:
