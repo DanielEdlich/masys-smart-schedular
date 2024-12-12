@@ -13,9 +13,6 @@ on:
   pull_request_target:
     branches: [ "main" ]
 
-env:
-  DB_FILE_NAME: "file:local.db"
-
 
 jobs:
   build:
@@ -36,10 +33,10 @@ jobs:
         run: npm clean-install
 
       - name: Setup DB
-        run: npm run db
+        run: DB_FILE_NAME="file:local.db" npm run db
 
       - name: Build
-        run: npm run build
+        run: DB_FILE_NAME="file:local.db" npm run build
 
       - name: Lint
         run: npm run lint
