@@ -1,12 +1,12 @@
 // db/types.ts
-import { teacher, teacherBlocker, schoolClass, timetable, lesson } from '@/db/schema';
+import { teacher, blocker, schoolClass, timetable, lesson } from '@/db/schema';
 import { type InferSelectModel, type InferInsertModel } from 'drizzle-orm';
 
 export type Teacher = InferSelectModel<typeof teacher>;
 export type NewTeacher = InferInsertModel<typeof teacher>;
 
-export type TeacherBlocker = InferSelectModel<typeof teacherBlocker>;
-export type NewTeacherBlocker = InferInsertModel<typeof teacherBlocker>;
+export type Blocker = InferSelectModel<typeof blocker>;
+export type NewBlocker = InferInsertModel<typeof blocker>;
 
 export type SchoolClass = InferSelectModel<typeof schoolClass>;
 export type NewSchoolClass = InferInsertModel<typeof schoolClass>;
