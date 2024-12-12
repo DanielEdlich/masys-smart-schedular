@@ -2,22 +2,22 @@
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
-type Availability = {
+type Blocker = {
   day: string
   von: number
   bis: number
 }
 
-export function TeacherAvailability({ availability }: { availability: Availability[] }) {
+export function TeacherBlocker({ blocker }: { blocker: Blocker[] }) {
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger>
-          {availability.map(a => a.day).join(", ")}
+          {blocker.map(a => a.day).join(", ")}
         </TooltipTrigger>
         <TooltipContent>
           <ul>
-            {availability.map((a, index) => (
+            {blocker.map((a, index) => (
               <li key={index}>
                 {a.day}: Block {a.von} - {a.bis}
               </li>

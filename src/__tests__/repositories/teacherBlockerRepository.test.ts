@@ -1,8 +1,8 @@
-// teacherAvailabilityRepository.test.ts
+// TeacherBlockerRepository.test.ts
 
-import { TeacherAvailabilityRepository } from '@/repositories/teacherAvailabilityRepository';
-import { availability } from '@/db/schema';
-import { Availability, NewAvailability } from '@/db/types';
+import { TeacherBlockerRepository } from '@/repositories/teacherBlockerRepository';
+import { blocker } from '@/db/schema';
+import { Blocker, NewBlocker } from '@/db/types';
 
 // Mock the dbClient methods
 const mockDbClient = {
@@ -12,23 +12,23 @@ const mockDbClient = {
   delete: jest.fn(),
 };
 
-describe('TeacherAvailabilityRepository', () => {
-  let repository: TeacherAvailabilityRepository;
+describe('TeacherBlockerRepository', () => {
+  let repository: TeacherBlockerRepository;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    repository = new TeacherAvailabilityRepository(mockDbClient);
+    repository = new TeacherBlockerRepository(mockDbClient);
   });
 
   describe('create', () => {
-    it('should insert a new availability record and return it', async () => {
-      const data: NewAvailability = {
+    it('should insert a new blocker record and return it', async () => {
+      const data: NewBlocker = {
         day: 'Monday',
         von: 8,
         bis: 10,
         teacher_id: 1,
       };
-      const expectedResult: Availability = { id: 1, ...data };
+      const expectedResult: Blocker = { id: 1, ...data };
 
       mockDbClient.insert.mockReturnValue({
         values: jest.fn().mockReturnValue({
@@ -38,15 +38,15 @@ describe('TeacherAvailabilityRepository', () => {
 
       const result = await repository.create(data);
 
-      expect(mockDbClient.insert).toHaveBeenCalledWith(availability);
+      expect(mockDbClient.insert).toHaveBeenCalledWith(blocker);
       expect(result).toEqual(expectedResult);
     });
   });
 
   describe('getById', () => {
-    it('should return an availability record by id', async () => {
+    it('should return an blocker record by id', async () => {
       const id = 1;
-      const expectedResult: Availability = {
+      const expectedResult: Blocker = {
         id,
         day: 'Monday',
         von: 8,
@@ -68,8 +68,8 @@ describe('TeacherAvailabilityRepository', () => {
   });
 
   describe('getAll', () => {
-    it('should return all availability records', async () => {
-      const expectedResults: Availability[] = [
+    it('should return all blocker records', async () => {
+      const expectedResults: Blocker[] = [
         {
           id: 1,
           day: 'Monday',
@@ -98,9 +98,9 @@ describe('TeacherAvailabilityRepository', () => {
   });
 
   describe('getForTeacher', () => {
-    it('should return availability records for a specific teacher', async () => {
+    it('should return blocker records for a specific teacher', async () => {
       const teacherId = 1;
-      const expectedResults: Availability[] = [
+      const expectedResults: Blocker[] = [
         {
           id: 1,
           day: 'Monday',
@@ -130,12 +130,12 @@ describe('TeacherAvailabilityRepository', () => {
     });
   });
 
-  describe('isAvailabilityAtTimeslot', () => {
+  describe('isBlockerAtTimeslot', () => {
     it('should return true if teacher is available at given timeslot and day', async () => {
       const teacherId = 1;
       const timeslot = 9;
       const day = 'Monday';
-      const expectedResults: Availability[] = [
+      const expectedResults: Blocker[] = [
         {
           id: 1,
           day,
@@ -176,13 +176,13 @@ describe('TeacherAvailabilityRepository', () => {
   });
 
   describe('update', () => {
-    it('should update an availability record and return it', async () => {
+    it('should update an blocker record and return it', async () => {
       const id = 1;
-      const data: Partial<NewAvailability> = {
+      const data: Partial<NewBlocker> = {
         von: 9,
         bis: 11,
       };
-      const expectedResult: Availability = {
+      const expectedResult: Blocker = {
         id,
         day: 'Monday',
         von: 9,
@@ -200,15 +200,15 @@ describe('TeacherAvailabilityRepository', () => {
 
       const result = await repository.update(id, data);
 
-      expect(mockDbClient.update).toHaveBeenCalledWith(availability);
+      expect(mockDbClient.update).toHaveBeenCalledWith(blocker);
       expect(result).toEqual(expectedResult);
     });
   });
 
   describe('delete', () => {
-    it('should delete an availability record and return it', async () => {
+    it('should delete an blocker record and return it', async () => {
       const id = 1;
-      const expectedResult: Availability = {
+      const expectedResult: Blocker = {
         id,
         day: 'Monday',
         von: 8,
@@ -224,15 +224,15 @@ describe('TeacherAvailabilityRepository', () => {
 
       const result = await repository.delete(id);
 
-      expect(mockDbClient.delete).toHaveBeenCalledWith(availability);
+      expect(mockDbClient.delete).toHaveBeenCalledWith(blocker);
       expect(result).toEqual(expectedResult);
     });
   });
 
   describe('deleteByTeacherId', () => {
-    it('should delete availability records by teacher ID and return them', async () => {
+    it('should delete blocker records by teacher ID and return them', async () => {
       const teacherId = 1;
-      const expectedResults: Availability[] = [
+      const expectedResults: Blocker[] = [
         {
           id: 1,
           day: 'Monday',
@@ -257,7 +257,7 @@ describe('TeacherAvailabilityRepository', () => {
 
       const results = await repository.deleteByTeacherId(teacherId);
 
-      expect(mockDbClient.delete).toHaveBeenCalledWith(availability);
+      expect(mockDbClient.delete).toHaveBeenCalledWith(blocker);
       expect(results).toEqual(expectedResults);
     });
   });

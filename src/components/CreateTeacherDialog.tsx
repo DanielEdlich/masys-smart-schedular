@@ -11,7 +11,7 @@ import { PlusCircle, Trash2 } from 'lucide-react'
 import { createTeacher } from '@/app/actions/teacherActions'
 import { useToast } from "@/hooks/use-toast"
 
-type Availability = {
+type Blocker = {
   day: string
   von: number
   bis: number
@@ -26,7 +26,7 @@ export function CreateTeacherDialog() {
     email: '',
     phone: '',
     priority: 1,
-    availability: [{ day: 'Montag', von: 1, bis: 2 }]
+    blocker: [{ day: 'Montag', von: 1, bis: 2 }]
   })
   const { toast } = useToast()
 
@@ -51,7 +51,7 @@ export function CreateTeacherDialog() {
         email: '',
         phone: '',
         priority: 1,
-        availability: [{ day: 'Montag', von: 1, bis: 2 }]
+        blocker: [{ day: 'Montag', von: 1, bis: 2 }]
       })
     } catch (error) {
       toast({
@@ -73,22 +73,22 @@ export function CreateTeacherDialog() {
     return true
   }
 
-  const handleAvailabilityChange = (index: number, field: keyof Availability, value: string | number) => {
-    const newAvailability = [...formData.availability]
-    newAvailability[index] = { ...newAvailability[index], [field]: value }
-    setFormData({ ...formData, availability: newAvailability })
+  const handleBlockerChange = (index: number, field: keyof Blocker, value: string | number) => {
+    const newBlocker = [...formData.blocker]
+    newBlocker[index] = { ...newBlocker[index], [field]: value }
+    setFormData({ ...formData, blocker: newBlocker })
   }
 
-  const addAvailability = () => {
+  const addBlocker = () => {
     setFormData({
       ...formData,
-      availability: [...formData.availability, { day: 'Montag', von: 1, bis: 2 }]
+      blocker: [...formData.blocker, { day: 'Montag', von: 1, bis: 2 }]
     })
   }
 
-  const removeAvailability = (index: number) => {
-    const newAvailability = formData.availability.filter((_, i) => i !== index)
-    setFormData({ ...formData, availability: newAvailability })
+  const removeBlocker = (index: number) => {
+    const newBlocker = formData.blocker.filter((_, i) => i !== index)
+    setFormData({ ...formData, blocker: newBlocker })
   }
 
   return (
@@ -170,11 +170,11 @@ export function CreateTeacherDialog() {
             </div>
             <div className="grid gap-4">
               <Label>Verfügbarkeit</Label>
-              {formData.availability.map((availability, index) => (
+              {formData.blocker.map((blocker, index) => (
                 <div key={index} className="grid grid-cols-4 items-center gap-4">
                   <Select
-                    value={availability.day}
-                    onValueChange={(value) => handleAvailabilityChange(index, 'day', value)}
+                    value={blocker.day}
+                    onValueChange={(value) => handleBlockerChange(index, 'day', value)}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Tag" />
@@ -189,19 +189,19 @@ export function CreateTeacherDialog() {
                   </Select>
                   <Input
                     type="number"
-                    value={availability.von}
-                    onChange={(e) => handleAvailabilityChange(index, 'von', parseInt(e.target.value))}
+                    value={blocker.von}
+                    onChange={(e) => handleBlockerChange(index, 'von', parseInt(e.target.value))}
                     min={1}
                     max={10}
                   />
                   <Input
                     type="number"
-                    value={availability.bis}
-                    onChange={(e) => handleAvailabilityChange(index, 'bis', parseInt(e.target.value))}
+                    value={blocker.bis}
+                    onChange={(e) => handleBlockerChange(index, 'bis', parseInt(e.target.value))}
                     min={1}
                     max={10}
                   />
-                  <Button type="button" variant="outline" size="icon" onClick={() => removeAvailability(index)}>
+                  <Button type="button" variant="outline" size="icon" onClick={() => removeBlocker(index)}>
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
@@ -210,7 +210,7 @@ export function CreateTeacherDialog() {
           </div>
         </form>
         <DialogFooter className="flex justify-between mt-4 pt-4 border-t">
-          <Button type="button" variant="outline" onClick={addAvailability}>
+          <Button type="button" variant="outline" onClick={addBlocker}>
             Verfügbarkeit hinzufügen
           </Button>
           <Button type="submit" onClick={handleSubmit}>Erstellen</Button>
