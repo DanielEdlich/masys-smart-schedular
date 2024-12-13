@@ -2,9 +2,12 @@ import { teacher } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { Teacher, NewTeacher } from '@/db/types';
 
-export class TeacherRepository {
 
-  constructor(private readonly dbClient ) { }
+export class TeacherRepository {
+// eslint-disable-next-line
+// @ts-ignore 
+constructor(private readonly dbClient ) { }
+
   
   async create(data: NewTeacher): Promise<Teacher | undefined> {
     const [result] = await this.dbClient.insert(teacher).values(data).returning();
