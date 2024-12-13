@@ -30,7 +30,7 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm clean-install
+        run: printenv && npm clean-install
 
       - name: Setup DB
         run: DB_FILE_NAME="file:local.db" npm run db
