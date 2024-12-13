@@ -3,7 +3,9 @@ import { eq, and, gte, lte } from 'drizzle-orm';
 import { Blocker, NewBlocker } from '@/db/types';
 
 export class TeacherBlockerRepository {
-  constructor(private readonly dbClient ) {}
+// eslint-disable-next-line
+// @ts-ignore 
+  constructor(private readonly dbClient) {}
 
   async create(data: NewBlocker): Promise<Blocker | undefined> {
     const [result] = await this.dbClient.insert(blocker).values(data).returning();

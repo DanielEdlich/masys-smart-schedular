@@ -1,9 +1,8 @@
-// db/db.ts
-import { drizzle } from 'drizzle-orm/libsql';
-import { createClient } from '@libsql/client';
+import { config } from 'dotenv';
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
 
-const client = createClient({
-  url: process.env.DB_FILE_NAME!,
-});
+config({ path: '.env.local' }); // or .env.local
 
-export const db = drizzle(client);
+const client = postgres(process.env.DATABASE_URL!);
+export const db = drizzle({ client });

@@ -30,6 +30,7 @@ describe('TeacherRepository', () => {
         first_name: 'John',
         last_name: 'Doe',
         email: 'john.doe@example.com',
+        weekly_capacity: 10,
         phone: '1234567890',
         priority: 1,
       };
@@ -58,6 +59,7 @@ describe('TeacherRepository', () => {
         first_name: 'Jane',
         last_name: 'Smith',
         email: 'jane.smith@example.com',
+        weekly_capacity: 10,
         phone: '0987654321',
         priority: 2,
       };
@@ -124,6 +126,7 @@ describe('TeacherRepository', () => {
         last_name: 'Doe',
         email: 'john.new@example.com',
         phone: '1234567890',
+        weekly_capacity: 10,
         priority: 1,
       };
 
@@ -152,6 +155,7 @@ describe('TeacherRepository', () => {
         first_name: 'John',
         last_name: 'Doe',
         email: 'john.doe@example.com',
+        weekly_capacity: 10,
         phone: '1234567890',
         priority: 1,
       };

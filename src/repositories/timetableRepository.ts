@@ -3,6 +3,8 @@ import { eq } from 'drizzle-orm';
 import { Timetable, NewTimetable } from '@/db/types';
 
 export class TimetableRepository {
+// eslint-disable-next-line
+// @ts-ignore 
   constructor(private readonly dbClient ) {}
 
   async create(data: NewTimetable): Promise<Timetable | undefined> {
