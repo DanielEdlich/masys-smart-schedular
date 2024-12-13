@@ -1,28 +1,29 @@
 import {
-  sqliteTable,
+  pgTable,
   integer,
   text,
+  serial,
   foreignKey
-} from 'drizzle-orm/sqlite-core';
+} from 'drizzle-orm/pg-core';
 
 // ---------------------------------------
 // TEACHER
 // ---------------------------------------
-export const teacher = sqliteTable('teacher', {
-  id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+export const teacher = pgTable('teacher', {
+  id: serial('id').primaryKey(), // Use serial for auto-incrementing primary key
   first_name: text('first_name').notNull(),  // First name
   last_name: text('last_name').notNull(),    // Last name
   email: text('email').notNull(),            // Email
-  phone: text('phone_number').notNull(),        // Phone number
-  priority: integer('priority').notNull(),          // Priority
-  weekly_capacity: integer('weekly_capacity').notNull()  //capacity
+  phone: text('phone').notNull(),            // Phone number
+  priority: integer('priority').notNull(),   // Priority
+  weekly_capacity: integer('weekly_capacity').notNull()  // Weekly capacity
 });
 
 // ---------------------------------------
-// AVAILABILITY
+// BLOCKER
 // ---------------------------------------
-export const blocker = sqliteTable('blocker', {
-  id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+export const blocker = pgTable('blocker', {
+  id: serial('id').primaryKey(), // Use serial for auto-incrementing primary key
   day: text('day').notNull(),                // Day (e.g. Monday, Tuesday...)
   timeslot_from: integer('timeslot_from').notNull(), // Timeslot start (e.g. 8)
   timeslot_to: integer('timeslot_to').notNull(),     // Timeslot end (e.g. 10)
@@ -39,30 +40,30 @@ export const blocker = sqliteTable('blocker', {
 // ---------------------------------------
 // SCHOOL_CLASS
 // ---------------------------------------
-export const schoolClass = sqliteTable('school_class', {
-  id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-  name: text('name').notNull(),      // Class name
-  year: text('year'),             // Year like 1-3 or 4-6
+export const schoolClass = pgTable('school_class', {
+  id: serial('id').primaryKey(), // Use serial for auto-incrementing primary key
+  name: text('name').notNull(),  // Class name
+  year: text('year'),            // Year like 1-3 or 4-6
 });
 
 // ---------------------------------------
 // TIMETABLE
 // ---------------------------------------
-export const timetable = sqliteTable('timetable', {
-  id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-  name: text('name').notNull(),       // Name of the timetable
-  school_year: text('school_year')    // e.g. "2024/2025"
+export const timetable = pgTable('timetable', {
+  id: serial('id').primaryKey(), // Use serial for auto-incrementing primary key
+  name: text('name').notNull(),  // Name of the timetable
+  school_year: text('school_year') // e.g. "2024/2025"
 });
 
 // ---------------------------------------
 // LESSON
 // ---------------------------------------
-export const lesson = sqliteTable('lesson', {
-  id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-  date: text('date'),                         // Weekday as Enum (Monday, Tuesday, etc)
-  week: text('week'), // A or B week or maybe more later
-  timeslot: integer('timeslot_from').notNull(), // Timeslot (e.g. 4)
-  name: text('name'),     // Lesson name
+export const lesson = pgTable('lesson', {
+  id: serial('id').primaryKey(), // Use serial for auto-incrementing primary key
+  date: text('date'),            // Weekday as Enum (Monday, Tuesday, etc)
+  week: text('week'),            // A or B week or maybe more later
+  timeslot: integer('timeslot').notNull(), // Timeslot (e.g. 4)
+  name: text('name'),            // Lesson name
 
   timetable_id: integer('timetable_id').notNull(),
   school_class_id: integer('school_class_id').notNull(),
