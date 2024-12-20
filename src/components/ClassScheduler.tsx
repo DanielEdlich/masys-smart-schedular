@@ -304,7 +304,7 @@ const DroppableSlot: React.FC<DroppableSlotProps> = ({ day, className, week, slo
             onClick={toggleBlock}
             title="Zeitfenster sperren"
           >
-            <Ban className="h-4 w-4" />
+            <Ban className="h-3 w-3" />
           </Button>
         </div>
       )}
