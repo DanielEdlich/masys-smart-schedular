@@ -27,7 +27,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20.x'
-          # cache: 'npm'
+          cache: 'npm'
 
       - name: Install dependencies
         run: printenv && npm clean-install
@@ -42,7 +42,7 @@ jobs:
         run: npm run lint
 
       - name: Test
-        run: npm run test
+        run: DB_FILE_NAME="file:local.db" npx drizzle-kit push && jest
 
   check-branches:
     name: "Check Pull Request Conditions"
