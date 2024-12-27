@@ -31,7 +31,10 @@ jobs:
 
       - name: Install dependencies
         run: printenv && npm clean-install
-
+        
+      - name: Test
+        run: DB_FILE_NAME="file:local.db" npx drizzle-kit push && jest
+        
       - name: Setup DB
         run: DB_FILE_NAME="file:local.db" npm run db
 
@@ -41,8 +44,6 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Test
-        run: DB_FILE_NAME="file:local.db" npx drizzle-kit push && jest
 
   check-branches:
     name: "Check Pull Request Conditions"
