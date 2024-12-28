@@ -29,7 +29,10 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: printenv && npm install
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
 
       - name: Setup Test DB
         run: DB_FILE_NAME="file:test.db" npx drizzle-kit push
@@ -43,8 +46,7 @@ jobs:
       - name: Build
         run: DB_FILE_NAME="file:local.db" npm run build
 
-      - name: Lint
-        run: npm run lint
+
 
   check-branches:
     name: "Check Pull Request Conditions"
