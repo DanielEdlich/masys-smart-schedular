@@ -2,7 +2,7 @@ name: "CI Build"
 
 on:
   push:
-    branches: ["*"]
+    branches: ["main"]
     paths-ignore:
       - "**.md"
       - ".gitignore"
@@ -10,8 +10,8 @@ on:
     paths-ignore:
       - "**.md"
       - ".gitignore"
-  # pull_request_target:
-  #   branches: [ "main" ]
+  pull_request_target:
+    branches: [ "main" ]
 
 jobs:
   build:
