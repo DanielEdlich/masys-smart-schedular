@@ -5,8 +5,6 @@ import { SchoolClass, NewSchoolClass } from '@/db/types';
 
 
 export class SchoolClassRepository {
-// eslint-disable-next-line
-// @ts-ignore 
   constructor(private readonly dbClient ) {}
 
   async create(data: NewSchoolClass): Promise<SchoolClass | undefined> {
