@@ -30,7 +30,7 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: printenv && npm install
+        run: printenv && npm ci
         
       - name: Test
         run: DB_FILE_NAME="file:local.db" npx drizzle-kit push && npx jest
