@@ -31,8 +31,11 @@ jobs:
       - name: Install dependencies
         run: printenv && npm install
 
+      - name: Setup Test DB
+        run: DB_FILE_NAME="file:test.db" npx drizzle-kit push
+
       - name: Test
-        run: DB_FILE_NAME="file:test.db" npx drizzle-kit push && npx jest --runInBand
+        run: DB_FILE_NAME="file:test.db" npx jest --runInBand
 
       - name: Setup DB
         run: DB_FILE_NAME="file:local.db" npm run db

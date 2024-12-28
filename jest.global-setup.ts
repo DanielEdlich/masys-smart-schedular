@@ -8,7 +8,7 @@ export default function globalSetup() {
   // Erstelle eine Datenbank-Datei (kann auch in-memory ':memory:' sein)
   // const sqlite = new Database('test.db'); // oder ':memory:' für in-memory
   const client = createClient({
-    url: `file:${process.env.DB_FILE_NAME}`,
+    url: process.env.DB_FILE_NAME || 'file:test.db',
   });
   // Drizzle-Datenbank-Instanz erstellen
   const db = drizzle(client);
