@@ -1,9 +1,9 @@
-import { blocker } from '@/db/schema';
 import { eq, and, gte, lte } from 'drizzle-orm';
-import { Blocker, NewBlocker } from '@/db/types';
+import { Blocker, NewBlocker, DbClient } from '@/db/types';
+import { blocker } from '@/db/schema';
 
 export class TeacherBlockerRepository {
-  constructor(private readonly dbClient ) {}
+  constructor(private readonly dbClient: DbClient ) {}
 
   async create(data: NewBlocker): Promise<Blocker | undefined> {
     const [result] = await this.dbClient.insert(blocker).values(data).returning();
@@ -23,7 +23,7 @@ export class TeacherBlockerRepository {
     return this.dbClient.select().from(blocker).where(eq(blocker.teacher_id, teacherId));
   }
 
-  async isBlockedAtTimeslot(teacherId: number, timeslot: number, day: string): Promise<boolean> {
+  async isTeacherBlockerAtTimeslot(teacherId: number, timeslot: number, day: string): Promise<boolean> {
     const query = this.dbClient.select().from(blocker).where(
       and(
         eq(blocker.teacher_id, teacherId),
@@ -48,7 +48,7 @@ export class TeacherBlockerRepository {
   }
 
   async deleteByTeacherId(teacherId: number): Promise<Blocker[] | undefined> {
-    const [result] = await this.dbClient.delete(blocker).where(eq(blocker.teacher_id, teacherId)).returning();
+    const result = await this.dbClient.delete(blocker).where(eq(blocker.teacher_id, teacherId)).returning();
     return result;
   }
 }

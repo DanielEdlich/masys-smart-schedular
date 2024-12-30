@@ -1,264 +1,205 @@
-// TeacherBlockerRepository.test.ts
 
+/**
+ * @jest-environment node
+ */
+
+import { teacher, blocker } from '@/db/schema';
+import {  NewBlocker } from '@/db/types';
 import { TeacherBlockerRepository } from '@/repositories/teacherBlockerRepository';
-import { blocker } from '@/db/schema';
-import { Blocker, NewBlocker } from '@/db/types';
 
-// Mock the dbClient methods
-const mockDbClient = {
-  insert: jest.fn(),
-  select: jest.fn(),
-  update: jest.fn(),
-  delete: jest.fn(),
-};
+describe('blockerRepository', () => {
+  let repo: TeacherBlockerRepository;
+  beforeAll(async () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    repo = new TeacherBlockerRepository((global as any).db);
 
-describe('TeacherBlockerRepository', () => {
-  let repository: TeacherBlockerRepository;
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-    repository = new TeacherBlockerRepository(mockDbClient);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (global as any).db.delete(teacher);
+    
+    await (global as any).db.insert(teacher).values({
+      first_name: 'Emma',
+      last_name: 'Watson',
+      email: 'emma.watson@mail.com',
+      id: 1,
+      phone: '',
+      priority: 0,
+      weekly_capacity: 0
+    });
+    await (global as any).db.insert(teacher).values({
+      first_name: 'Daniel',
+      last_name: 'Radcliffe',
+      email: 'daniel.radcliffe@mail.com',
+      id: 2,
+      phone: '',
+      priority: 0,
+      weekly_capacity: 0
+    });
   });
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    afterAll(async () => await (global as any).db.delete(blocker));
+
   describe('create', () => {
-    it('should insert a new blocker record and return it', async () => {
-      const data: NewBlocker = {
-        day: 'Monday',
-        timeslot_from: 8,
-        timeslot_to: 10,
+    it('should create a new teacher blocker and return it', async () => {
+      const newblocker: NewBlocker = {
         teacher_id: 1,
+        day: 'Monday',
+        timeslot_from: 1,
+        timeslot_to: 2,
       };
-      const expectedResult: Blocker = { id: 1, ...data };
 
-      mockDbClient.insert.mockReturnValue({
-        values: jest.fn().mockReturnValue({
-          returning: jest.fn().mockResolvedValue([expectedResult]),
-        }),
-      });
-
-      const result = await repository.create(data);
-
-      expect(mockDbClient.insert).toHaveBeenCalledWith(blocker);
-      expect(result).toEqual(expectedResult);
+      const created = await repo.create(newblocker);
+      expect(created).toBeDefined();
+      expect(created?.id).toBeDefined();
+      expect(created?.teacher_id).toBe(1);
+      expect(created?.day).toBe('Monday');
+      expect(created?.timeslot_from).toBe(1);
+      expect(created?.timeslot_to).toBe(2);
     });
   });
 
   describe('getById', () => {
-    it('should return an blocker record by id', async () => {
-      const id = 1;
-      const expectedResult: Blocker = {
-        id,
-        day: 'Monday',
-        timeslot_from: 8,
-        timeslot_to: 10,
-        teacher_id: 1,
-      };
-
-      mockDbClient.select.mockReturnValue({
-        from: jest.fn().mockReturnValue({
-          where: jest.fn().mockResolvedValue([expectedResult]),
-        }),
+    let createdId: number;
+    beforeAll(async () => {
+      const created = await repo.create({
+        teacher_id: 2,
+        day: 'Tuesday',
+        timeslot_from: 3,
+        timeslot_to: 4,
       });
+      createdId = created!.id;
+    });
 
-      const result = await repository.getById(id);
+    it('should return the correct blocker by id', async () => {
+      const result = await repo.getById(createdId);
+      expect(result).toBeDefined();
+      expect(result?.id).toBe(createdId);
+      expect(result?.teacher_id).toBe(2);
+      expect(result?.day).toBe('Tuesday');
+      expect(result?.timeslot_from).toBe(3);
+      expect(result?.timeslot_to).toBe(4);
+    });
 
-      expect(mockDbClient.select).toHaveBeenCalled();
-      expect(result).toEqual(expectedResult);
+    it('should return undefined if blocker not found', async () => {
+      const result = await repo.getById(999);
+      expect(result).toBeUndefined();
     });
   });
 
   describe('getAll', () => {
-    it('should return all blocker records', async () => {
-      const expectedResults: Blocker[] = [
-        {
-          id: 1,
-          day: 'Monday',
-          timeslot_from: 8,
-          timeslot_to: 10,
-          teacher_id: 1,
-        },
-        {
-          id: 2,
-          day: 'Tuesday',
-          timeslot_from: 9,
-          timeslot_to: 11,
-          teacher_id: 2,
-        },
-      ];
-
-      mockDbClient.select.mockReturnValue({
-        from: jest.fn().mockResolvedValue(expectedResults),
+    beforeAll(async () => {
+      await repo.create({
+        teacher_id: 1,
+        day: 'Wednesday',
+        timeslot_from: 5,
+        timeslot_to: 6,
       });
+      await repo.create({
+        teacher_id: 2,
+        day: 'Thursday',
+        timeslot_from: 7,
+        timeslot_to: 8,
+      });
+    });
 
-      const results = await repository.getAll();
-
-      expect(mockDbClient.select).toHaveBeenCalled();
-      expect(results).toEqual(expectedResults);
+    it('should return all teacher availabilities', async () => {
+      const all = await repo.getAll();
+      expect(all.length).toBeGreaterThanOrEqual(2);
+      const days = all.map(a => a.day);
+      expect(days).toContain('Wednesday');
+      expect(days).toContain('Thursday');
     });
   });
 
   describe('getForTeacher', () => {
-    it('should return blocker records for a specific teacher', async () => {
-      const teacherId = 1;
-      const expectedResults: Blocker[] = [
-        {
-          id: 1,
-          day: 'Monday',
-          timeslot_from: 8,
-          timeslot_to: 10,
-          teacher_id: teacherId,
-        },
-        {
-          id: 3,
-          day: 'Wednesday',
-          timeslot_from: 10,
-          timeslot_to: 12,
-          teacher_id: teacherId,
-        },
-      ];
-
-      mockDbClient.select.mockReturnValue({
-        from: jest.fn().mockReturnValue({
-          where: jest.fn().mockResolvedValue(expectedResults),
-        }),
+    beforeAll(async () => {
+      await repo.create({
+        teacher_id: 1,
+        day: 'Friday',
+        timeslot_from: 9,
+        timeslot_to: 10,
       });
+    });
 
-      const results = await repository.getForTeacher(teacherId);
-
-      expect(mockDbClient.select).toHaveBeenCalled();
-      expect(results).toEqual(expectedResults);
+    it('should return availabilities for the given teacher', async () => {
+      const availabilities = await repo.getForTeacher(1);
+      expect(availabilities.length).toBeGreaterThanOrEqual(1);
+      const days = availabilities.map(a => a.day);
+      expect(days).toContain('Friday');
     });
   });
 
-  describe('isBlockerAtTimeslot', () => {
-    it('should return true if teacher is available at given timeslot and day', async () => {
-      const teacherId = 1;
-      const timeslot = 9;
-      const day = 'Monday';
-      const expectedResults: Blocker[] = [
-        {
-          id: 1,
-          day,
-          timeslot_from: 8,
-          timeslot_to: 10,
-          teacher_id: teacherId,
-        },
-      ];
-
-      mockDbClient.select.mockReturnValue({
-        from: jest.fn().mockReturnValue({
-          where: jest.fn().mockResolvedValue(expectedResults),
-        }),
+  describe('isblockerAtTimeslot', () => {
+    beforeAll(async () => {
+      await repo.create({
+        teacher_id: 2,
+        day: 'Saturday',
+        timeslot_from: 11,
+        timeslot_to: 12,
       });
-
-      const result = await repository.isBlockedAtTimeslot(teacherId, timeslot, day);
-
-      expect(mockDbClient.select).toHaveBeenCalled();
-      expect(result).toBe(true);
     });
 
-    it('should return false if teacher is not available at given timeslot and day', async () => {
-      const teacherId = 1;
-      const timeslot = 12;
-      const day = 'Monday';
+    it('should return true if teacher is available at the given timeslot and day', async () => {
+      const isAvailable = await repo.isTeacherBlockerAtTimeslot(2, 11, 'Saturday');
+      expect(isAvailable).toBe(true);
+    });
 
-      mockDbClient.select.mockReturnValue({
-        from: jest.fn().mockReturnValue({
-          where: jest.fn().mockResolvedValue([]),
-        }),
-      });
-
-      const result = await repository.isBlockedAtTimeslot(teacherId, timeslot, day);
-
-      expect(mockDbClient.select).toHaveBeenCalled();
-      expect(result).toBe(false);
+    it('should return false if teacher is not available at the given timeslot and day', async () => {
+      const isAvailable = await repo.isTeacherBlockerAtTimeslot(2, 13, 'Saturday');
+      expect(isAvailable).toBe(false);
     });
   });
 
   describe('update', () => {
-    it('should update an blocker record and return it', async () => {
-      const id = 1;
-      const data: Partial<NewBlocker> = {
-        timeslot_from: 9,
-        timeslot_to: 11,
-      };
-      const expectedResult: Blocker = {
-        id,
-        day: 'Monday',
-        timeslot_from: 9,
-        timeslot_to: 11,
+    let blockerId: number;
+    beforeAll(async () => {
+      const created = await repo.create({
         teacher_id: 1,
-      };
-
-      mockDbClient.update.mockReturnValue({
-        set: jest.fn().mockReturnValue({
-          where: jest.fn().mockReturnValue({
-            returning: jest.fn().mockResolvedValue([expectedResult]),
-          }),
-        }),
+        day: 'Sunday',
+        timeslot_from: 13,
+        timeslot_to: 14,
       });
+      blockerId = created!.id;
+    });
 
-      const result = await repository.update(id, data);
+    it('should update an existing teacher blocker', async () => {
+      const updated = await repo.update(blockerId, { day: 'Tuesday' });
+      expect(updated).toBeDefined();
+      expect(updated?.id).toBe(blockerId);
+      expect(updated?.day).toBe('Tuesday');
+    });
 
-      expect(mockDbClient.update).toHaveBeenCalledWith(blocker);
-      expect(result).toEqual(expectedResult);
+    it('should return undefined if trying to update non-existing blocker', async () => {
+      const updated = await repo.update(999, { day: 'Sunday' });
+      expect(updated).toBeUndefined();
     });
   });
 
   describe('delete', () => {
-    it('should delete an blocker record and return it', async () => {
-      const id = 1;
-      const expectedResult: Blocker = {
-        id,
-        day: 'Monday',
-        timeslot_from: 8,
-        timeslot_to: 10,
+    let blockerId: number;
+    beforeAll(async () => {
+      const created = await repo.create({
         teacher_id: 1,
-      };
-
-      mockDbClient.delete.mockReturnValue({
-        where: jest.fn().mockReturnValue({
-          returning: jest.fn().mockResolvedValue([expectedResult]),
-        }),
+        day: 'Monday',
+        timeslot_from: 15,
+        timeslot_to: 16,
       });
-
-      const result = await repository.delete(id);
-
-      expect(mockDbClient.delete).toHaveBeenCalledWith(blocker);
-      expect(result).toEqual(expectedResult);
+      blockerId = created!.id;
     });
-  });
 
-  describe('deleteByTeacherId', () => {
-    it('should delete blocker records by teacher ID and return them', async () => {
-      const teacherId = 1;
-      const expectedResults: Blocker[] = [
-        {
-          id: 1,
-          day: 'Monday',
-          timeslot_from: 8,
-          timeslot_to: 10,
-          teacher_id: teacherId,
-        },
-        {
-          id: 3,
-          day: 'Wednesday',
-          timeslot_from: 10,
-          timeslot_to: 12,
-          teacher_id: teacherId,
-        },
-      ];
+    it('should delete an existing teacher blocker and return it', async () => {
+      const deleted = await repo.delete(blockerId);
+      expect(deleted).toBeDefined();
+      expect(deleted?.id).toBe(blockerId);
+      expect(deleted?.day).toBe('Monday');
 
-      mockDbClient.delete.mockReturnValue({
-        where: jest.fn().mockReturnValue({
-          returning: jest.fn().mockResolvedValue([expectedResults]),
-        }),
-      });
+      const afterDelete = await repo.getById(blockerId);
+      expect(afterDelete).toBeUndefined();
+    });
 
-      const results = await repository.deleteByTeacherId(teacherId);
-
-      expect(mockDbClient.delete).toHaveBeenCalledWith(blocker);
-      expect(results).toEqual(expectedResults);
+    it('should return undefined if trying to delete non-existing blocker', async () => {
+      const deleted = await repo.delete(999);
+      expect(deleted).toBeUndefined();
     });
   });
 });

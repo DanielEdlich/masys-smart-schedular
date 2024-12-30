@@ -177,7 +177,7 @@ export function CreateTeacherDialog() {
               <Input
                 id="weekly_capacity"
                 value={formData.weekly_capacity}
-                onChange={(e) => setFormData({ ...formData, weekly_capacity: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, weekly_capacity: parseInt(e.target.value) })}
                 className="col-span-3"
               />
             </div>

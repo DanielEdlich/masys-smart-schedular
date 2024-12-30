@@ -1,15 +1,19 @@
-import Database from 'better-sqlite3';
-import { drizzle } from 'drizzle-orm/better-sqlite3';
+import { drizzle } from 'drizzle-orm/libsql';
+import { createClient } from '@libsql/client';
 
-module.exports = async () => {
+
+export default function globalSetup() {
   console.log('Setting up global SQLite DB');
 
   // Erstelle eine Datenbank-Datei (kann auch in-memory ':memory:' sein)
-  const sqlite = new Database('test.db'); // oder ':memory:' für in-memory
-
+  // const sqlite = new Database('test.db'); // oder ':memory:' für in-memory
+  const client = createClient({
+    url: process.env.DB_FILE_NAME || 'file:test.db',
+  });
   // Drizzle-Datenbank-Instanz erstellen
-  const db = drizzle(sqlite);
+  const db = drizzle(client);
 
   // Repository bereitstellen (global zugänglich)
-  global.db = db;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (global as any).db = db;
 };
