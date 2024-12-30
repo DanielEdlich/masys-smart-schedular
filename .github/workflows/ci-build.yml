@@ -11,7 +11,7 @@ on:
       - "**.md"
       - ".gitignore"
   pull_request_target:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build:
@@ -46,7 +46,28 @@ jobs:
       - name: Build
         run: DB_FILE_NAME="file:local.db" npm run build
 
+      - name: Determine Image Tag
+        id: tag
+        run: |
+          if [ "${{ github.ref_name }}" == "main" ]; then
+            echo "tag=main" >> $GITHUB_ENV
+          else
+            echo "tag=${{ github.sha }}" >> $GITHUB_ENV
+          fi
+        shell: bash
 
+      - name: Log in to Harbor Docker Registry
+        run: echo "${{ secrets.HARBOR_PASSWORD }}" | docker login ${{ secrets.HARBOR_REGISTRY }} -u "${{ secrets.HARBOR_USERNAME }}" --password-stdin
+
+      - name: Build Docker Image
+        run: |
+          docker build \
+            --tag ${{ secrets.HARBOR_REGISTRY }}/${{ secrets.HARBOR_PROJECT }}/nestjs-app:${{ env.tag }} \
+            .
+
+      - name: Push Docker Image to Harbor
+        run: |
+          docker push ${{ secrets.HARBOR_REGISTRY }}/${{ secrets.HARBOR_PROJECT }}/nestjs-app:${{ env.tag }}
 
   check-branches:
     name: "Check Pull Request Conditions"

@@ -1,10 +1,15 @@
 services:
   web:
-    image: harbor.hitabis.de/htw/schedular:prod #Eure Webanwendung
-    depends_on:
-      - postgres
-    environment: ...
-    volumes: ...
+    # image: harbor.hitabis.de/htw/schedular:prod #Eure Webanwendung
+    image: mss
+    build: .
+    # environment: ...
+    platform: linux/amd64
+    env_file:
+      - .env.production
+      # - .env.local
+    volumes:
+      - ./data:/app/data
     restart: unless-stopped
     networks:
       - traefik-net
@@ -21,8 +26,11 @@ services:
       - traefik.http.middlewares.schedular.headers.stsSeconds=15768000
       - traefik.http.middlewares.schedular.headers.customResponseHeaders.X-Download-Options=noopen
       - traefik.http.middlewares.schedular.headers.customResponseHeaders.X-Permitted-Cross-Domain-Policies=none
+    # expose:
+    #   - 3000
+    ports:
+      - 127.0.0.1:3000:3000
 
 networks:
   traefik-net:
-    external:
-      name: traefik-net
+    external: true

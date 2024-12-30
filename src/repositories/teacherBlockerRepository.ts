@@ -3,7 +3,7 @@ import { Blocker, NewBlocker, DbClient } from '@/db/types';
 import { blocker } from '@/db/schema';
 
 export class TeacherBlockerRepository {
-  constructor(private readonly dbClient: DbClient ) {}
+  constructor(private readonly dbClient: DbClient) { }
 
   async create(data: NewBlocker): Promise<Blocker | undefined> {
     const [result] = await this.dbClient.insert(blocker).values(data).returning();
