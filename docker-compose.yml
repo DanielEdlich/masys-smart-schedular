@@ -31,6 +31,13 @@ services:
     ports:
       - 127.0.0.1:3000:3000
 
+  # watchtower:
+  #   image: containrrr/watchtower
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - /root/.docker/config.json:/config.json
+  #   command: --interval 30
+
 networks:
   traefik-net:
     external: true

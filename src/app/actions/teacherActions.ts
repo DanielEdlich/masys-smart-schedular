@@ -3,6 +3,8 @@
 import { db } from '@/db/db';
 import { TeacherRepository } from '@/repositories/teacherRepository';
 import { TeacherBlockerRepository } from '@/repositories/teacherBlockerRepository';
+import { revalidatePath } from 'next/cache';
+import { cookies } from 'next/headers';
 
 const teacherRepository = new TeacherRepository(db);
 const blockerRepository = new TeacherBlockerRepository(db);
@@ -19,6 +21,7 @@ export async function createTeacher(data: any) {
     blockerRepository.create(blockerData.map((singleBlock: any) => ({ ...singleBlock, teacher_id: newTeacher.id })));
 
   }
+  revalidatePath('/lehrer-verwaltung');
 }
 
 export async function updateTeacher(data: any) {
@@ -36,6 +39,7 @@ export async function updateTeacher(data: any) {
       blockerRepository.create({ ...block, teacher_id: id });
     });
   }
+  revalidatePath('/lehrer-verwaltung');
 
 }
 
@@ -45,10 +49,14 @@ export async function deleteTeacher(id: number) {
 
   // 2: delete teacher
   await teacherRepository.delete(id);
+  revalidatePath('/lehrer-verwaltung');
 
 }
 
 export async function getAllTeachers() {
+  const _ = cookies();
+
+  // disable cache for this server action
   const teachers = await teacherRepository.getAll();
 
   // Use Promise.all to wait for all blocker data to be fetched

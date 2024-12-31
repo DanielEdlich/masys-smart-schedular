@@ -11,7 +11,9 @@ RUN npm ci
 
 COPY . .
 
-RUN npm run db && npm run build
+RUN npm run db 
+
+RUN npm run build
 
 FROM node:20-slim AS runner
 
