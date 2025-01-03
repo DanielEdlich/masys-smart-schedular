@@ -1,9 +1,7 @@
 services:
   web:
-    # image: harbor.hitabis.de/htw/schedular:prod #Eure Webanwendung
-    image: mss
+    image: harbor.hitabis.de/htw/schedular:prod #Eure Webanwendung
     build: .
-    # environment: ...
     platform: linux/amd64
     env_file:
       - .env.production
@@ -16,7 +14,7 @@ services:
       - default
     labels:
       - traefik.enable=true
-      - traefik.port=80 # Hier den Port hinterlegen, auf dem eure Anwendung (ohne SSL!) hört. Also wahrscheinlich Port 80
+      - traefik.port=3000 # Hier den Port hinterlegen, auf dem eure Anwendung (ohne SSL!) hört. Also wahrscheinlich Port 80
       - traefik.http.routers.schedular.entrypoints=websecure
       - traefik.http.routers.schedular.rule=Host(`htw.hitabis.de`) # Beispiel für die Domain, die euch Hitabis zur Verfügung stellt
       - traefik.http.routers.schedular.tls=true
@@ -31,12 +29,12 @@ services:
     ports:
       - 127.0.0.1:3000:3000
 
-  # watchtower:
-  #   image: containrrr/watchtower
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #     - /root/.docker/config.json:/config.json
-  #   command: --interval 30
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /root/.docker/config.json:/config.json
+    command: --interval 300
 
 networks:
   traefik-net:
