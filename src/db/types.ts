@@ -18,6 +18,12 @@ export type NewTimetable = InferInsertModel<typeof timetable>;
 export type Lesson = InferSelectModel<typeof lesson>;
 export type NewLesson = InferInsertModel<typeof lesson>;
 
+
+export enum SchoolClassTrack {
+  A = "A",
+  B = "B",
+}
+
 export interface DbClient extends LibSQLDatabase<Record<string, never>> {
 
   $client: Client;

@@ -1,4 +1,3 @@
-
 import { schoolClass } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { SchoolClass, NewSchoolClass, DbClient } from '@/db/types';
