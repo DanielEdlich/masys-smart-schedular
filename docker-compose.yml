@@ -1,33 +1,28 @@
 services:
   web:
-    image: harbor.hitabis.de/htw/schedular:prod #Eure Webanwendung
-    build: .
+    image: harbor.hitabis.de/htw/schedular:dev
+    container_name: schedular
     platform: linux/amd64
-    env_file:
-      - .env.production
-      # - .env.local
-    volumes:
-      - ./data:/app/data
-    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.schedular.rule=Host(`htw.hitabis.de`)"
+      - "traefik.http.routers.schedular.entrypoints=websecure"
+      - "traefik.http.routers.schedular.tls=true"
+      - "traefik.http.routers.schedular.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.schedular.service=schedular"
+      - "traefik.http.services.schedular.loadbalancer.server.port=3000"
+      - "traefik.http.routers.schedular.middlewares=schedular"
+      - "traefik.http.middlewares.schedular.headers.stsSeconds=15768000"
+      - "traefik.http.middlewares.schedular.headers.customResponseHeaders.X-Download-Options=noopen"
+      - "traefik.http.middlewares.schedular.headers.customResponseHeaders.X-Permitted-Cross-Domain-Policies=none"
     networks:
       - traefik-net
-      - default
-    labels:
-      - traefik.enable=true
-      - traefik.port=3000 # Hier den Port hinterlegen, auf dem eure Anwendung (ohne SSL!) hört. Also wahrscheinlich Port 80
-      - traefik.http.routers.schedular.entrypoints=websecure
-      - traefik.http.routers.schedular.rule=Host(`htw.hitabis.de`) # Beispiel für die Domain, die euch Hitabis zur Verfügung stellt
-      - traefik.http.routers.schedular.tls=true
-      - traefik.http.routers.schedular.tls.certresolver=letsencrypt
-      - traefik.docker.network=traefik-net
-      - traefik.http.routers.schedular.middlewares=schedular
-      - traefik.http.middlewares.schedular.headers.stsSeconds=15768000
-      - traefik.http.middlewares.schedular.headers.customResponseHeaders.X-Download-Options=noopen
-      - traefik.http.middlewares.schedular.headers.customResponseHeaders.X-Permitted-Cross-Domain-Policies=none
-    # expose:
-    #   - 3000
-    ports:
-      - 127.0.0.1:3000:3000
+    env_file:
+      - .env.production
+    volumes:
+      - ./data:/app/data
+    expose:
+      - "3000"
 
   watchtower:
     image: containrrr/watchtower
