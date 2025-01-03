@@ -3,7 +3,7 @@
  */
 import { lesson, teacher, timetable, schoolClass } from '@/db/schema';
 import { LessonRepository } from '@/repositories/lessonRepository';
-import { NewLesson } from '@/db/types';
+import { NewLesson, SchoolClassTrack } from '@/db/types';
 
 describe('LessonRepository', () => {
   let repo: LessonRepository;
@@ -18,7 +18,7 @@ describe('LessonRepository', () => {
 
     await (global as any).db.insert(teacher).values({ id: 1, first_name: 'John', last_name: 'Doe', email: 'john.doe@mail.com', phone: "012344534", priority: "1", weekly_capacity: 30 });
     await (global as any).db.insert(timetable).values({ id: 1, name: '2024 Timetable', school_year: '2024/2025' });
-    await (global as any).db.insert(schoolClass).values({ id: 1, name: 'Class 1A', year: '1' });
+    await (global as any).db.insert(schoolClass).values({ id: 1, name: 'Class 1A', year: '1', primary_teacher_id: "1", track: SchoolClassTrack.A });
 
   });
 
