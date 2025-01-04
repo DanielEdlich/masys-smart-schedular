@@ -6,6 +6,6 @@ dist
 *.md
 .git
 *.idea
-*.db
+**/*.db
 src/tests
 jest*

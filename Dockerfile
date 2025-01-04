@@ -12,7 +12,7 @@ RUN npm ci
 
 COPY . .
 
-RUN npm run db 
+RUN DB_FILE_NAME=DB_FILE_NAME npm run db 
 
 RUN npm run build
 

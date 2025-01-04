@@ -13,7 +13,7 @@
     "test": "DB_FILE_NAME=file:test.db npx drizzle-kit push && jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "db": "DB_FILE_NAME=file:local.db npx drizzle-kit push"
+    "db": "npx drizzle-kit push"
   },
   "dependencies": {
     "@libsql/client": "^0.14.0",
