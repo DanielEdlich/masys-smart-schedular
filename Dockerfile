@@ -2,7 +2,7 @@ FROM node:20-slim AS builder
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
-ENV DB_FILE_NAME=file:/app/data/local.db
+ENV DB_FILE_NAME=file:local.db
 
 WORKDIR /app
 
