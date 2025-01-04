@@ -316,7 +316,7 @@ interface ClassSchedulerProps {
   initialSchedule?: Schedule
 }
 
-export default function Component({ initialSchedule }: ClassSchedulerProps = {}) {
+export default function ClassScheduler({ initialSchedule }: ClassSchedulerProps = {}) {
   const [schedule, setSchedule] = useState<Schedule>(() => {
     if (initialSchedule) return initialSchedule;
 
