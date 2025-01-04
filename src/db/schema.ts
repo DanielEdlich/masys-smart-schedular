@@ -43,6 +43,22 @@ export const schoolClass = sqliteTable('school_class', {
   id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   name: text('name').notNull(),      // Class name
   year: text('year'),             // Year like 1-3 or 4-6
+  track: text('track').notNull(), // Zug A or B
+  primary_teacher_id: integer('primary_teacher_id').notNull(), 
+  secondary_teacher_id: integer('secondary_teacher_id'), 
+
+}, (table) => {
+  return {
+    primaryTeacherFk: foreignKey({
+      columns: [table.primary_teacher_id],
+      foreignColumns: [teacher.id],
+    }).onDelete('cascade').onUpdate('cascade'),
+
+    secondaryTeacherFk: foreignKey({
+      columns: [table.secondary_teacher_id],
+      foreignColumns: [teacher.id],
+    }).onDelete('set null').onUpdate('cascade') 
+  };
 });
 
 // ---------------------------------------
