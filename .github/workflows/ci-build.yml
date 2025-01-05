@@ -56,13 +56,17 @@ jobs:
           fi
         shell: bash
 
-      -
-        name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: "${{ secrets.HARBOR_REGISTRY }}"
-          username: "${{ secrets.HARBOR_USERNAME }}"
-          password: "${{ secrets.HARBOR_PASSWORD }}"
+      # -
+      #   name: Login to GitHub Container Registry
+      #   uses: docker/login-action@v3
+      #   with:
+      #     registry: "${{ secrets.HARBOR_REGISTRY }}"
+      #     username: "${{ secrets.HARBOR_USERNAME }}"
+      #     password: "${{ secrets.HARBOR_PASSWORD }}"
+
+      - name: Login to docker registry
+        run: | 
+          docker login ${{ secrets.HARBOR_REGISTRY }} -u ${{ secrets.HARBOR_USERNAME }} -p ${{ secrets.HARBOR_PASSWORD }}
 
       - name: Build Docker Image
         run: |
