@@ -4,6 +4,7 @@ import React, { useState, useCallback } from 'react'
 import { DndProvider, useDrag, useDrop } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { Slot } from '@radix-ui/react-slot'
+import { FC } from 'react';
 import { GripVertical, PencilRuler, X, Pause, Ban } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
@@ -67,7 +68,7 @@ interface DraggableCardProps {
   deleteCard: (day: Weekday, className: ClassName, week: Week, index: number) => void
 }
 
-const DraggableCard: React.FC<DraggableCardProps> = ({ card, moveCard, editCard, deleteCard }) => {
+const DraggableCard: FC<DraggableCardProps> = ({ card, moveCard, editCard, deleteCard }) => {
   const [{ isDragging }, drag] = useDrag({
     type: 'CARD',
     item: card,
@@ -76,8 +77,13 @@ const DraggableCard: React.FC<DraggableCardProps> = ({ card, moveCard, editCard,
     }),
   })
 
+    // Create a ref callback that properly handles the drag reference
+    const dragRef = useCallback((node: HTMLDivElement | null) => {
+      drag(node);
+    }, [drag]);
+
   return (
-    <Card ref={drag} style={{ opacity: isDragging ? 0.5 : 1, backgroundColor: card.color }} className="w-full h-full shadow-sm border-none">
+    <Card ref={dragRef} style={{ opacity: isDragging ? 0.5 : 1, backgroundColor: card.color }} className="w-full h-full shadow-sm border-none">
       <CardContent className="p-2 flex flex-col justify-between text-xs h-full">
         <div className="flex items-center w-full justify-between">
           <span className="font-bold truncate w-20">{card.type}</span>
@@ -251,8 +257,12 @@ const DroppableSlot: React.FC<DroppableSlotProps> = ({ day, className, week, slo
     setIsBlocked(!isBlocked)
   }
 
+  const dropRef = useCallback((node: HTMLDivElement | null) => {
+    drop(node);
+  }, [drop]);
+
   return (
-    <div ref={drop} className="w-32 h-16 relative  rounded-md overflow-hidden">
+    <div ref={dropRef} className="w-32 h-16 relative  rounded-md overflow-hidden">
       {isBlocked ? (
         <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
           <Ban className="text-gray-400" />
