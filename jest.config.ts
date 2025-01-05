@@ -203,7 +203,16 @@ const config: Config = {
 
     // Whether to use watchman for file crawling
     // watchman: true,
+
+    // Necessary for dnd-core and react-dnd to work in the test environment
+    transform: {
+        "^.+\\.(j|t)sx?$": 'ts-jest',
+      },
+      transformIgnorePatterns: [
+        '<rootDir>/node_modules/(?!@react-dnd|react-dnd|dnd-core|react-dnd-html5-backend)',
+      ],    
 };
+
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
 export default createJestConfig(config)
