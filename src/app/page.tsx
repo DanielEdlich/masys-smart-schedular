@@ -29,7 +29,7 @@ export default function LandingPage() {
               </div>
               <div className="flex flex-col sm:flex-row gap-4 mt-8">
                 <Button asChild size="lg" className="bg-white text-purple-900 hover:bg-gray-100">
-                  <Link href="/">Plan bearbeiten</Link>
+                  <Link href="/lehrplan">Plan bearbeiten</Link>
                 </Button>
                 <Button asChild size="lg" variant="outline" className="bg-transparent text-white border-white hover:bg-white/10">
                   <Link href="/lehrer-verwaltung">Lehrer verwalten</Link>
