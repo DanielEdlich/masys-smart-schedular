@@ -1,28 +1,40 @@
 services:
   web:
-    image: harbor.hitabis.de/htw/schedular:prod #Eure Webanwendung
-    depends_on:
-      - postgres
-    environment: ...
-    volumes: ...
-    restart: unless-stopped
+    image: harbor.hitabis.de/htw/schedular:dev
+    container_name: schedular
+    platform: linux/amd64
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.schedular.rule=Host(`htw.hitabis.de`)"
+      - "traefik.http.routers.schedular.entrypoints=websecure"
+      - "traefik.http.routers.schedular.tls=true"
+      - "traefik.http.routers.schedular.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.schedular.service=schedular"
+      - "traefik.http.services.schedular.loadbalancer.server.port=3000"
+      - "traefik.http.routers.schedular.middlewares=schedular"
+      - "traefik.http.middlewares.schedular.headers.stsSeconds=15768000"
+      - "traefik.http.middlewares.schedular.headers.customResponseHeaders.X-Download-Options=noopen"
+      - "traefik.http.middlewares.schedular.headers.customResponseHeaders.X-Permitted-Cross-Domain-Policies=none"
+      - "com.centurylinklabs.watchtower.enable=true"
     networks:
       - traefik-net
-      - default
-    labels:
-      - traefik.enable=true
-      - traefik.port=80 # Hier den Port hinterlegen, auf dem eure Anwendung (ohne SSL!) hört. Also wahrscheinlich Port 80
-      - traefik.http.routers.schedular.entrypoints=websecure
-      - traefik.http.routers.schedular.rule=Host(`htw.hitabis.de`) # Beispiel für die Domain, die euch Hitabis zur Verfügung stellt
-      - traefik.http.routers.schedular.tls=true
-      - traefik.http.routers.schedular.tls.certresolver=letsencrypt
-      - traefik.docker.network=traefik-net
-      - traefik.http.routers.schedular.middlewares=schedular
-      - traefik.http.middlewares.schedular.headers.stsSeconds=15768000
-      - traefik.http.middlewares.schedular.headers.customResponseHeaders.X-Download-Options=noopen
-      - traefik.http.middlewares.schedular.headers.customResponseHeaders.X-Permitted-Cross-Domain-Policies=none
+    env_file:
+      - .env.production
+    volumes:
+      - ./data:/app/data
+    expose:
+      - "3000"
+
+  watchtower:
+    image: containrrr/watchtower
+    environment:
+      - WATCHTOWER_LABEL_ENABLE=true
+      - WATCHTOWER_CLEANUP=true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /root/.docker/config.json:/config.json
+    command: --interval 300
 
 networks:
   traefik-net:
-    external:
-      name: traefik-net
+    external: true

@@ -13,10 +13,11 @@
     "test": "DB_FILE_NAME=file:test.db npx drizzle-kit push && jest --runInBand",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "db": "DB_FILE_NAME=file:local.db npx drizzle-kit push"
+    "db": "npx drizzle-kit push"
   },
   "dependencies": {
     "@libsql/client": "^0.14.0",
+    "drizzle-kit": "^0.29.1",
     "@radix-ui/react-avatar": "^1.1.1",
     "@radix-ui/react-dialog": "^1.1.2",
     "@radix-ui/react-label": "^2.1.0",
@@ -54,7 +55,6 @@
     "@types/react-dom": "^18",
     "babel-jest": "^29.7.0",
     "cypress": "^13.16.1",
-    "drizzle-kit": "^0.29.1",
     "eslint": "^8.57.1",
     "eslint-config-next": "14.2.18",
     "eslint-config-prettier": "^9.1.0",
