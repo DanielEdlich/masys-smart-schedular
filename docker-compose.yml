@@ -15,6 +15,7 @@ services:
       - "traefik.http.middlewares.schedular.headers.stsSeconds=15768000"
       - "traefik.http.middlewares.schedular.headers.customResponseHeaders.X-Download-Options=noopen"
       - "traefik.http.middlewares.schedular.headers.customResponseHeaders.X-Permitted-Cross-Domain-Policies=none"
+      - "com.centurylinklabs.watchtower.enable=true"
     networks:
       - traefik-net
     env_file:
@@ -26,6 +27,9 @@ services:
 
   watchtower:
     image: containrrr/watchtower
+    environment:
+      - WATCHTOWER_LABEL_ENABLE=true
+      - WATCHTOWER_CLEANUP=true
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /root/.docker/config.json:/config.json
