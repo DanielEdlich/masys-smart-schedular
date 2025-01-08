@@ -14,6 +14,7 @@ export const Navbar = () => {
           <nav className="hidden md:flex gap-6">
             <Link className="text-sm font-medium text-purple-1000 hover:text-purple-900 dark:text-gray-300 dark:hover:text-white" href="/">Start</Link>
             <Link className="text-sm font-medium text-purple-1000 hover:text-purple-900 dark:text-gray-300 dark:hover:text-white" href="/lehrer-verwaltung">Lehrerverwaltung</Link>
+            <Link className="text-sm font-medium text-purple-1000 hover:text-purple-900 dark:text-gray-300 dark:hover:text-white" href="/klassen-verwaltung">Klassenverwaltung</Link>
             <Link className="text-sm font-medium text-purple-1000 hover:text-purple-900 dark:text-gray-300 dark:hover:text-white" href="/lehrplan">Lehrplan</Link>
             <Link className="text-sm font-medium text-purple-1000 hover:text-purple-900 dark:text-gray-300 dark:hover:text-white" href="/#green-code">Green Code</Link>
           </nav>
