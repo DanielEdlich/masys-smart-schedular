@@ -24,48 +24,56 @@ Zudem sollte eine `.env` Datei mit den, wie in [.env.example](.env.example) besc
 
 Die Seite kann bearbeitet werden, indem `app/page.tsx` modifiziert wird. Die Seite wird automatisch aktualisiert, wenn die Datei bearbeitet wird.
 
-
 ## Struktur des Projekts
 
 ### `src/`
+
 - Enthält den gesamten Code deiner Anwendung.
 - Die zentrale Organisation für deine App.
 
 ### `src/app/`
+
 - **`page.tsx`**: Definiert eine Seite. Z. B. `src/app/page.tsx` ist die Startseite (`/`).
 - **`layout.tsx`**: Definiert das Layout (z. B. Header, Footer) für eine Seite oder eine Gruppe von Seiten.
 - **Unterseiten**: Erstelle Unterverzeichnisse mit einer eigenen `page.tsx`, um neue Routen hinzuzufügen (z. B. `src/app/unterseite/page.tsx` wird `/unterseite`).
 
 ### `src/components/`
+
 - Enthält wiederverwendbare Komponenten (z. B. Buttons, Header).
 
 ### `src/styles/`
+
 - Hier können CSS-Dateien oder CSS-Module abgelegt werden.
 
 ### `public/`
+
 - Statische Dateien wie Bilder oder Icons. Inhalte sind direkt über die URL zugänglich.
   - Beispiel: `public/images/logo.png` ist unter `http://localhost:3000/images/logo.png` erreichbar.
 
 ### `next.config.js`
+
 - Konfigurationsdatei für dein Projekt (z. B. benutzerdefinierte Routen oder Umgebungsvariablen).
-- 
+-
+
 ### `drizzle.config.js`
+
 - Konfigurationsdatei für Drizzle
 
 ### `.example.env`
-- Konfigurationsdatei für Secrets und Datenbankverbindungen  
-Die [`.env.example`](.env.example) sollte kopiert und in `.env.local` umbenannt werden für die lokale Entwicklung.
 
+- Konfigurationsdatei für Secrets und Datenbankverbindungen  
+  Die [`.env.example`](.env.example) sollte kopiert und in `.env.local` umbenannt werden für die lokale Entwicklung.
 
 ## ✏️ Neue Seite hinzufügen
 
 ### 1. Neue Seite erstellen:
+
 - Erstelle die Datei `src/app/neue-seite/page.tsx`:
   ```tsx
   export default function NeueSeite() {
     return <h1>Willkommen auf der neuen Seite!</h1>;
   }
-
+  ```
 
 ## Abhängigkeiten und Versionsnummern
 
@@ -91,14 +99,12 @@ Die Abhängigkeiten und Versionsnummern sind in der `package.json` Datei definie
 }
 ```
 
-
 ## Mehr erfahren
 
 Um mehr über Next.js zu erfahren, sollten die folgenden Ressourcen angesehen werden:
 
 - [Next.js Dokumentation](https://nextjs.org/docs) - mehr über die Funktionen und die API von Next.js lernen.
 - [Lerne Next.js](https://nextjs.org/learn) - ein interaktives Next.js Tutorial.
-
 
 ## ShadCN Komponenten hinzufügen
 
@@ -169,6 +175,7 @@ Der einfachste Weg, die Next.js App bereitzustellen, ist die Verwendung der [Ver
 Die [Next.js Bereitstellungsdokumentation](https://nextjs.org/docs/app/building-your-application/deploying) sollte für weitere Details angesehen werden.
 
 ## Schema erstellen und deployen mit Drizzle
+
 Um das Datenbank Schema anzupassen [schema.ts](src/db/schema.ts) bearbeiten. Im Anschluss können die Änderungen mit `npm run db` in die Datenbank gepushed werden.
 
 ## Architektur
@@ -176,14 +183,16 @@ Um das Datenbank Schema anzupassen [schema.ts](src/db/schema.ts) bearbeiten. Im 
 ### Komponenten
 
 Das Projekt basiert auf einem modernen Tech-Stack, der schnelle Prototyp-Entwicklung und Skalierbarkeit ermöglicht:
-* Frontend: React und TypeScript für eine typsichere und modulare UI.
-* Backend: Next.js auf Node.js für serverseitiges Rendering und API-Integration.
-* Datenbank & Authentifizierung: PostgreSQL, Drizzle (ORM) und NextAuth.js für sichere Datenverwaltung und Authentifizierung.
-  
+
+- Frontend: React und TypeScript für eine typsichere und modulare UI.
+- Backend: Next.js auf Node.js für serverseitiges Rendering und API-Integration.
+- Datenbank & Authentifizierung: PostgreSQL, Drizzle (ORM) und NextAuth.js für sichere Datenverwaltung und Authentifizierung.
+
 ![Komponentendiagramm](docs/component.drawio.svg)
 _Komponentendiagramm_
 
 ### Deployment
+
 Die Anwendung wird auf einer VPS in Docker Containern deployed werden und über Traefik als Reverse Proxy im Internet erreichbar sein.  
 ![Deploymentdiagramm](docs/deployment.drawio.svg)  
 _Deploymentdiagramm_
@@ -195,8 +204,10 @@ _Deploymentdiagramm_
 Zugangsdaten befinden sich in Confluence. Wir haben keine Sudo-Rechte auf dem Server.
 
 ### Docker Registry
+
 Ein Harbor Docker Registry (harbor.hitabis.de/htw) wurde uns von Hitabis zur Verfügung gestellt. Potenzielle Docker Images können beispielsweise mit dem `harbor.hitabis.de/htw/schedular:production` Tag gepushed werden.
-Die Zugangsdaten dafür liegen auf der VM unter `/home/htw/harbor-registry-hitabis.txt`. 
+Die Zugangsdaten dafür liegen auf der VM unter `/home/htw/harbor-registry-hitabis.txt`.
 
 ### Reverse Proxy
+
 Für die Verbinding ins Internet mit einem gültigen SSL-Zertifikat sollen wir `Traefik` nutzen, ein Container, sowie ein [Template](docker-compose.yml) wurde uns zur Verfügung gestellt.

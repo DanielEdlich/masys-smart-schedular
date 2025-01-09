@@ -26,5 +26,4 @@ export function authMiddleware(request: NextRequest) {
       "WWW-Authenticate": 'Basic realm="Protected Area"',
     },
   });
-  
 }
