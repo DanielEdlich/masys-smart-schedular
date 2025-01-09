@@ -55,6 +55,7 @@ export function EditClassDialog({ schoolClass, onEditClass, onCancel, teachers }
           <DialogTitle>Klasse bearbeiten</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
+          <p className="text-xs text-gray-500">Klassenname</p>
           <Input
             name="name"
             placeholder="Klassenname"
@@ -62,12 +63,14 @@ export function EditClassDialog({ schoolClass, onEditClass, onCancel, teachers }
             onChange={handleInputChange}
             required
           />
+          <p className="text-xs text-gray-500">Jahrgang</p>
           <Input
             name="year"
             placeholder="Jahrgang (z.B. 1-3, 4-6)"
             value={editedClass.year ?? ''}
             onChange={handleInputChange}
           />
+          <p className="text-xs text-gray-500">Zug</p>
           <Select
             name="track"
             value={editedClass.track}
@@ -81,6 +84,7 @@ export function EditClassDialog({ schoolClass, onEditClass, onCancel, teachers }
               <SelectItem value="B">Zug B</SelectItem>
             </SelectContent>
           </Select>
+          <p className="text-xs text-gray-500">Klassenlehrer</p>
           <Select
             name="primary_teacher_id"
             value={editedClass.primary_teacher_id.toString()}
@@ -89,6 +93,7 @@ export function EditClassDialog({ schoolClass, onEditClass, onCancel, teachers }
             <SelectTrigger>
               <SelectValue placeholder="Klassenlehrer auswählen" />
             </SelectTrigger>
+            <p className="text-xs text-gray-500">Co-Klassenlehrer auswählen (optional)</p>
             <SelectContent>
               {teachers.map((teacher) => (
                 <SelectItem key={teacher.id} value={teacher.id.toString()}>

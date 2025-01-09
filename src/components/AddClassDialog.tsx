@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { SchoolClass, Teacher } from '@/db/types'
+import { Label } from './ui/label'
 
 
 type AddClassDialogProps = {
@@ -57,6 +58,7 @@ export function AddClassDialog({ onAddClass, onClose, teachers }: AddClassDialog
           <DialogTitle>Neue Klasse hinzufügen</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
+          <p className='text-xs text-gray-500'>Klassenname</p>
           <Input
             name="name"
             placeholder="Klassenname"
@@ -64,6 +66,7 @@ export function AddClassDialog({ onAddClass, onClose, teachers }: AddClassDialog
             onChange={handleInputChange}
             required
           />
+          <p className='text-xs text-gray-500'>Jahrgang (z.B. 1-3, 4-6)</p>
           <Input
             name="year"
             placeholder="Jahrgang (z.B. 1-3, 4-6)"
@@ -75,6 +78,7 @@ export function AddClassDialog({ onAddClass, onClose, teachers }: AddClassDialog
             value={newClass.track}
             onValueChange={(value) => handleSelectChange('track', value)}
           >
+            <p className='text-xs text-gray-500'>Zug auswählen</p>
             <SelectTrigger>
               <SelectValue placeholder="Zug auswählen" />
             </SelectTrigger>
@@ -88,6 +92,7 @@ export function AddClassDialog({ onAddClass, onClose, teachers }: AddClassDialog
             value={newClass.primary_teacher_id.toString()}
             onValueChange={(value) => handleSelectChange('primary_teacher_id', value)}
           >
+            <p className='text-xs text-gray-500'>Klassenlehrer auswählen</p>
             <SelectTrigger>
               <SelectValue placeholder="Klassenlehrer auswählen" />
             </SelectTrigger>
@@ -104,6 +109,7 @@ export function AddClassDialog({ onAddClass, onClose, teachers }: AddClassDialog
             value={newClass.secondary_teacher_id?.toString() ?? 'null'}
             onValueChange={(value) => handleSelectChange('secondary_teacher_id', value)}
           >
+            <p className='text-xs text-gray-500'>Co-Klassenlehrer auswählen (optional)</p>
             <SelectTrigger>
               <SelectValue placeholder="Co-Klassenlehrer auswählen (optional)" />
             </SelectTrigger>

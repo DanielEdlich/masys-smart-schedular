@@ -3,7 +3,6 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import SchulklassenVerwaltung from '@/app/klassen-verwaltung/page'
 import { getClasses, getTeachers } from '@/app/actions/classActions'
-import { Teacher, SchoolClass } from '@/db/types'
 
 // Mock next/navigation
 jest.mock('next/navigation', () => ({
