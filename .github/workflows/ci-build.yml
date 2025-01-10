@@ -65,7 +65,7 @@ jobs:
       #     password: "${{ secrets.HARBOR_PASSWORD }}"
 
       - name: Login to docker registry
-        run: | 
+        run: |
           docker login "${{ secrets.HARBOR_REGISTRY }}" -u "${{ secrets.HARBOR_USERNAME }}" -p "${{ secrets.HARBOR_PASSWORD }}"
 
       - name: Build Docker Image

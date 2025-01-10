@@ -1,45 +1,55 @@
-'use client'
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
-import { deleteClass } from '@/app/actions/classActions'
-import { useToast } from "@/hooks/use-toast"
-import { SchoolClass } from '@/db/types'
-
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { deleteClass } from "@/app/actions/classActions";
+import { useToast } from "@/hooks/use-toast";
+import { SchoolClass } from "@/db/types";
 
 type DeleteConfirmDialogProps = {
-  schoolClass: SchoolClass
-  isOpen: boolean
-  onClose: () => void
-  onDeleteComplete: () => void
-}
+  schoolClass: SchoolClass;
+  isOpen: boolean;
+  onClose: () => void;
+  onDeleteComplete: () => void;
+};
 
-export function DeleteConfirmDialog({ schoolClass, isOpen, onClose, onDeleteComplete }: DeleteConfirmDialogProps) {
-  const [isDeleting, setIsDeleting] = useState(false)
-  const { toast } = useToast()
+export function DeleteConfirmDialog({
+  schoolClass,
+  isOpen,
+  onClose,
+  onDeleteComplete,
+}: DeleteConfirmDialogProps) {
+  const [isDeleting, setIsDeleting] = useState(false);
+  const { toast } = useToast();
 
   const handleDelete = async () => {
-    setIsDeleting(true)
+    setIsDeleting(true);
     try {
-      await deleteClass(schoolClass.id)
+      await deleteClass(schoolClass.id);
       toast({
         title: "Klasse erfolgreich gelöscht!",
-        description: `Die Klasse ${schoolClass.name} wurde gelöscht.`
-      })
-      onDeleteComplete()
+        description: `Die Klasse ${schoolClass.name} wurde gelöscht.`,
+      });
+      onDeleteComplete();
     } catch (error) {
-      console.error('Failed to delete class:', error)
+      console.error("Failed to delete class:", error);
       toast({
         variant: "destructive",
         title: "Fehler beim Löschen der Klasse.",
-        description: "Bitte versuchen Sie es später erneut."
-      })
+        description: "Bitte versuchen Sie es später erneut.",
+      });
     } finally {
-      setIsDeleting(false)
-      onClose()
+      setIsDeleting(false);
+      onClose();
     }
-  }
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -52,12 +62,18 @@ export function DeleteConfirmDialog({ schoolClass, isOpen, onClose, onDeleteComp
           <p className="font-semibold">{schoolClass.name}</p>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>Abbrechen</Button>
-          <Button variant="destructive" onClick={handleDelete} disabled={isDeleting}>
-            {isDeleting ? 'Löschen...' : 'Löschen'}
+          <Button variant="outline" onClick={onClose}>
+            Abbrechen
+          </Button>
+          <Button
+            variant="destructive"
+            onClick={handleDelete}
+            disabled={isDeleting}
+          >
+            {isDeleting ? "Löschen..." : "Löschen"}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

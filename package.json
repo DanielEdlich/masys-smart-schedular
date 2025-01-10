@@ -9,11 +9,13 @@
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "cypress:open": "cypress open",
-    "format": "prettier --write .",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write .",
     "test": "DB_FILE_NAME=file:test.db npx drizzle-kit push && jest --runInBand",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "db": "npx drizzle-kit push"
+    "db": "npx drizzle-kit push",
+    "prepare": "husky"
   },
   "dependencies": {
     "@libsql/client": "^0.14.0",
@@ -60,6 +62,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-react": "^7.37.2",
+    "husky": "^9.1.7",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "postcss": "^8",

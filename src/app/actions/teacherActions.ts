@@ -1,10 +1,10 @@
-'use server';
+"use server";
 
-import { db } from '@/db/db';
-import { TeacherRepository } from '@/repositories/teacherRepository';
-import { TeacherBlockerRepository } from '@/repositories/teacherBlockerRepository';
-import { revalidatePath } from 'next/cache';
-import { cookies } from 'next/headers';
+import { db } from "@/db/db";
+import { TeacherRepository } from "@/repositories/teacherRepository";
+import { TeacherBlockerRepository } from "@/repositories/teacherBlockerRepository";
+import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 
 const teacherRepository = new TeacherRepository(db);
 const blockerRepository = new TeacherBlockerRepository(db);
@@ -13,15 +13,18 @@ export async function createTeacher(data: any) {
   const { blocker: blockerData, ...teacherData } = data;
   const newTeacher = await teacherRepository.create(teacherData);
   if (!newTeacher) {
-    throw new Error('Failed to create teacher');
+    throw new Error("Failed to create teacher");
   }
 
   if (blockerData && blockerData.length > 0) {
-
-    blockerRepository.create(blockerData.map((singleBlock: any) => ({ ...singleBlock, teacher_id: newTeacher.id })));
-
+    blockerRepository.create(
+      blockerData.map((singleBlock: any) => ({
+        ...singleBlock,
+        teacher_id: newTeacher.id,
+      })),
+    );
   }
-  revalidatePath('/lehrer-verwaltung');
+  revalidatePath("/lehrer-verwaltung");
 }
 
 export async function updateTeacher(data: any) {
@@ -39,8 +42,7 @@ export async function updateTeacher(data: any) {
       blockerRepository.create({ ...block, teacher_id: id });
     });
   }
-  revalidatePath('/lehrer-verwaltung');
-
+  revalidatePath("/lehrer-verwaltung");
 }
 
 export async function deleteTeacher(id: number) {
@@ -49,8 +51,7 @@ export async function deleteTeacher(id: number) {
 
   // 2: delete teacher
   await teacherRepository.delete(id);
-  revalidatePath('/lehrer-verwaltung');
-
+  revalidatePath("/lehrer-verwaltung");
 }
 
 export async function getAllTeachers() {
@@ -65,11 +66,10 @@ export async function getAllTeachers() {
       const blocker = await blockerRepository.getForTeacher(teacher.id);
       return {
         ...teacher,
-        blocker: blocker || [] // Provide empty array as fallback
+        blocker: blocker || [], // Provide empty array as fallback
       };
-    })
+    }),
   );
 
   return teachersWithBlocker;
 }
-
