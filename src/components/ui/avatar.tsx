@@ -2,9 +2,9 @@
 
 import * as React from "react";
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
-
 import { cn } from "@/lib/utils";
 
+// Avatar-Komponente
 const Avatar = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>
@@ -20,6 +20,7 @@ const Avatar = React.forwardRef<
 ));
 Avatar.displayName = AvatarPrimitive.Root.displayName;
 
+// AvatarImage-Komponente
 const AvatarImage = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Image>,
   React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>
@@ -32,14 +33,23 @@ const AvatarImage = React.forwardRef<
 ));
 AvatarImage.displayName = AvatarPrimitive.Image.displayName;
 
+// AvatarFallback-Komponente mit dynamischen Farben
+interface AvatarFallbackProps
+  extends React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback> {
+  bgColor?: string; // Hintergrundfarbe als Hex-/RGB-Wert
+}
+
 const AvatarFallback = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Fallback>,
-  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback>
->(({ className, ...props }, ref) => (
+  AvatarFallbackProps
+>(({ bgColor = "#e0bbff", className, ...props }, ref) => (
   <AvatarPrimitive.Fallback
     ref={ref}
+    style={{
+      backgroundColor: bgColor,
+    }}
     className={cn(
-      "flex h-full w-full items-center justify-center rounded-full bg-purple-200 text-purple-800",
+      "flex h-full w-full items-center justify-center rounded-full",
       className,
     )}
     {...props}
@@ -47,4 +57,5 @@ const AvatarFallback = React.forwardRef<
 ));
 AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName;
 
+// Export der Komponenten
 export { Avatar, AvatarImage, AvatarFallback };

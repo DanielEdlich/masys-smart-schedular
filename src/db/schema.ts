@@ -16,6 +16,7 @@ export const teacher = sqliteTable("teacher", {
   phone: text("phone_number").notNull(), // Phone number
   priority: integer("priority").notNull(), // Priority
   weekly_capacity: integer("weekly_capacity").notNull(), //capacity
+  color: text("color").notNull().default("#000000"),
 });
 
 // ---------------------------------------

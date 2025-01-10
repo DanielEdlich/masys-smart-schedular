@@ -52,9 +52,11 @@ export default async function Lehrerverwaltung() {
                     <TeacherAvatar
                       first_name={teacher.first_name}
                       last_name={teacher.last_name}
+                      color={teacher.color}
                     />
                   </TableCell>
                   <TableCell>{`${teacher.first_name} ${teacher.last_name}`}</TableCell>
+                  {/* Farbpünktchen */}
                   <TableCell>{teacher.email}</TableCell>
                   <TableCell>{teacher.phone}</TableCell>
                   <TableCell>{teacher.priority}</TableCell>
