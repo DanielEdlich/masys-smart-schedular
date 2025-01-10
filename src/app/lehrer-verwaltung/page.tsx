@@ -56,7 +56,6 @@ export default async function Lehrerverwaltung() {
                     />
                   </TableCell>
                   <TableCell>{`${teacher.first_name} ${teacher.last_name}`}</TableCell>
-                  {/* Farbpünktchen */}
                   <TableCell>{teacher.email}</TableCell>
                   <TableCell>{teacher.phone}</TableCell>
                   <TableCell>{teacher.priority}</TableCell>
