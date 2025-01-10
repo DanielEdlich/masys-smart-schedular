@@ -7,23 +7,23 @@ jest.mock("@/components/Navbar", () => ({
   Navbar: () => <div data-testid="navbar">Navbar</div>,
 }));
 
-jest.mock("@/components/CreateTeacherDialog", () => ({
+jest.mock("@/components/lehrer-verwaltung/CreateTeacherDialog", () => ({
   CreateTeacherDialog: () => <div>Create Teacher</div>,
 }));
 
-jest.mock("@/components/TeacherAvatar", () => ({
+jest.mock("@/components/lehrer-verwaltung/TeacherAvatar", () => ({
   TeacherAvatar: () => <div>Avatar</div>,
 }));
 
-jest.mock("@/components/EditTeacherDialog", () => ({
+jest.mock("@/components/lehrer-verwaltung/EditTeacherDialog", () => ({
   EditTeacherDialog: () => <div>Edit Teacher</div>,
 }));
 
-jest.mock("@/components/DeleteTeacherDialog", () => ({
+jest.mock("@/components/lehrer-verwaltung/DeleteTeacherDialog", () => ({
   DeleteTeacherDialog: () => <div>Delete Teacher</div>,
 }));
 
-jest.mock("@/components/TeacherBlocker", () => ({
+jest.mock("@/components/lehrer-verwaltung/TeacherBlocker", () => ({
   TeacherBlocker: () => <div>Teacher Blocker</div>,
 }));
 

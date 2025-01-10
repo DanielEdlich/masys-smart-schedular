@@ -1,5 +1,5 @@
 import { Navbar } from "@/components/Navbar";
-import ClassScheduler from "@/components/ClassScheduler";
+import ClassScheduler from "@/components/lehrplan/ClassScheduler";
 
 export default async function Lehrerverwaltung() {
   return (

@@ -7,11 +7,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { TeacherAvatar } from "@/components/TeacherAvatar";
-import { CreateTeacherDialog } from "@/components/CreateTeacherDialog";
-import { EditTeacherDialog } from "@/components/EditTeacherDialog";
-import { DeleteTeacherDialog } from "@/components/DeleteTeacherDialog";
-import { TeacherBlocker } from "@/components/TeacherBlocker";
+import { TeacherAvatar } from "@/components/lehrer-verwaltung/TeacherAvatar";
+import { CreateTeacherDialog } from "@/components/lehrer-verwaltung/CreateTeacherDialog";
+import { EditTeacherDialog } from "@/components/lehrer-verwaltung/EditTeacherDialog";
+import { DeleteTeacherDialog } from "@/components/lehrer-verwaltung/DeleteTeacherDialog";
+import { TeacherBlocker } from "@/components/lehrer-verwaltung/TeacherBlocker";
 import { getAllTeachers } from "@/app/actions/teacherActions";
 import { Navbar } from "@/components/Navbar";
 
