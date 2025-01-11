@@ -37,7 +37,7 @@ jest.mock("@/app/actions/teacherActions", () => ({
         email: "john@example.com",
         phone: "123456",
         priority: "High",
-        color: "#000000",
+        color: "#37EB5B",
         blocker: [],
       },
     ]),

@@ -31,13 +31,8 @@ function TeacherSelectItem({ teacher }: { teacher: Teacher }) {
   return (
     <SelectItem key={teacher.id} value={teacher.id.toString()}>
       <span
-        style={{
-          display: "inline-block",
-          width: "10px",
-          height: "10px",
-          backgroundColor: teacher.color,
-          marginRight: "8px",
-        }}
+        className="inline-block w-2.5 h-2.5 rounded-full mr-2"
+        style={{ backgroundColor: teacher.color }}
       />
       {teacher.first_name} {teacher.last_name}
     </SelectItem>

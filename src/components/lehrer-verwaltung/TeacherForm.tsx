@@ -226,13 +226,21 @@ export function TeacherForm({
           <Label htmlFor="color" className="text-right">
             Farbe
           </Label>
-          <Input
-            id="color"
-            type="color"
-            value={formData.color}
-            onChange={(e) => handleChange("color", e.target.value)}
-            className="col-span-3"
-          />
+          <div className="flex items-center gap-4">
+            <div className="relative w-6 h-6">
+              <div
+                className="w-full h-full rounded-full"
+                style={{ backgroundColor: formData.color }}
+              />
+            </div>
+            <Input
+              id="color"
+              type="color"
+              value={formData.color}
+              onChange={(e) => handleChange("color", e.target.value)}
+              className="w-0 h-0 opacity-0 absolute" // versteckter Input
+            />
+          </div>
         </div>
 
         {/* Blocker */}

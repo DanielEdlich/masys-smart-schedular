@@ -48,7 +48,7 @@ export function EditTeacherDialog({ teacher }: { teacher: Teacher }) {
     phone: teacher.phone,
     priority: teacher.priority,
     weekly_capacity: teacher.weekly_capacity,
-    color: teacher.color || "#000000",
+    color: teacher.color || "#37EB5B",
     blocker: teacher.blocker || [],
   };
 

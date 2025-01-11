@@ -28,7 +28,7 @@ export function CreateTeacherDialog() {
     phone: "",
     priority: 1,
     weekly_capacity: 40,
-    color: "#000000",
+    color: "#37EB5B",
     blocker: [{ day: "Montag", timeslot_from: 1, timeslot_to: 2 }],
   };
 
