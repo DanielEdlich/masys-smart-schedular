@@ -23,12 +23,13 @@ export function AddClassDialog({
   };
 
   return (
-    <ClassDialog
+    <ClassDialog<Omit<SchoolClass, "id">>
       initialClass={initialClass}
       onSubmit={onAddClass}
       onCancel={onClose}
       teachers={teachers}
       title="Neue Klasse hinzufügen"
+      isEditing={false}
     />
   );
 }

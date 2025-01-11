@@ -18,41 +18,41 @@ import {
 } from "@/components/ui/select";
 import { SchoolClass, Teacher } from "@/db/types";
 
-type ClassDialogProps = {
-  initialClass: Omit<SchoolClass, "id">;
-  onSubmit: (classData: Omit<SchoolClass, "id"> | SchoolClass) => Promise<void>;
+interface ClassDialogProps<T> {
+  initialClass: T;
+  onSubmit: (classData: T) => Promise<void>;
   onCancel: () => void;
   teachers: Teacher[];
   title: string;
-  isEditing?: boolean;
-};
+  isEditing: boolean;
+}
 
-const TeacherSelectItem = ({ teacher }: { teacher: Teacher }) => (
-  <SelectItem key={teacher.id} value={teacher.id.toString()}>
-    <span
-      style={{
-        display: "inline-block",
-        width: "10px",
-        height: "10px",
-        backgroundColor: teacher.color,
-        marginRight: "8px",
-      }}
-    ></span>
-    {`${teacher.first_name} ${teacher.last_name}`}
-  </SelectItem>
-);
+function TeacherSelectItem({ teacher }: { teacher: Teacher }) {
+  return (
+    <SelectItem key={teacher.id} value={teacher.id.toString()}>
+      <span
+        style={{
+          display: "inline-block",
+          width: "10px",
+          height: "10px",
+          backgroundColor: teacher.color,
+          marginRight: "8px",
+        }}
+      />
+      {teacher.first_name} {teacher.last_name}
+    </SelectItem>
+  );
+}
 
-export function ClassDialog({
+export function ClassDialog<T extends SchoolClass | Omit<SchoolClass, "id">>({
   initialClass,
   onSubmit,
   onCancel,
   teachers,
   title,
-  isEditing = false,
-}: ClassDialogProps) {
-  const [classData, setClassData] = useState<
-    Omit<SchoolClass, "id"> | SchoolClass
-  >(initialClass);
+  isEditing,
+}: ClassDialogProps<T>) {
+  const [classData, setClassData] = useState<T>(initialClass);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -60,18 +60,16 @@ export function ClassDialog({
   }, [initialClass]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setClassData({ ...classData, [e.target.name]: e.target.value });
+    setClassData({ ...classData, [e.target.name]: e.target.value } as T);
   };
 
   const handleSelectChange = (name: string, value: string) => {
-    setClassData({
-      ...classData,
-      [name]: name.includes("teacher")
-        ? value === "null"
-          ? null
-          : parseInt(value)
-        : value,
-    });
+    const parsedValue = name.includes("teacher")
+      ? value === "null"
+        ? null
+        : parseInt(value)
+      : value;
+    setClassData({ ...classData, [name]: parsedValue } as T);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -114,14 +112,14 @@ export function ClassDialog({
             />
           </div>
           <div>
-            <p className="text-xs text-gray-500">Zug auswählen</p>
+            <p className="text-xs text-gray-500">Zug</p>
             <Select
               name="track"
               value={classData.track}
               onValueChange={(value) => handleSelectChange("track", value)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Zug auswählen" />
+                <SelectValue placeholder="Zug wählen" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="A">Zug A</SelectItem>
@@ -130,37 +128,20 @@ export function ClassDialog({
             </Select>
           </div>
           <div>
-            <p className="text-xs text-gray-500">Klassenlehrer auswählen</p>
+            <p className="text-xs text-gray-500">Klassenlehrer</p>
             <Select
               name="primary_teacher_id"
-              value={classData.primary_teacher_id.toString()}
+              value={
+                classData.primary_teacher_id
+                  ? classData.primary_teacher_id.toString()
+                  : "null"
+              }
               onValueChange={(value) =>
                 handleSelectChange("primary_teacher_id", value)
               }
             >
               <SelectTrigger>
-                <SelectValue placeholder="Klassenlehrer auswählen" />
-              </SelectTrigger>
-              <SelectContent>
-                {teachers.map((teacher) => (
-                  <TeacherSelectItem key={teacher.id} teacher={teacher} />
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <p className="text-xs text-gray-500">
-              Co-Klassenlehrer auswählen (optional)
-            </p>
-            <Select
-              name="secondary_teacher_id"
-              value={classData.secondary_teacher_id?.toString() ?? "null"}
-              onValueChange={(value) =>
-                handleSelectChange("secondary_teacher_id", value)
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Co-Klassenlehrer auswählen (optional)" />
+                <SelectValue placeholder="Klassenlehrer" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="null">Keiner</SelectItem>
@@ -170,24 +151,43 @@ export function ClassDialog({
               </SelectContent>
             </Select>
           </div>
-          <div
-            className={`flex ${isEditing ? "justify-end space-x-2" : "justify-center"}`}
-          >
-            {isEditing && (
-              <>
-                <Button type="button" variant="outline" onClick={onCancel}>
-                  Abbrechen
-                </Button>
-                <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? "Speichern..." : "Speichern"}
-                </Button>
-              </>
-            )}
-            {!isEditing && (
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Hinzufügen..." : "Klasse hinzufügen"}
-              </Button>
-            )}
+          <div>
+            <p className="text-xs text-gray-500">Co-Klassenlehrer (optional)</p>
+            <Select
+              name="secondary_teacher_id"
+              value={
+                classData.secondary_teacher_id
+                  ? classData.secondary_teacher_id.toString()
+                  : "null"
+              }
+              onValueChange={(value) =>
+                handleSelectChange("secondary_teacher_id", value)
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Co-Klassenlehrer (optional)" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="null">Keiner</SelectItem>
+                {teachers.map((teacher) => (
+                  <TeacherSelectItem key={teacher.id} teacher={teacher} />
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex justify-end space-x-2">
+            <Button type="button" variant="outline" onClick={onCancel}>
+              Abbrechen
+            </Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting
+                ? isEditing
+                  ? "Speichert..."
+                  : "Fügt hinzu..."
+                : isEditing
+                  ? "Speichern"
+                  : "Hinzufügen"}
+            </Button>
           </div>
         </form>
       </DialogContent>

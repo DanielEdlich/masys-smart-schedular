@@ -5,9 +5,7 @@ import { Teacher, SchoolClass } from "@/db/types";
 
 type EditClassDialogProps = {
   schoolClass: SchoolClass;
-  onEditClass: (
-    classData: Omit<SchoolClass, "id"> | SchoolClass,
-  ) => Promise<void>;
+  onEditClass: (classData: SchoolClass) => Promise<void>;
   onCancel: () => void;
   teachers: Teacher[];
 };
@@ -19,7 +17,7 @@ export function EditClassDialog({
   teachers,
 }: EditClassDialogProps) {
   return (
-    <ClassDialog
+    <ClassDialog<SchoolClass>
       initialClass={schoolClass}
       onSubmit={onEditClass}
       onCancel={onCancel}
