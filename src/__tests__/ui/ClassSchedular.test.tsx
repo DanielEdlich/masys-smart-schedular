@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import ClassScheduler from "@/components/ClassScheduler";
+import ClassScheduler from "@/components/lehrplan/ClassScheduler";
 
 // Mock react-dnd
 jest.mock("react-dnd", () => ({

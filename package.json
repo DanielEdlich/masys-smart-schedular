@@ -16,6 +16,7 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "db": "npx drizzle-kit push",
+    "db:local": "DB_FILE_NAME=file:local.db npx drizzle-kit push",
     "prepare": "husky"
   },
   "dependencies": {

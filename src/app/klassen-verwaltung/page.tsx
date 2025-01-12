@@ -12,9 +12,9 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
-import { AddClassDialog } from "@/components/AddClassDialog";
-import { EditClassDialog } from "@/components/EditClassDialog";
-import { DeleteConfirmDialog } from "@/components/DeleteClassDialog";
+import { AddClassDialog } from "@/components/klassen-verwaltung/CreateClassDialog";
+import { EditClassDialog } from "@/components/klassen-verwaltung/EditClassDialog";
+import { DeleteConfirmDialog } from "@/components/klassen-verwaltung/DeleteClassDialog";
 import { useToast } from "@/hooks/use-toast";
 import {
   getClasses,
@@ -24,6 +24,19 @@ import {
 } from "@/app/actions/classActions";
 import { SchoolClass, Teacher } from "@/db/types";
 import { Navbar } from "@/components/Navbar";
+
+const TeacherNameWithColor = ({ teacher }: { teacher: Teacher | null }) => {
+  if (!teacher) return "-";
+  return (
+    <span>
+      <span
+        className="inline-block w-2.5 h-2.5 rounded-full mr-2"
+        style={{ backgroundColor: teacher.color }}
+      ></span>
+      {`${teacher.first_name} ${teacher.last_name}`}
+    </span>
+  );
+};
 
 export default function SchulklassenVerwaltung() {
   const [classes, setClasses] = useState<SchoolClass[]>([]);
@@ -109,9 +122,8 @@ export default function SchulklassenVerwaltung() {
   };
 
   const getTeacherName = (id: number | null) => {
-    if (id === null) return "-";
-    const teacher = teachers.find((t) => t.id === id);
-    return teacher ? `${teacher.first_name} ${teacher.last_name}` : "Unbekannt";
+    if (id === null) return null;
+    return teachers.find((t) => t.id === id) || null;
   };
 
   if (isLoading) {
@@ -157,9 +169,15 @@ export default function SchulklassenVerwaltung() {
                 <TableCell>{cls.name}</TableCell>
                 <TableCell>{cls.year}</TableCell>
                 <TableCell>{cls.track}</TableCell>
-                <TableCell>{getTeacherName(cls.primary_teacher_id)}</TableCell>
                 <TableCell>
-                  {getTeacherName(cls.secondary_teacher_id)}
+                  <TeacherNameWithColor
+                    teacher={getTeacherName(cls.primary_teacher_id)}
+                  />
+                </TableCell>
+                <TableCell>
+                  <TeacherNameWithColor
+                    teacher={getTeacherName(cls.secondary_teacher_id)}
+                  />
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end space-x-2">
