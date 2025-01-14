@@ -17,11 +17,14 @@
     "test:coverage": "jest --coverage",
     "db": "npx drizzle-kit push",
     "db:local": "DB_FILE_NAME=file:local.db npx drizzle-kit push",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test-measure": "DB_FILE_NAME=file:test.db npx drizzle-kit push && ENABLE_MEASUREMENTS=1 npx jest --coverage --runInBand"
+
   },
   "dependencies": {
     "@libsql/client": "^0.14.0",
-    "drizzle-kit": "^0.29.1",
+    "@oaklean/cli": "^0.1.5",
+    "@oaklean/profiler-jest-environment": "^0.1.5",
     "@radix-ui/react-avatar": "^1.1.1",
     "@radix-ui/react-dialog": "^1.1.2",
     "@radix-ui/react-label": "^2.1.0",
@@ -32,6 +35,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "dotenv": "^16.4.7",
+    "drizzle-kit": "^0.29.1",
     "drizzle-orm": "^0.37.0",
     "lucide-react": "^0.460.0",
     "next": "14.2.21",

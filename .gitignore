@@ -39,3 +39,6 @@ drizzle
 *.db
 .env.production
 *.idea
+/.npmrc
+profiles/
+profiles_history/

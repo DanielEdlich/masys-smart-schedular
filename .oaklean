@@ -1,0 +1,28 @@
+{
+  "exportOptions": {
+    "outDir": "profiles/",
+    "outHistoryDir": "profiles_history/",
+    "rootDir": "./",
+    "exportV8Profile": false,
+    "exportReport": true,
+    "exportSensorInterfaceData": false
+  },
+  "projectOptions": {
+    "identifier": "3c85512f-8d3d-47f1-b48d-44013de13697"
+  },
+  "runtimeOptions": {
+    "seeds": {},
+    "v8": {
+      "cpu": {
+        "sampleInterval": 1
+      }
+    },
+    "sensorInterface": {
+      "type": "powermetrics",
+      "options": {
+        "outputFilePath": "energy-measurements.plist",
+        "sampleInterval": 100
+      }
+    }
+  }
+}
