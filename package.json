@@ -15,11 +15,10 @@
     "test": "DB_FILE_NAME=file:test.db npx drizzle-kit push && jest --runInBand",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "test:measure": "DB_FILE_NAME=file:test.db npx drizzle-kit push && ENABLE_MEASUREMENTS=1 npx jest --coverage --runInBand",
     "db": "npx drizzle-kit push",
     "db:local": "DB_FILE_NAME=file:local.db npx drizzle-kit push",
-    "prepare": "husky",
-    "test-measure": "DB_FILE_NAME=file:test.db npx drizzle-kit push && ENABLE_MEASUREMENTS=1 npx jest --coverage --runInBand"
-
+    "prepare": "husky"
   },
   "dependencies": {
     "@libsql/client": "^0.14.0",

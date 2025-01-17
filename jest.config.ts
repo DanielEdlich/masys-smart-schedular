@@ -156,12 +156,12 @@ const config: Config = {
   // The test environment that will be used for testing
   // testEnvironment: "jsdom",
 
-  testEnvironment: '@oaklean/profiler-jest-environment/env.js', // add this line
-  globalTeardown: '@oaklean/profiler-jest-environment/teardown.js', // add this line
+  testEnvironment: "@oaklean/profiler-jest-environment/env.js", // add this line
+  globalTeardown: "@oaklean/profiler-jest-environment/teardown.js", // add this line
   testEnvironmentOptions: {
-    testEnvironment: 'jsdom'
+    testEnvironment: "jsdom",
   },
-  
+
   // Options that will be passed to the testEnvironment
   // testEnvironmentOptions: {},
 
