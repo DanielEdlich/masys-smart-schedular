@@ -20,7 +20,7 @@ export const teacher = sqliteTable("teacher", {
 });
 
 // ---------------------------------------
-// AVAILABILITY
+// BLOCKER
 // ---------------------------------------
 export const blocker = sqliteTable(
   "blocker",
@@ -91,15 +91,16 @@ export const lesson = sqliteTable(
   "lesson",
   {
     id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    date: text("date"), // Weekday as Enum (Monday, Tuesday, etc)
+    day: text("date"), // Weekday as Enum (Monday, Tuesday, etc)
     week: text("week"), // A or B week or maybe more later
-    timeslot: integer("timeslot_from").notNull(), // Timeslot (e.g. 4)
+    timeslot: integer("timeslot_from"), // Timeslot (e.g. 4)
     name: text("name"), // Lesson name
 
-    timetable_id: integer("timetable_id").notNull(),
-    school_class_id: integer("school_class_id").notNull(),
-    primary_teacher_id: integer("primary_teacher_id").notNull(),
+    timetable_id: integer("timetable_id"),
+    school_class_id: integer("school_class_id"),
+    primary_teacher_id: integer("primary_teacher_id"),
     secondary_teacher_id: integer("secondary_teacher_id"),
+    isBlocker: integer("is_blocker", { mode: "boolean" }).notNull().default(false)
   },
   (table) => {
     return {

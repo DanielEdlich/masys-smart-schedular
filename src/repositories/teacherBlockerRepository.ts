@@ -1,6 +1,6 @@
 import { eq, and, gte, lte } from "drizzle-orm";
 import { Blocker, NewBlocker, DbClient } from "@/db/types";
-import { blocker } from "@/db/schema";
+import { blocker, teacher } from "@/db/schema";
 
 export class TeacherBlockerRepository {
   constructor(private readonly dbClient: DbClient) {}

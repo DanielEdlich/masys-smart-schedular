@@ -26,3 +26,32 @@ export enum SchoolClassTrack {
 export interface DbClient extends LibSQLDatabase<Record<string, never>> {
   $client: Client;
 }
+
+export enum Week {
+  A = "A",
+  B = "B",
+}
+
+export enum Weekday {
+  "Montag",
+  "Dienstag",
+  "Mittwoch",
+  "Donnerstag",
+  "Freitag"
+}
+
+
+
+// Update other types that used className
+export type ClassSchedule = {
+  [classId: number]: WeekSchedule;
+};
+
+export type Schedule = {
+  [day in Weekday]: ClassSchedule;
+};
+
+export type WeekSchedule = {
+  [week in Week]: (Lesson | null)[];
+};
+
