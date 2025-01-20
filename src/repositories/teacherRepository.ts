@@ -64,10 +64,8 @@ export class TeacherRepository {
     const blockedTeacherIds = results.map((blocker) => blocker.teacher_id);
 
     const allTeachers = await this.dbClient.select().from(teacher);
-    const allTeacherIds = allTeachers.map((teacher) => teacher.id);
 
-    return allTeacherIds.filter((teacherId) => !blockedTeacherIds.includes
-    (teacherId));
+    return allTeachers.filter((teacher) => !blockedTeacherIds.includes(teacher.id));
   }
 
   // check if teacher is available at the given timeslot

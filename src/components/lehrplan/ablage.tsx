@@ -11,7 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { LessonForm } from './lesson-form';
+import { LessonForm } from '@/components/lehrplan/lesson-form';
 import { useToast } from "@/hooks/use-toast";
 
 
@@ -20,11 +20,11 @@ type AblageProps = {
   lessons: Lesson[];
   onDrop: (lesson: Lesson) => void;
   moveLesson: (
-    lesson: Lesson,
-    toDay: string,
-    toName: string,
-    toWeek: string,
-    toTimeslot: number,
+    lesson: Lesson | null,
+    toDay: string | null,
+    toName: string | null,
+    toWeek: string | null,
+    toTimeslot: number | null
   ) => void;
   addLessonToAblage: (
     primary_teacher_id: number | null,
@@ -42,10 +42,10 @@ type AblageProps = {
     secondaryTeacher?: Teacher,
   ) => void;
   deleteLesson: (
-    day: string,
-    name: string,
-    week: string,
-    timeslot: number,
+    day: string | null,
+    name: string | null,
+    week: string | null,
+    timeslot: number | null
   ) => void;
   teachers: Teacher[];
   isTeacherAvailable: (teacher: Teacher, day: string, timeslot: number) => Promise<boolean>;
@@ -72,7 +72,7 @@ export const Ablage: React.FC<AblageProps> = ({
         onDrop(item);
       } else {
         // If the item is already in Ablage, just update its position
-        handleMoveLesson(item, 'Ablage', 'Ablage', null, lessons.length);
+        handleMoveLesson(item, 'Ablage', 'Ablage', 'Ablage', lessons.length);
       }
     },
   });

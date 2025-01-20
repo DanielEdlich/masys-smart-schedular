@@ -6,7 +6,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { Ablage } from '@/components/lehrplan/ablage';
 import { DroppableSlot } from '@/components/lehrplan/droppable-slot';
 import { Lesson, Teacher, SchoolClass, Blocker, Timetable } from '@/db/types';
-import { getSchoolClasses, getTeachers, addCard, deleteCard, moveCard, loadSchedule, getBlockers, isTeacherAlreadyBooked, getAvailableTeachers, getAvailableTeachersForEdit, getScheduleCards, getAblageCards, saveSchedule, getAllTeacherBlockers } from '@/app/actions/classSchedulerActions';
+import { getSchoolClasses, getTeachers, addCard, deleteCard, moveCard, loadSchedule, getBlockers, getAvailableTeachers, getAvailableTeachersForEdit, getScheduleCards, getAblageCards, saveSchedule, getAllTeacherBlockers } from '@/app/actions/classSchedulerActions';
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
@@ -175,7 +175,8 @@ export default function ClassScheduler({
     teacher: Teacher | undefined,
     day: string,
     timeslot: number,
-    week: string
+    week: string,
+    draggedLesson?: Lesson
   ): Promise<boolean> => {
     // If no teacher, they're available
     if (!teacher) return true;
@@ -192,8 +193,21 @@ export default function ClassScheduler({
       timeslot >= blocker.timeslot_from && 
       timeslot <= blocker.timeslot_to
     );
-  
-    return !isBlocked;
+
+    // check if the teacher is already booked for this timeslot on the same day in the week(A or B)
+    const isBooked = Object.values(schedule).some(classSchedule => 
+      Object.values(classSchedule).some(weekSchedule => 
+        weekSchedule[week]?.[timeslot] && (
+          (weekSchedule[week][timeslot]?.primary_teacher_id === teacher.id ||
+           weekSchedule[week][timeslot]?.secondary_teacher_id === teacher.id) &&
+           // Exclude current lesson from check
+           (weekSchedule[week][timeslot]?.id !== draggedLesson?.id)
+
+        )
+      )
+    );
+    
+    return !isBlocked && !isBooked;
   };
 
   const moveLessonHandler = useCallback(
@@ -213,8 +227,8 @@ export default function ClassScheduler({
         const secondaryTeacher = teachers.find(t => t.id === lesson.secondary_teacher_id);
   
         const [primaryAvailable, secondaryAvailable] = await Promise.all([
-                isTeacherAvailable(primaryTeacher, toDay, toTimeslot, toWeek as string),
-                isTeacherAvailable(secondaryTeacher, toDay, toTimeslot, toWeek as string)
+                isTeacherAvailable(primaryTeacher, toDay, toTimeslot, toWeek as string, lesson),
+                isTeacherAvailable(secondaryTeacher, toDay, toTimeslot, toWeek as string, lesson)
         ]);
   
         if (!primaryAvailable || !secondaryAvailable) {
@@ -267,7 +281,7 @@ export default function ClassScheduler({
   const addLessonHandler = useCallback(
     async (
       day: string  | null,
-      schoolClassId: number | null,
+      schoolClassId: number,
       week: string | null,
       timeslot: number | null,
       primaryTeacherId: number | null,
@@ -636,7 +650,6 @@ export default function ClassScheduler({
           deleteLesson={deleteLessonHandler}
           teachers={teachers}
           isTeacherAvailable={isTeacherAvailable}
-          isTeacherAlreadyBooked={isTeacherAlreadyBooked}
           setDraggedLesson={setDraggedLesson}
         />
         <Toaster />

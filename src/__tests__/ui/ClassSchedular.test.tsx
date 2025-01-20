@@ -32,7 +32,6 @@ describe("ClassScheduler", () => {
       "Mittwoch",
       "Donnerstag",
       "Freitag",
-      "Samstag",
     ];
     weekdays.forEach((day) => {
       expect(screen.getByText(day)).toBeInTheDocument();

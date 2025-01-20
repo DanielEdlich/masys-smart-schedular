@@ -124,11 +124,6 @@ export async function getSchoolClasses(): Promise<SchoolClass[]> {
   return Promise.resolve(schoolClassRepository.getAll());
 }
 
-export async function getCards(): Promise<Lesson[]> {
-  return Promise.resolve(lessonRepository.getAll());
-}
-
-
 export async function addCard(card: Lesson): Promise<void> {
   console.log("Adding card:", card);
   if (card.day === null) {
@@ -151,12 +146,6 @@ export async function deleteCard(cardId: number): Promise<void> {
   console.log("Card deleted successfully");
 }
 
-export async function moveCard(card: Lesson, toDay: string, toSchoolClassId: number, toWeek: Week, toTimeslot: number): Promise<void> {
-  console.log("Moving card:", card);
-  lessonRepository.update(card.id, { ...card, day: toDay, school_class_id: toSchoolClassId, week: toWeek, timeslot: toTimeslot });
-  console.log("Card moved successfully");
-}
-
 export async function getTeachers(): Promise<Teacher[]> {
   return Promise.resolve(teacherRepository.getAll());
 }
@@ -165,33 +154,11 @@ export async function getBlockers(): Promise<Blocker[]> {
   return Promise.resolve(teacherBlockerRepository.getAll());
 }
 
-export async function isTeacherAvailable(teacher: Teacher, day: string, timeslot: number): Promise<boolean> {
-  try {
-    // Cache check results to prevent repeated calls
-    const available = await teacherRepository.isTeacherAvailable(teacher.id, day, timeslot);
-    console.log(`Teacher ${teacher.id} availability for ${day}:${timeslot} = ${available}`);
-    return true;
-  } catch (error) {
-    console.error('Teacher availability check failed:', error);
-    return false;
-  }
-}
-
-export async function isTeacherAlreadyBooked(teacher: Teacher, day: string, timeslot: number, week: string): Promise<boolean> {
-  try {
-    // Cache blocker checks to prevent repeated calls
-    const blocked = await teacherBlockerRepository.isTeacherBlockerAtTimeslot(teacher.id, timeslot, day);
-    console.log(`Teacher ${teacher.id} blocked for ${day}:${timeslot} = ${blocked}`);
-    return false;
-  } catch (error) {
-    console.error('Teacher booking check failed:', error);
-    return true;
-  }
-}
 
 
-export async function getAvailableTeachers(day: string, timeslot: number): Promise<Teacher[]> {
-  return teacherRepository.getAvailableTeachers(day, timeslot);
+export async function getAvailableTeachersForTimeslot(day: string, timeslot: number): Promise<Teacher[]> {
+  const availableTeachers = teacherRepository.getAvailableTeachers(day, timeslot);
+  return availableTeachers;
 }
 
 export async function getAllTeacherBlockers(): Promise<Blocker[]> {
@@ -199,16 +166,7 @@ export async function getAllTeacherBlockers(): Promise<Blocker[]> {
 }
 
 export async function getAvailableTeachersForEdit(day: string, timeslot: number, week: string, currentPrimaryTeacherId?: number, currentSecondaryTeacherId?: number): Promise<Teacher[]> {
-  const availableTeachers = [];
-  for (const teacher of await teacherRepository.getAll()) {
-    const [isAvailable, isBooked] = await Promise.all([
-      isTeacherAvailable(teacher, day, timeslot),
-      isTeacherAlreadyBooked(teacher, day, timeslot, week)
-    ]);
-    if (isAvailable && (!isBooked || teacher.id === currentPrimaryTeacherId || teacher.id === currentSecondaryTeacherId)) {
-      availableTeachers.push(teacher);
-    }
-  }
+  const availableTeachers = teacherRepository.getAvailableTeachers(day, timeslot);
   return availableTeachers;
 }
 

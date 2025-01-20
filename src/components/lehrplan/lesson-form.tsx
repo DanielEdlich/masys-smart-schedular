@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Teacher, Lesson } from '@/db/types';
-import { getAvailableTeachers, getAvailableTeachersForEdit } from '@/app/actions/classSchedulerActions';
+import { getAvailableTeachersForTimeslot } from '@/app/actions/classSchedulerActions';
 
 type LessonFormProps = {
   day: string | null;
@@ -22,7 +22,7 @@ type LessonFormProps = {
     day: string | null,
     schoolClassId: number | null,
     week: string | null,
-    timeslot: number,
+    timeslot: number | null,
     primaryTeacherId: number | null,
     name: string | null,
     secondaryTeacherId?: number | null,
@@ -42,7 +42,7 @@ type LessonFormProps = {
     day: string | null,
     schoolClassId: number | null,
     week: string | null,
-    timeslot: number,
+    timeslot: number | null,
   ) => Promise<void>;
   existingLesson?: Lesson;
   onClose: () => void;
@@ -77,15 +77,7 @@ export const LessonForm: React.FC<LessonFormProps> = ({
   useEffect(() => {
     const fetchAvailableTeachers = async () => {
       if (day && week && !isForAblage) {
-        const available = existingLesson
-          ? await getAvailableTeachersForEdit(
-              day, 
-              timeslot + 1, 
-              week, 
-              existingLesson?.primary_teacher_id ?? undefined,
-              existingLesson?.secondary_teacher_id ?? undefined
-            )
-          : await getAvailableTeachers(day, timeslot + 1);
+        const available = await getAvailableTeachersForTimeslot(day, timeslot + 1);
         setAvailableTeachers(available);
       } else {
         setAvailableTeachers(teachers);

@@ -17,7 +17,7 @@ type DraggableLessonProps = {
     toDay: string | null,
     toSchoolClassId: number | null,
     toWeek: string | null,
-    toTimeslot: number,
+    toTimeslot: number | null,
   ) => void;
   editLesson: (
     day: string | null,
@@ -33,7 +33,7 @@ type DraggableLessonProps = {
     day: string | null,
     schoolClassId: number | null,
     week: string | null,
-    timeslot: number,
+    timeslot: number | null,
   ) => void;
   isInAblage?: boolean;
   teachers: Teacher[];
