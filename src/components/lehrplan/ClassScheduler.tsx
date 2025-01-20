@@ -13,7 +13,6 @@ import { useToast } from "@/hooks/use-toast";
 import { useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Save } from 'lucide-react';
-import { useMemo } from "react";
 
 
 
@@ -54,10 +53,9 @@ export default function ClassScheduler({
   const [draggedLesson, setDraggedLesson] = useState<Lesson | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  const [teacherBlockers, setTeacherBlockers] = useState<Blocker[]>([]);
+  const [teacherBlockers ] = useState<Blocker[]>([]);
 
   const { toast } = useToast();
-  const router = useRouter();
 
   const sortedSchoolClasses = React.useMemo(() => {
     return [...schoolClasses].sort((a, b) => {
@@ -155,7 +153,7 @@ export default function ClassScheduler({
           );
           return;
         }
-  
+        
         newSchedule[day][school_class_id][week][timeslot] = lesson;
         
       } catch (error) {
@@ -384,7 +382,7 @@ export default function ClassScheduler({
         if (day === null) {
           const lessonToDelete = ablageLessons.find((lesson) => lesson.timeslot === timeslot);
           if (lessonToDelete) {
-            await deleteCard(lessonToDelete.id);
+            setHasUnsavedChanges(true);
             setAblageLessons((prevLessons) => {
               const updatedLessons = prevLessons.filter((lesson) => lesson.id !== lessonToDelete.id);
               return updatedLessons.map((lesson, idx) => ({ ...lesson, timeslot: idx }));
@@ -396,7 +394,7 @@ export default function ClassScheduler({
             if (newSchedule[day]?.[schoolClassId]?.[week]) {
               const lessonToDelete = newSchedule[day][schoolClassId][week][timeslot];
               if (lessonToDelete) {
-                deleteCard(lessonToDelete.id);
+                setHasUnsavedChanges(true);
                 newSchedule[day][schoolClassId][week][timeslot] = null;
                 toast({
                   title: lessonToDelete.isBlocker ? "Blocker entfernt" : "Unterricht gelöscht",
@@ -541,11 +539,11 @@ export default function ClassScheduler({
         </div>
         {isLoading ? (
           <div className="flex items-center justify-center h-full">
-            <p>Lädt Stundenplan...</p>
+            <p>Lädt den Stundenplan...</p>
           </div>
         ) : (
-          <div className="overflow-auto flex-grow pb-48">
-            <div className="min-w-[1700px] relative">
+          <div className="overflow-auto flex-grow pb-64">
+            <div className="w-full relative">
               <table className="w-full border-collapse">
                 <thead className="sticky top-0 z-20 bg-white">
                   <tr className="sticky top-0 z-20">
@@ -555,20 +553,20 @@ export default function ClassScheduler({
                       <th
                         key={schoolClass.id}
                         colSpan={2}
-                        className="border p-2 bg-purple-50 min-w-[200px]"
+                        className="border p-2 bg-purple-50"
                       >
                         {`${schoolClass.track}${schoolClass.year} ${schoolClass.name}`}
                       </th>
                     ))}
                   </tr>
                   <tr className="sticky top-[41px] z-20 bg-white">
-                    <th className="border p-2 bg-purple-50 sticky left-0 z-30 min-w-[100px]"></th>
-                    <th className="border p-2 bg-purple-50 sticky left-[100px] z-30 min-w-[50px]"></th>
+                    <th className="border p-2 bg-purple-50 sticky left-0 z-30"></th>
+                    <th className="border p-2 bg-purple-50 sticky z-30 min-w-[50px]"></th>
                     {sortedSchoolClasses.flatMap((schoolClass) =>
                       weeks.map((week) => (
                         <th
                           key={`${schoolClass.id}-${week}`}
-                          className="border p-2 bg-purple-50 min-w-[100px]"
+                          className="border p-2 bg-purple-50"
                         >
                           Woche {week}
                         </th>
@@ -584,19 +582,19 @@ export default function ClassScheduler({
                           {slotIndex === 0 && (
                             <th
                               rowSpan={8}
-                              className="border p-2 bg-purple-50 sticky left-0 z-10 min-w-[100px]"
+                              className="border p-2 bg-purple-50 sticky left-0 z-10 w-32"
                             >
                               {day}
                             </th>
                           )}
-                          <td className="border p-2 bg-purple-50 sticky left-[100px] z-10 min-w-[50px] text-center">
+                          <td className="border p-2 bg-purple-50 sticky left-[100px] z-10 w-16 text-center">
                             {slot}
                           </td>
                           {sortedSchoolClasses.map((schoolClass) =>
                             weeks.map((week) => (
                               <td
                                 key={`${day}-${schoolClass.id}-${week}-${slot}`}
-                                className="border p-0.5 min-w-[100px]"
+                                className="border p-1"
                               >
                                 <DroppableSlot
                                   day={day}

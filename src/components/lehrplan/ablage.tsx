@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/dialog";
 import { LessonForm } from './lesson-form';
 import { useToast } from "@/hooks/use-toast";
-import { isTeacherAvailable, isTeacherAlreadyBooked } from '@/app/actions/classSchedulerActions';
 
 
 

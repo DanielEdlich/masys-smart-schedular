@@ -109,8 +109,8 @@ export const DraggableLesson: React.FC<DraggableLessonProps> = ({
       style={{ 
         opacity: isDragging ? 0.5 : 1, 
         backgroundColor: lesson.isBlocker 
-          ? '#f0f0f0' 
-          : (lesson.primary_teacher_id && teachers.find(t => t.id === lesson.primary_teacher_id)?.color) || '#ffffff'
+          ? '#ff0000' 
+          : (lesson.primary_teacher_id && teachers.find(t => t.id === lesson.primary_teacher_id)?.color) || '#FAFAFA'
       }}
       className="shadow-sm border-none w-full h-full"
     >

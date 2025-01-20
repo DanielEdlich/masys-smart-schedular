@@ -12,19 +12,6 @@ import {
 import { Teacher, Lesson } from '@/db/types';
 import { getAvailableTeachers, getAvailableTeachersForEdit } from '@/app/actions/classSchedulerActions';
 
-const classTypes = [
-  "Mathematik",
-  "Deutsch",
-  "Kunst",
-  "Englisch",
-  "Sport",
-  "Biologie",
-  "Chemie",
-  "Physik",
-  "Geschichte",
-  "Geographie",
-];
-
 type LessonFormProps = {
   day: string | null;
   schoolClassId: number | null;
@@ -32,9 +19,9 @@ type LessonFormProps = {
   timeslot: number;
   teachers: Teacher[];
   addLesson: (
-    day: string,
-    schoolClassId: number,
-    week: string,
+    day: string | null,
+    schoolClassId: number | null,
+    week: string | null,
     timeslot: number,
     primaryTeacherId: number | null,
     name: string | null,
@@ -95,10 +82,10 @@ export const LessonForm: React.FC<LessonFormProps> = ({
               day, 
               timeslot + 1, 
               week, 
-              existingLesson?.primary_teacher_id,
-              existingLesson?.secondary_teacher_id
+              existingLesson?.primary_teacher_id ?? undefined,
+              existingLesson?.secondary_teacher_id ?? undefined
             )
-          : await getAvailableTeachers(day, timeslot + 1, week);
+          : await getAvailableTeachers(day, timeslot + 1);
         setAvailableTeachers(available);
       } else {
         setAvailableTeachers(teachers);

@@ -17,11 +17,37 @@ const teacherBlockerRepository = new TeacherBlockerRepository(db);
 
 export async function saveSchedule(lessons: Lesson[], ablageLessons: Lesson[]): Promise<void> {
   try {
-    const all_lessons = lessons.concat(ablageLessons);
-    console.log(`Saving ${all_lessons.length} lessons`);
-
+    // Step 1: Ensure timetable exists (later we can support multiple timetables)
     await timetableRepository.getById(1) || await timetableRepository.create({ id: 1, name: "Default Timetable" });
 
+    // Step 2: Get all existing lessons to track duplicates
+    const existingLessons = await lessonRepository.getAll();
+    console.log('Existing lessons:', existingLessons.length);
+
+    // Step 3: Create a Set of lesson IDs for O(1) lookup
+    const processedIds = new Set<number>();
+    
+    // Step 4: Combine and deduplicate lessons
+    const all_lessons = [...lessons, ...ablageLessons].filter(lesson => {
+      if (processedIds.has(lesson.id)) {
+        console.log('Duplicate lesson found:', lesson);
+        return false;
+      }
+      processedIds.add(lesson.id);
+      return true;
+    });
+
+
+    // Step 5: Delete lessons that are no longer in the schedule
+    const newLessonIds = new Set(all_lessons.map(l => l.id));
+    const lessonsToDelete = existingLessons.filter(l => !newLessonIds.has(l.id));
+    
+    for (const lesson of lessonsToDelete) {
+      await lessonRepository.delete(lesson.id);
+      console.log('Deleted old lesson:', lesson.id);
+    }
+
+    // Step 6: Save or update remaining lessons
     for (const lesson of all_lessons) {
       const lessonToSave = {
         ...lesson,
@@ -33,9 +59,13 @@ export async function saveSchedule(lessons: Lesson[], ablageLessons: Lesson[]): 
 
       try {
         const existing = lesson.id && await lessonRepository.getById(lesson.id);
-        existing ? 
-          await lessonRepository.update(lesson.id, lessonToSave) :
+        if (existing) {
+          await lessonRepository.update(lesson.id, lessonToSave);
+          console.log('Updated lesson:', lesson.id);
+        } else {
           await lessonRepository.create(lessonToSave);
+          console.log('Created new lesson:', lesson.id);
+        }
       } catch (error) {
         console.error(`Failed to save lesson:`, lesson, error);
       }
