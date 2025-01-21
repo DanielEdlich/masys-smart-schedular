@@ -5,13 +5,11 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Ablage } from '@/components/lehrplan/ablage';
 import { DroppableSlot } from '@/components/lehrplan/droppable-slot';
-import { Lesson, Teacher, SchoolClass, Blocker, Timetable } from '@/db/types';
-import { getSchoolClasses, getTeachers, addCard, deleteCard, moveCard, loadSchedule, getBlockers, getAvailableTeachers, getAvailableTeachersForEdit, getScheduleCards, getAblageCards, saveSchedule, getAllTeacherBlockers } from '@/app/actions/classSchedulerActions';
+import { Lesson, Teacher, SchoolClass, Blocker } from '@/db/types';
+import { getSchoolClasses, getTeachers, addCard, deleteCard, getBlockers, getScheduleCards, getAblageCards, saveSchedule, getAllTeacherBlockers } from '@/app/actions/classSchedulerActions';
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
-import { useRef } from 'react';
-import { useRouter } from 'next/navigation';
 import { Save } from 'lucide-react';
 
 
