@@ -72,9 +72,8 @@ jobs:
           docker login "${{ secrets.HARBOR_REGISTRY }}" -u "${{ secrets.HARBOR_USERNAME }}" -p "${{ secrets.HARBOR_PASSWORD }}"
 
       - name: Build Docker Image
-        with:
-          secrets: |
-            "NPM_REGISTRY=${{ secrets.NPM_REGISTRY }}"
+        env:
+            NPM_REGISTRY: ${{ secrets.NPM_REGISTRY }}
         run: |
           docker build \
             --tag ${{ secrets.HARBOR_REGISTRY }}:${{ env.tag }} \
