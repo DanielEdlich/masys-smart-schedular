@@ -11,9 +11,9 @@ WORKDIR /app
 COPY package*.json ./
 
 RUN --mount=type=secret,id=NPM_REGISTRY \
-    cat /run/secrets/NPM_REGISTRY > ~/.npmrc
-
-RUN npm ci --ignore-scripts
+    cat /run/secrets/NPM_REGISTRY > ~/.npmrc && \
+    npm ci --ignore-scripts && \
+    rm ~/.npmrc
 
 COPY . .
 
