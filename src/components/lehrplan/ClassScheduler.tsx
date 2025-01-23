@@ -69,7 +69,7 @@ export default function ClassScheduler({
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const [fetchedClasses, fetchedTeachers, fetchedBlockers, fetchedLessons, fetchedAblageLessons, teacherBlockers] = await Promise.all([
+        const [fetchedClasses, fetchedTeachers, fetchedAvailabilities, fetchedLessons, fetchedAblageLessons, teacherAvailabilities] = await Promise.all([
           getSchoolClasses(),
           getTeachers(),
           getTeacherAvailabilities(),
@@ -81,8 +81,8 @@ export default function ClassScheduler({
         if (!controller.signal.aborted) {
           setSchoolClasses(fetchedClasses);
           setTeachers(fetchedTeachers);
-          setAvailabilities(fetchedBlockers);
-          setAvailabilities(teacherBlockers);
+          setAvailabilities(fetchedAvailabilities);
+          setAvailabilities(teacherAvailabilities);
 
           const newSchedule = initializeSchedule(fetchedClasses, fetchedLessons);
           
@@ -179,17 +179,17 @@ export default function ClassScheduler({
     // If no teacher, they're available
     if (!teacher) return true;
   
-    // Find all blockers for this teacher
+    // Find all availabilities for this teacher
     const teacherAvailabilities = availabilities.filter(
       availability => 
         availability.teacher_id === teacher.id && 
         availability.day === day
     );
   
-    // Check if any blocker covers the requested timeslot
-    const isAvailable = teacherAvailabilities.some(blocker => 
-      timeslot >= blocker.timeslot_from && 
-      timeslot <= blocker.timeslot_to
+    // Check if any Availability covers the requested timeslot
+    const isAvailable = teacherAvailabilities.some(availability => 
+      timeslot >= availability.timeslot_from && 
+      timeslot <= availability.timeslot_to
     );
 
     // check if the teacher is already booked for this timeslot on the same day in the week(A or B)
