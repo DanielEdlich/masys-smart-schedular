@@ -1,52 +1,25 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
-import { DndProvider, useDrag, useDrop } from "react-dnd";
+import React, { useState, useCallback, useEffect } from "react";
+import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { Slot } from "@radix-ui/react-slot";
-import { FC } from "react";
-import { GripVertical, PencilRuler, X, Pause, Ban } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Ablage } from "@/components/lehrplan/ablage";
+import { DroppableSlot } from "@/components/lehrplan/droppable-slot";
+import { Lesson, Teacher, SchoolClass, Blocker } from "@/db/types";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
+  getSchoolClasses,
+  getTeachers,
+  deleteCard,
+  getBlockers,
+  getScheduleCards,
+  getAblageCards,
+  saveSchedule,
+  getAllTeacherBlockers,
+} from "@/app/actions/classSchedulerActions";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-interface ScheduleCard {
-  id: string;
-  teacher: Teacher;
-  type: ClassType;
-  color: string;
-  day: Weekday;
-  className: ClassName;
-  week: Week;
-  index: number;
-  secondaryTeacher?: Teacher;
-}
-
-type WeekSchedule = {
-  [week in Week]: (ScheduleCard | null)[];
-};
-
-type ClassSchedule = {
-  [className in ClassName]: WeekSchedule;
-};
-
-type Schedule = {
-  [day in Weekday]: ClassSchedule;
-};
+import { Toaster } from "@/components/ui/toaster";
+import { useToast } from "@/hooks/use-toast";
+import { Save } from "lucide-react";
 
 const weekdays = [
   "Montag",
@@ -54,661 +27,707 @@ const weekdays = [
   "Mittwoch",
   "Donnerstag",
   "Freitag",
-  "Samstag",
 ] as const;
-type Weekday = (typeof weekdays)[number];
-
-const classes = [
-  "Class1",
-  "Class2",
-  "Class3",
-  "Class4",
-  "Class5",
-  "Class6",
-  "Class7",
-  "Class8",
-  "Class9",
-  "Class10",
-] as const;
-type ClassName = (typeof classes)[number];
 
 const weeks = ["A", "B"] as const;
-type Week = (typeof weeks)[number];
 
 const timeSlots = Array.from({ length: 8 }, (_, i) => i + 1);
 
-const classTypes = [
-  "Mathematik",
-  "Deutsch",
-  "Kunst",
-  "Englisch",
-  "Sport",
-  "Biologie",
-  "Chemie",
-  "Physik",
-  "Geschichte",
-  "Geographie",
-] as const;
-type ClassType = (typeof classTypes)[number];
-
-const teachers = [
-  "Herr Schmidt",
-  "Frau Müller",
-  "Herr Weber",
-  "Frau Fischer",
-  "Herr Wagner",
-  "Frau Becker",
-  "Herr Hoffmann",
-  "Frau Schulz",
-  "Herr Koch",
-  "Frau Meyer",
-] as const;
-type Teacher = (typeof teachers)[number];
-
-const getColorByTeacher = (teacher: Teacher): string => {
-  const colors = [
-    "#FF6B6B",
-    "#4ECDC4",
-    "#45B7D1",
-    "#FFA07A",
-    "#98FB98",
-    "#DDA0DD",
-    "#F0E68C",
-    "#87CEFA",
-    "#FFB6C1",
-    "#20B2AA",
-  ];
-  return colors[teachers.indexOf(teacher) % colors.length];
+type WeekSchedule = {
+  [week in string]: (Lesson | null)[];
 };
 
-interface DraggableCardProps {
-  card: ScheduleCard;
-  moveCard: (
-    card: ScheduleCard,
-    toDay: Weekday,
-    toClass: ClassName,
-    toWeek: Week,
-    toIndex: number,
-  ) => void;
-  editCard: (
-    day: Weekday,
-    className: ClassName,
-    week: Week,
-    index: number,
-    teacher: Teacher,
-    type: ClassType,
-    color: string,
-    secondaryTeacher?: Teacher,
-  ) => void;
-  deleteCard: (
-    day: Weekday,
-    className: ClassName,
-    week: Week,
-    index: number,
-  ) => void;
-}
-
-const DraggableCard: FC<DraggableCardProps> = ({
-  card,
-  moveCard,
-  editCard,
-  deleteCard,
-}) => {
-  const [{ isDragging }, drag] = useDrag({
-    type: "CARD",
-    item: card,
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
-  });
-
-  // Create a ref callback that properly handles the drag reference
-  const dragRef = useCallback(
-    (node: HTMLDivElement | null) => {
-      drag(node);
-    },
-    [drag],
-  );
-
-  return (
-    <Card
-      ref={dragRef}
-      style={{ opacity: isDragging ? 0.5 : 1, backgroundColor: card.color }}
-      className="w-full h-full shadow-sm border-none"
-    >
-      <CardContent className="p-2 flex flex-col justify-between text-xs h-full">
-        <div className="flex items-center w-full justify-between">
-          <span className="font-bold truncate w-20">{card.type}</span>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-6 w-6 p-0 rounded-full hover:bg-white/10"
-              >
-                <Slot>
-                  <PencilRuler className="h-3 w-3" />
-                </Slot>
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Karte bearbeiten</DialogTitle>
-              </DialogHeader>
-              <CardForm
-                day={card.day}
-                className={card.className}
-                week={card.week}
-                slotIndex={card.index}
-                addCard={() => {}}
-                editCard={editCard}
-                deleteCard={deleteCard}
-                existingCard={card}
-                onClose={() =>
-                  document
-                    .querySelector<HTMLButtonElement>("[data-dialog-close]")
-                    ?.click()
-                }
-              />
-            </DialogContent>
-          </Dialog>
-        </div>
-      </CardContent>
-    </Card>
-  );
+type ClassSchedule = {
+  [schoolClassId: number]: WeekSchedule;
 };
 
-interface CardFormProps {
-  day: Weekday;
-  className: ClassName;
-  week: Week;
-  slotIndex: number;
-  addCard: (
-    day: Weekday,
-    className: ClassName,
-    week: Week,
-    index: number,
-    teacher: Teacher,
-    type: ClassType,
-    color: string,
-    secondaryTeacher?: Teacher,
-  ) => void;
-  editCard: (
-    day: Weekday,
-    className: ClassName,
-    week: Week,
-    index: number,
-    teacher: Teacher,
-    type: ClassType,
-    color: string,
-    secondaryTeacher?: Teacher,
-  ) => void;
-  deleteCard: (
-    day: Weekday,
-    className: ClassName,
-    week: Week,
-    index: number,
-  ) => void;
-  existingCard?: ScheduleCard;
-  onClose: () => void;
-}
+type Schedule = Record<string, ClassSchedule>;
 
-const CardForm: React.FC<CardFormProps> = ({
-  day,
-  className,
-  week,
-  slotIndex,
-  addCard,
-  editCard,
-  deleteCard,
-  existingCard,
-  onClose,
-}) => {
-  const [teacher, setTeacher] = useState<Teacher>(
-    existingCard?.teacher || teachers[0],
-  );
-  const [type, setType] = useState<ClassType>(
-    existingCard?.type || classTypes[0],
-  );
-  const [secondaryTeacher, setSecondaryTeacher] = useState<Teacher | "none">(
-    existingCard?.secondaryTeacher || "none",
-  );
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const secondaryTeacherValue =
-      secondaryTeacher === "none" ? undefined : secondaryTeacher;
-    const color = getColorByTeacher(teacher);
-    if (existingCard) {
-      editCard(
-        day,
-        className,
-        week,
-        slotIndex,
-        teacher,
-        type,
-        color,
-        secondaryTeacherValue,
-      );
-    } else {
-      addCard(
-        day,
-        className,
-        week,
-        slotIndex,
-        teacher,
-        type,
-        color,
-        secondaryTeacherValue,
-      );
-    }
-    onClose();
-  };
-
-  const handleDelete = () => {
-    deleteCard(day, className, week, slotIndex);
-    onClose();
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <Label>Findet statt am:</Label>
-          <div className="text-sm text-gray-600">
-            {`${slotIndex + 1}. Stunde, ${day}, ${className}, Woche ${week}`}
-          </div>
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="type">Fachtyp</Label>
-          <Select
-            value={type}
-            onValueChange={(value: ClassType) => setType(value)}
-            required
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select class type" />
-            </SelectTrigger>
-            <SelectContent>
-              {classTypes.map((classType) => (
-                <SelectItem key={classType} value={classType}>
-                  {classType}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="teacher">Lehrer</Label>
-          <Select
-            value={teacher}
-            onValueChange={(value: Teacher) => setTeacher(value)}
-            required
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select teacher" />
-            </SelectTrigger>
-            <SelectContent>
-              {teachers.map((t) => (
-                <SelectItem key={t} value={t}>
-                  <div className="flex items-center">
-                    <div
-                      className="w-4 h-4 rounded-full mr-2"
-                      style={{ backgroundColor: getColorByTeacher(t) }}
-                    ></div>
-                    {t}
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="secondaryTeacher">Zweiter Lehrer (Optional)</Label>
-          <Select
-            value={secondaryTeacher}
-            onValueChange={(value: Teacher | "none") =>
-              setSecondaryTeacher(value)
-            }
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select secondary teacher" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="none">None</SelectItem>
-              {teachers.map((t) => (
-                <SelectItem key={t} value={t}>
-                  <div className="flex items-center">
-                    <div
-                      className="w-4 h-4 rounded-full mr-2"
-                      style={{ backgroundColor: getColorByTeacher(t) }}
-                    ></div>
-                    {t}
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="flex justify-between">
-          <Button type="submit">
-            {existingCard ? "Aktualisieren" : "Hinzufügen"}
-          </Button>
-          {existingCard && (
-            <Button type="button" variant="destructive" onClick={handleDelete}>
-              Löschen
-            </Button>
-          )}
-        </div>
-      </div>
-    </form>
-  );
-};
-
-interface DroppableSlotProps {
-  day: Weekday;
-  className: ClassName;
-  week: Week;
-  slotIndex: number;
-  card: ScheduleCard | null;
-  moveCard: (
-    card: ScheduleCard,
-    toDay: Weekday,
-    toClass: ClassName,
-    toWeek: Week,
-    toIndex: number,
-  ) => void;
-  addCard: (
-    day: Weekday,
-    className: ClassName,
-    week: Week,
-    index: number,
-    teacher: Teacher,
-    type: ClassType,
-    color: string,
-    secondaryTeacher?: Teacher,
-  ) => void;
-  editCard: (
-    day: Weekday,
-    className: ClassName,
-    week: Week,
-    index: number,
-    teacher: Teacher,
-    type: ClassType,
-    color: string,
-    secondaryTeacher?: Teacher,
-  ) => void;
-  deleteCard: (
-    day: Weekday,
-    className: ClassName,
-    week: Week,
-    index: number,
-  ) => void;
-}
-
-const DroppableSlot: React.FC<DroppableSlotProps> = ({
-  day,
-  className,
-  week,
-  slotIndex,
-  card,
-  moveCard,
-  addCard,
-  editCard,
-  deleteCard,
-}) => {
-  const [, drop] = useDrop({
-    accept: "CARD",
-    canDrop: () => !isBlocked,
-    drop: (item: ScheduleCard) => {
-      if (
-        !isBlocked &&
-        (item.day !== day ||
-          item.className !== className ||
-          item.week !== week ||
-          item.index !== slotIndex)
-      ) {
-        moveCard(item, day, className, week, slotIndex);
-      }
-    },
-  });
-
-  const [isBlocked, setIsBlocked] = useState(false);
-
-  const toggleBlock = () => {
-    setIsBlocked(!isBlocked);
-  };
-
-  const dropRef = useCallback(
-    (node: HTMLDivElement | null) => {
-      drop(node);
-    },
-    [drop],
-  );
-
-  return (
-    <div
-      ref={dropRef}
-      className="w-32 h-16 relative  rounded-md overflow-hidden"
-    >
-      {isBlocked ? (
-        <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
-          <Ban className="text-gray-400" />
-          <Button
-            variant="ghost"
-            size="sm"
-            className="absolute top-0 right-0 h-4 w-4 p-0 rounded-full bg-white shadow-sm"
-            onClick={toggleBlock}
-            title="Zeitfenster entsperren"
-          >
-            <X className="h-3 w-3" />
-          </Button>
-        </div>
-      ) : card ? (
-        <DraggableCard
-          card={card}
-          moveCard={moveCard}
-          editCard={editCard}
-          deleteCard={deleteCard}
-        />
-      ) : (
-        <div className="w-full h-full flex">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button
-                variant="ghost"
-                className="h-full flex-grow text-xl text-gray-400 hover:text-gray-600 hover:bg-gray-50"
-                title="Neue Karte hinzufügen"
-              >
-                +
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Neue Karte hinzufügen</DialogTitle>
-              </DialogHeader>
-              <CardForm
-                day={day}
-                className={className}
-                week={week}
-                slotIndex={slotIndex}
-                addCard={addCard}
-                editCard={editCard}
-                deleteCard={deleteCard}
-                onClose={() =>
-                  document
-                    .querySelector<HTMLButtonElement>("[data-dialog-close]")
-                    ?.click()
-                }
-              />
-            </DialogContent>
-          </Dialog>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-full aspect-square text-gray-400 hover:text-gray-600 hover:bg-gray-50"
-            onClick={toggleBlock}
-            title="Zeitfenster sperren"
-          >
-            <Ban className="h-3 w-3" />
-          </Button>
-        </div>
-      )}
-    </div>
-  );
-};
-
-interface ClassSchedulerProps {
+type ClassSchedulerProps = {
   initialSchedule?: Schedule;
-}
+};
 
 export default function ClassScheduler({
   initialSchedule,
 }: ClassSchedulerProps = {}) {
-  const [schedule, setSchedule] = useState<Schedule>(() => {
-    if (initialSchedule) return initialSchedule;
+  const [schedule, setSchedule] = useState<Schedule>(
+    initialSchedule || ({} as Schedule),
+  );
+  const [ablageLessons, setAblageLessons] = useState<Lesson[]>([]);
+  const [schoolClasses, setSchoolClasses] = useState<SchoolClass[]>([]);
+  const [teachers, setTeachers] = useState<Teacher[]>([]);
+  const [blockers, setBlockers] = useState<Blocker[]>([]);
+  const [draggedLesson, setDraggedLesson] = useState<Lesson | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [teacherBlockers] = useState<Blocker[]>([]);
 
-    const newSchedule: Schedule = {} as Schedule;
-    weekdays.forEach((day) => {
-      newSchedule[day] = {} as ClassSchedule;
-      classes.forEach((className) => {
-        newSchedule[day][className] = {
-          A: Array(8).fill(null),
-          B: Array(8).fill(null),
-        };
-      });
+  const { toast } = useToast();
+
+  const sortedSchoolClasses = React.useMemo(() => {
+    return [...schoolClasses].sort((a, b) => {
+      if (a.track !== b.track) return a.track.localeCompare(b.track);
+      if (a.year !== b.year) return (a.year ?? "").localeCompare(b.year ?? "");
+      return a.name.localeCompare(b.name);
     });
-    return newSchedule;
-  });
+  }, [schoolClasses]);
 
-  const moveCard = useCallback(
-    (
-      card: ScheduleCard,
-      toDay: Weekday,
-      toClass: ClassName,
-      toWeek: Week,
-      toIndex: number,
-    ) => {
-      setSchedule((prevSchedule) => {
-        const newSchedule = JSON.parse(
-          JSON.stringify(prevSchedule),
-        ) as Schedule;
-        // Remove card from its original position
-        newSchedule[card.day][card.className][card.week][card.index] = null;
-        // Place card in its new position
-        newSchedule[toDay][toClass][toWeek][toIndex] = {
-          ...card,
-          day: toDay,
-          className: toClass,
-          week: toWeek,
-          index: toIndex,
-        };
-        return newSchedule;
-      });
-    },
-    [],
-  );
+  useEffect(() => {
+    const controller = new AbortController();
 
-  const addCard = useCallback(
-    (
-      day: Weekday,
-      className: ClassName,
-      week: Week,
-      index: number,
-      teacher: Teacher,
-      type: ClassType,
-      color: string,
-      secondaryTeacher?: Teacher,
-    ) => {
-      setSchedule((prevSchedule) => {
-        const newSchedule = { ...prevSchedule };
-        const newCard: ScheduleCard = {
-          id: `card-${day}-${className}-${week}-${index}`,
-          teacher,
-          type,
-          color,
-          day,
-          className,
-          week,
-          index,
-          secondaryTeacher,
-        };
-        newSchedule[day][className][week][index] = newCard;
-        return newSchedule;
-      });
-    },
-    [],
-  );
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const [
+          fetchedClasses,
+          fetchedTeachers,
+          fetchedBlockers,
+          fetchedLessons,
+          fetchedAblageLessons,
+          teacherBlockers,
+        ] = await Promise.all([
+          getSchoolClasses(),
+          getTeachers(),
+          getBlockers(),
+          getScheduleCards(),
+          getAblageCards(),
+          getAllTeacherBlockers(),
+        ]);
 
-  const editCard = useCallback(
-    (
-      day: Weekday,
-      className: ClassName,
-      week: Week,
-      index: number,
-      teacher: Teacher,
-      type: ClassType,
-      color: string,
-      secondaryTeacher?: Teacher,
-    ) => {
-      setSchedule((prevSchedule) => {
-        const newSchedule = { ...prevSchedule };
-        const existingCard = newSchedule[day][className][week][index];
-        if (existingCard) {
-          newSchedule[day][className][week][index] = {
-            ...existingCard,
-            teacher,
-            type,
-            color,
-            secondaryTeacher,
-          };
+        if (!controller.signal.aborted) {
+          setSchoolClasses(fetchedClasses);
+          setTeachers(fetchedTeachers);
+          setBlockers(fetchedBlockers);
+          setBlockers(teacherBlockers);
+
+          const newSchedule = initializeSchedule(
+            fetchedClasses,
+            fetchedLessons,
+          );
+
+          setAblageLessons(fetchedAblageLessons);
+          setSchedule(newSchedule);
+          console.log("Ablage lessons", fetchedAblageLessons);
         }
-        return newSchedule;
-      });
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          console.error("Error fetching data:", error);
+          toast({
+            title: "Fehler beim Laden",
+            description:
+              "Die Daten konnten nicht geladen werden. Bitte versuchen Sie es erneut.",
+            variant: "destructive",
+          });
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      controller.abort();
+    };
+  }, [toast]);
+
+  const initializeSchedule = (
+    classes: SchoolClass[],
+    lessons: Lesson[],
+  ): Schedule => {
+    console.log("Initializing schedule with:", {
+      classCount: classes.length,
+      lessonCount: lessons.length,
+    });
+
+    // Create empty schedule structure
+    const newSchedule = weekdays.reduce((schedule, day) => {
+      schedule[day] = classes.reduce((classSchedule, schoolClass) => {
+        classSchedule[schoolClass.id] = weeks.reduce((weekSchedule, week) => {
+          weekSchedule[week] = Array(timeSlots.length).fill(null);
+          return weekSchedule;
+        }, {} as WeekSchedule);
+        return classSchedule;
+      }, {} as ClassSchedule);
+      return schedule;
+    }, {} as Schedule);
+
+    // Insert lessons into schedule
+    lessons.forEach((lesson) => {
+      try {
+        if (!lesson) {
+          console.warn("Skipping null/undefined lesson");
+          return;
+        }
+
+        const { day, school_class_id, week, timeslot } = lesson;
+
+        if (!day || !school_class_id || !week || timeslot == undefined) {
+          console.warn("Skipping invalid lesson:", lesson);
+          return;
+        }
+
+        if (!newSchedule[day]?.[school_class_id]?.[week]) {
+          console.warn("Invalid schedule position:", {
+            day,
+            school_class_id,
+            week,
+            timeslot,
+          });
+          return;
+        }
+
+        newSchedule[day][school_class_id][week][timeslot] = lesson;
+      } catch (error) {
+        console.error("Error adding lesson to schedule:", error);
+      }
+    });
+
+    console.log("Schedule initialized");
+    return newSchedule;
+  };
+
+  const updateScheduleState = useCallback(
+    (updater: (prevSchedule: Schedule) => Schedule) => {
+      setSchedule(updater);
+      setHasUnsavedChanges(true);
     },
     [],
   );
 
-  const deleteCard = useCallback(
-    (day: Weekday, className: ClassName, week: Week, index: number) => {
-      setSchedule((prevSchedule) => {
-        const newSchedule = { ...prevSchedule };
-        newSchedule[day][className][week][index] = null;
-        return newSchedule;
-      });
+  //check teacherBlockers for the given teacherId and return true or false
+  const isTeacherAvailable = async (
+    teacher: Teacher | undefined,
+    day: string,
+    timeslot: number,
+    week: string,
+    draggedLesson?: Lesson,
+  ): Promise<boolean> => {
+    // If no teacher, they're available
+    if (!teacher) return true;
+
+    // Find all blockers for this teacher
+    const teacherBlockers = blockers.filter(
+      (blocker) => blocker.teacher_id === teacher.id && blocker.day === day,
+    );
+
+    // Check if any blocker covers the requested timeslot
+    const isBlocked = teacherBlockers.some(
+      (blocker) =>
+        timeslot + 1 >= blocker.timeslot_from &&
+        timeslot + 1 <= blocker.timeslot_to,
+    );
+
+    // check if the teacher is already booked for this timeslot on the same day in the week(A or B)
+    const isBooked = Object.values(schedule).some((classSchedule) =>
+      Object.values(classSchedule).some(
+        (weekSchedule) =>
+          weekSchedule[week]?.[timeslot] &&
+          (weekSchedule[week][timeslot]?.primary_teacher_id === teacher.id ||
+            weekSchedule[week][timeslot]?.secondary_teacher_id ===
+              teacher.id) &&
+          // Exclude current lesson from check
+          weekSchedule[week][timeslot]?.id !== draggedLesson?.id,
+      ),
+    );
+
+    return !isBlocked && !isBooked;
+  };
+
+  const moveLessonHandler = useCallback(
+    async (
+      lesson: Lesson,
+      toDay: string,
+      toSchoolClassId: number,
+      toWeek: string,
+      toTimeslot: number,
+    ) => {
+      try {
+        // First check position
+        if (
+          lesson.day === toDay &&
+          lesson.school_class_id === toSchoolClassId &&
+          lesson.week === toWeek &&
+          lesson.timeslot === toTimeslot
+        ) {
+          return;
+        }
+
+        // Then do teacher checks
+        const primaryTeacher = teachers.find(
+          (t) => t.id === lesson.primary_teacher_id,
+        );
+        const secondaryTeacher = teachers.find(
+          (t) => t.id === lesson.secondary_teacher_id,
+        );
+
+        const [primaryAvailable, secondaryAvailable] = await Promise.all([
+          isTeacherAvailable(
+            primaryTeacher,
+            toDay,
+            toTimeslot,
+            toWeek as string,
+            lesson,
+          ),
+          isTeacherAvailable(
+            secondaryTeacher,
+            toDay,
+            toTimeslot,
+            toWeek as string,
+            lesson,
+          ),
+        ]);
+
+        if (!primaryAvailable || !secondaryAvailable) {
+          toast({
+            title: "Lehrer nicht verfügbar",
+            description:
+              "Einer oder beide Lehrer sind nicht verfügbar für diese Zeit",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        // the schedule state is not saved
+        setHasUnsavedChanges(true);
+
+        // Finally update UI state
+        updateScheduleState((prevSchedule) => {
+          const newSchedule = { ...prevSchedule };
+          if (
+            lesson.day &&
+            lesson.school_class_id !== null &&
+            lesson.week &&
+            lesson.timeslot !== null
+          ) {
+            newSchedule[lesson.day][lesson.school_class_id][lesson.week][
+              lesson.timeslot
+            ] = null;
+          }
+          if (!newSchedule[toDay][toSchoolClassId][toWeek]) {
+            newSchedule[toDay][toSchoolClassId][toWeek] = Array(
+              timeSlots.length,
+            ).fill(null);
+          }
+          newSchedule[toDay][toSchoolClassId][toWeek][toTimeslot] = {
+            ...lesson,
+            day: toDay,
+            school_class_id: toSchoolClassId,
+            week: toWeek,
+            timeslot: toTimeslot,
+          };
+          return newSchedule;
+        });
+
+        if (lesson.day === null) {
+          setAblageLessons((prev) => prev.filter((l) => l.id !== lesson.id));
+        }
+      } catch (error) {
+        console.error("Move failed:", error);
+        toast({
+          title: "Fehler",
+          description: "Verschieben nicht möglich",
+          variant: "destructive",
+        });
+      }
     },
-    [],
+    [teachers, updateScheduleState, setAblageLessons, toast],
   );
+
+  const addLessonHandler = useCallback(
+    async (
+      day: string | null,
+      schoolClassId: number,
+      week: string | null,
+      timeslot: number | null,
+      primaryTeacherId: number | null,
+      name: string | null,
+      secondaryTeacherId?: number | null,
+      isBlocker?: boolean,
+    ) => {
+      const newLesson: Lesson = {
+        id: Date.now(),
+        day: day as unknown as string,
+        week,
+        timeslot,
+        name,
+        timetable_id: 1,
+        school_class_id: schoolClassId,
+        primary_teacher_id: primaryTeacherId,
+        secondary_teacher_id: secondaryTeacherId || null,
+        isBlocker: isBlocker || false,
+      };
+
+      try {
+        setHasUnsavedChanges(true);
+        toast({
+          title: isBlocker ? "Blocker hinzugefügt" : "Unterricht hinzugefügt",
+          description: isBlocker
+            ? "Der Zeitblock wurde erfolgreich hinzugefügt."
+            : "Der neue Unterricht wurde erfolgreich hinzugefügt.",
+        });
+
+        updateScheduleState((prevSchedule) => {
+          if (!day || !timeslot || !week) {
+            setAblageLessons((prevLessons) => [
+              ...(prevLessons || []),
+              newLesson,
+            ]);
+            return prevSchedule;
+          }
+
+          const newSchedule = { ...prevSchedule };
+          if (!newSchedule[day]) newSchedule[day] = {};
+          if (!newSchedule[day][schoolClassId])
+            newSchedule[day][schoolClassId] = {};
+          if (!newSchedule[day][schoolClassId][week])
+            newSchedule[day][schoolClassId][week] = Array(
+              timeSlots.length,
+            ).fill(null);
+          newSchedule[day][schoolClassId][week][timeslot] = newLesson;
+          return newSchedule;
+        });
+      } catch (error) {
+        console.error("Error adding lesson:", error);
+        toast({
+          title: "Fehler",
+          description: isBlocker
+            ? "Der Zeitblock konnte nicht hinzugefügt werden. Bitte versuchen Sie es erneut."
+            : "Der Unterricht konnte nicht hinzugefügt werden. Bitte versuchen Sie es erneut.",
+          variant: "destructive",
+        });
+      }
+    },
+    [toast, updateScheduleState],
+  );
+
+  const editLessonHandler = useCallback(
+    async (
+      day: string | null,
+      schoolClassId: number | null,
+      week: string | null,
+      timeslot: number,
+      primaryTeacherId: number | null,
+      name: string | null,
+      secondaryTeacherId?: number | null,
+      isBlocker?: boolean,
+    ) => {
+      const updatedLesson: Lesson = {
+        id:
+          day === null
+            ? Date.now()
+            : Number(
+                `${day == null ? 0 : 1}${schoolClassId}${week === "A" ? 1 : 2}${timeslot}`,
+              ),
+        day,
+        school_class_id: schoolClassId,
+        week,
+        timeslot,
+        name,
+        timetable_id: 1,
+        primary_teacher_id: primaryTeacherId,
+        secondary_teacher_id: secondaryTeacherId || null,
+        isBlocker: isBlocker || false,
+      };
+
+      try {
+        setHasUnsavedChanges(true);
+
+        toast({
+          title: "Unterricht aktualisiert",
+          description: "Der Unterricht wurde erfolgreich aktualisiert.",
+        });
+
+        if (day === null) {
+          setAblageLessons((prevLessons) =>
+            prevLessons.map((lesson) =>
+              lesson.timeslot === timeslot ? updatedLesson : lesson,
+            ),
+          );
+        } else {
+          updateScheduleState((prevSchedule) => {
+            if (!day || !timeslot || !week || !schoolClassId) {
+              setAblageLessons((prevLessons) =>
+                prevLessons.map((lesson) =>
+                  lesson.timeslot === timeslot ? updatedLesson : lesson,
+                ),
+              );
+              return prevSchedule;
+            }
+
+            const newSchedule = { ...prevSchedule };
+            if (!newSchedule[day]) newSchedule[day] = {};
+            if (!newSchedule[day][schoolClassId])
+              newSchedule[day][schoolClassId] = {};
+            if (!newSchedule[day][schoolClassId][week])
+              newSchedule[day][schoolClassId][week] = Array(
+                timeSlots.length,
+              ).fill(null);
+            newSchedule[day][schoolClassId][week][timeslot] = updatedLesson;
+            return newSchedule;
+          });
+        }
+      } catch (error) {
+        console.error("Error updating lesson:", error);
+        toast({
+          title: "Fehler",
+          description:
+            "Der Unterricht konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut.",
+          variant: "destructive",
+        });
+      }
+    },
+    [toast, updateScheduleState],
+  );
+
+  const deleteLessonHandler = useCallback(
+    async (
+      day: string | null,
+      schoolClassId: number | null,
+      week: string | null,
+      timeslot: number | null,
+    ) => {
+      try {
+        if (day === null) {
+          const lessonToDelete = ablageLessons.find(
+            (lesson) => lesson.timeslot === timeslot,
+          );
+          if (lessonToDelete) {
+            setHasUnsavedChanges(true);
+            setAblageLessons((prevLessons) => {
+              const updatedLessons = prevLessons.filter(
+                (lesson) => lesson.id !== lessonToDelete.id,
+              );
+              return updatedLessons.map((lesson, idx) => ({
+                ...lesson,
+                timeslot: idx,
+              }));
+            });
+          }
+        } else {
+          updateScheduleState((prevSchedule) => {
+            const newSchedule = { ...prevSchedule };
+
+            if (!day || !timeslot || !week || !schoolClassId) {
+              return prevSchedule;
+            }
+
+            if (newSchedule[day]?.[schoolClassId]?.[week]) {
+              const lessonToDelete =
+                newSchedule[day][schoolClassId][week][timeslot];
+              if (lessonToDelete) {
+                setHasUnsavedChanges(true);
+                newSchedule[day][schoolClassId][week][timeslot] = null;
+                toast({
+                  title: lessonToDelete.isBlocker
+                    ? "Blocker entfernt"
+                    : "Unterricht gelöscht",
+                  description: lessonToDelete.isBlocker
+                    ? "Der Zeitblock wurde erfolgreich entfernt."
+                    : "Der Unterricht wurde erfolgreich gelöscht.",
+                });
+              }
+            }
+            return newSchedule;
+          });
+        }
+      } catch (error) {
+        console.error("Error deleting lesson:", error);
+        toast({
+          title: "Fehler",
+          description:
+            "Der Unterricht konnte nicht gelöscht werden. Bitte versuchen Sie es erneut.",
+          variant: "destructive",
+        });
+      }
+    },
+    [ablageLessons, setAblageLessons, deleteCard, toast, updateScheduleState],
+  );
+
+  const handleDropToAblage = useCallback(
+    async (lesson: Lesson) => {
+      console.log("Dropping lesson to Ablage:", lesson);
+      try {
+        if (lesson.day !== null) {
+          await deleteCard(lesson.id);
+          updateScheduleState((prevSchedule) => {
+            const newSchedule = { ...prevSchedule };
+            if (
+              lesson.day &&
+              lesson.school_class_id !== null &&
+              lesson.week !== null
+            ) {
+              if (!lesson.timeslot) {
+                return prevSchedule;
+              }
+
+              if (
+                newSchedule[lesson.day]?.[lesson.school_class_id]?.[lesson.week]
+              ) {
+                newSchedule[lesson.day][lesson.school_class_id][lesson.week][
+                  lesson.timeslot
+                ] = null;
+              }
+            }
+            return newSchedule;
+          });
+          const newLesson: Lesson = {
+            ...lesson,
+            day: null,
+            week: null,
+            school_class_id: null,
+            timeslot: ablageLessons?.length ?? 0,
+          };
+          setHasUnsavedChanges(true);
+          setAblageLessons((prevLessons) => [
+            ...(prevLessons || []),
+            newLesson,
+          ]);
+        } else {
+          // If the lesson is already in Ablage, just update its position
+          setAblageLessons((prevLessons) => {
+            if (!prevLessons) return [lesson];
+            if (!lesson.timeslot) return prevLessons;
+            const updatedLessons = prevLessons.filter(
+              (l) => l.id !== lesson.id,
+            );
+            updatedLessons.splice(lesson.timeslot, 0, lesson);
+            return updatedLessons.map((l, index) => ({
+              ...l,
+              timeslot: index,
+              day: null,
+            }));
+          });
+        }
+      } catch (error) {
+        console.error("Error dropping lesson to Ablage:", error);
+        toast({
+          title: "Fehler",
+          description:
+            "Der Unterricht konnte nicht in die Ablage verschoben werden. Bitte versuchen Sie es erneut.",
+          variant: "destructive",
+        });
+      }
+    },
+    [ablageLessons, deleteCard, toast, updateScheduleState],
+  );
+
+  const addLessonToAblage = useCallback(
+    async (
+      primaryTeacherId: number | null,
+      name: string | null,
+      secondaryTeacherId?: number | null,
+    ) => {
+      const newLesson: Lesson = {
+        id: Date.now(),
+        day: null,
+        week: null,
+        timeslot: ablageLessons?.length ?? 0,
+        name,
+        timetable_id: 1,
+        school_class_id: null,
+        primary_teacher_id: primaryTeacherId,
+        secondary_teacher_id: secondaryTeacherId || null,
+        isBlocker: false,
+      };
+      try {
+        setHasUnsavedChanges(true);
+        setAblageLessons((prevLessons) => [...(prevLessons || []), newLesson]);
+        setHasUnsavedChanges(true);
+        console.log("Current ablage lessons:", ablageLessons);
+
+        toast({
+          title: "Unterricht hinzugefügt",
+          description:
+            "Der neue Unterricht wurde erfolgreich zur Ablage hinzugefügt.",
+        });
+      } catch (error) {
+        console.error("Error adding lesson to Ablage:", error);
+        toast({
+          title: "Fehler",
+          description:
+            "Der Unterricht konnte nicht zur Ablage hinzugefügt werden. Bitte versuchen Sie es erneut.",
+          variant: "destructive",
+        });
+      }
+    },
+    [ablageLessons, toast],
+  );
+
+  const handleSaveSchedule = useCallback(async () => {
+    try {
+      const allLessons = Object.values(schedule).flatMap((classSchedule) =>
+        Object.values(classSchedule).flatMap((weekSchedule) =>
+          Object.values(weekSchedule).flatMap((daySchedule) =>
+            (daySchedule || []).filter(
+              (lesson): lesson is Lesson => lesson !== null,
+            ),
+          ),
+        ),
+      );
+
+      await saveSchedule(allLessons, ablageLessons);
+      setHasUnsavedChanges(false);
+      toast({
+        title: "Gespeichert",
+        description: "Der Stundenplan wurde erfolgreich gespeichert.",
+      });
+    } catch (error) {
+      console.error("Error saving schedule:", error);
+      toast({
+        title: "Fehler beim Speichern",
+        description:
+          "Der Stundenplan konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.",
+        variant: "destructive",
+      });
+    }
+  }, [schedule, ablageLessons, toast]);
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="p-4 flex flex-col h-screen w-screen ">
-        <div className="overflow-auto flex-grow">
-          <div className="fixed top-20 left-4 right-4 bottom-4 overflow-auto rounded-lg">
-            <div className="min-w-[1700px] relative">
+      <div className="p-4 flex flex-col h-screen w-screen">
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-2xl font-bold">Class Scheduler</h1>
+          <div className="flex items-center space-x-4">
+            <Button
+              onClick={handleSaveSchedule}
+              disabled={!hasUnsavedChanges || isLoading}
+            >
+              <Save className="w-4 h-4 mr-2" />
+              Stundenplan speichern
+            </Button>
+          </div>
+        </div>
+        {isLoading ? (
+          <div className="flex items-center justify-center h-full">
+            <p>Lädt den Stundenplan...</p>
+          </div>
+        ) : (
+          <div className="overflow-auto flex-grow pb-64">
+            <div className="w-full relative">
               <table className="w-full border-collapse">
                 <thead className="sticky top-0 z-20 bg-white">
                   <tr className="sticky top-0 z-20">
                     <th className="border p-2 bg-purple-50 sticky left-0 z-30 min-w-[100px]"></th>
                     <th className="border p-2 bg-purple-50 sticky left-[100px] z-30 min-w-[50px]"></th>
-                    {classes.map((className) => (
+                    {sortedSchoolClasses.map((schoolClass) => (
                       <th
-                        key={className}
+                        key={schoolClass.id}
                         colSpan={2}
-                        className="border p-2 bg-purple-50 min-w-[200px]"
+                        className="border p-2 bg-purple-50"
                       >
-                        {className}
+                        {`${schoolClass.track}${schoolClass.year} ${schoolClass.name}`}
                       </th>
                     ))}
                   </tr>
                   <tr className="sticky top-[41px] z-20 bg-white">
-                    <th className="border p-2 bg-purple-50 sticky left-0 z-30 min-w-[100px]"></th>
-                    <th className="border p-2 bg-purple-50 sticky left-[100px] z-30 min-w-[50px]"></th>
-                    {classes.flatMap((className) =>
+                    <th className="border p-2 bg-purple-50 sticky left-0 z-30"></th>
+                    <th className="border p-2 bg-purple-50 sticky z-30 min-w-[50px]"></th>
+                    {sortedSchoolClasses.flatMap((schoolClass) =>
                       weeks.map((week) => (
                         <th
-                          key={`${className}-${week}`}
-                          className="border p-2 bg-purple-50 min-w-[100px]"
+                          key={`${schoolClass.id}-${week}`}
+                          className="border p-2 bg-purple-50"
                         >
                           Woche {week}
                         </th>
@@ -724,32 +743,42 @@ export default function ClassScheduler({
                           {slotIndex === 0 && (
                             <th
                               rowSpan={8}
-                              className="border p-2 bg-purple-50 sticky left-0 z-10 min-w-[100px]"
+                              className="border p-2 bg-purple-50 sticky left-0 z-10 w-32"
                             >
                               {day}
                             </th>
                           )}
-                          <td className="border p-2 bg-purple-50 sticky left-[100px] z-10 min-w-[50px] text-center">
+                          <td className="border p-2 bg-purple-50 sticky left-[100px] z-10 w-16 text-center">
                             {slot}
                           </td>
-                          {classes.map((className) =>
+                          {sortedSchoolClasses.map((schoolClass) =>
                             weeks.map((week) => (
                               <td
-                                key={`${day}-${className}-${week}-${slot}`}
-                                className="border p-0.5 min-w-[100px]"
+                                key={`${day}-${schoolClass.id}-${week}-${slot}`}
+                                className="border p-1"
                               >
                                 <DroppableSlot
                                   day={day}
-                                  className={className}
+                                  name={schoolClass.name}
+                                  schoolClassId={schoolClass.id}
                                   week={week}
-                                  slotIndex={slotIndex}
-                                  card={
-                                    schedule[day][className][week][slotIndex]
+                                  timeslot={slotIndex}
+                                  lesson={
+                                    schedule[day]?.[schoolClass.id]?.[week]?.[
+                                      slotIndex
+                                    ] || null
                                   }
-                                  moveCard={moveCard}
-                                  addCard={addCard}
-                                  editCard={editCard}
-                                  deleteCard={deleteCard}
+                                  //  @ts-expect-error - argument mismatch, but safe to ignore
+                                  moveLesson={moveLessonHandler}
+                                  addLesson={addLessonHandler}
+                                  //  @ts-expect-error - argument mismatch, but safe to ignore
+                                  editLesson={editLessonHandler}
+                                  deleteLesson={deleteLessonHandler}
+                                  teachers={teachers}
+                                  draggedLesson={draggedLesson}
+                                  setDraggedLesson={setDraggedLesson}
+                                  onDrop={handleDropToAblage}
+                                  teacherBlockers={teacherBlockers}
                                 />
                               </td>
                             )),
@@ -762,7 +791,22 @@ export default function ClassScheduler({
               </table>
             </div>
           </div>
-        </div>
+        )}
+        <Ablage
+          lessons={ablageLessons || []}
+          onDrop={handleDropToAblage}
+          //  @ts-expect-error - argument mismatch, but safe to ignore
+          moveLesson={moveLessonHandler}
+          addLessonToAblage={addLessonToAblage}
+          //  @ts-expect-error - argument mismatch, but safe to ignore
+          editLesson={editLessonHandler}
+          deleteLesson={deleteLessonHandler}
+          teachers={teachers}
+          //  @ts-expect-error - argument mismatch, but safe to ignore
+          isTeacherAvailable={isTeacherAvailable}
+          setDraggedLesson={setDraggedLesson}
+        />
+        <Toaster />
       </div>
     </DndProvider>
   );

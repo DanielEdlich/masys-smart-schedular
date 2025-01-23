@@ -61,6 +61,7 @@ describe("SchulklassenVerwaltung Page", () => {
         phone: "1234567890",
         priority: 1,
         weekly_capacity: 40,
+        color: "blue",
       },
       {
         id: 2,
@@ -70,6 +71,7 @@ describe("SchulklassenVerwaltung Page", () => {
         phone: "0987654321",
         priority: 1,
         weekly_capacity: 40,
+        color: "red",
       },
     ]);
   });

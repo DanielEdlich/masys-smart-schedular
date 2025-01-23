@@ -1,64 +1,133 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import ClassScheduler from "@/components/lehrplan/ClassScheduler";
+import SchulklassenVerwaltung from "@/app/klassen-verwaltung/page";
+import { getClasses, getTeachers } from "@/app/actions/classActions";
 
-// Mock react-dnd
-jest.mock("react-dnd", () => ({
-  DndProvider: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
-  ),
-  useDrag: () => [{ isDragging: false }, () => {}],
-  useDrop: () => [{}, () => {}],
+// Mock next/navigation
+jest.mock("next/navigation", () => ({
+  useRouter() {
+    return {
+      refresh: jest.fn(),
+    };
+  },
 }));
 
-jest.mock("react-dnd-html5-backend", () => ({
-  HTML5Backend: jest.fn(),
+// Mock server actions
+jest.mock("@/app/actions/classActions", () => ({
+  getClasses: jest.fn(),
+  getTeachers: jest.fn(),
+  addClass: jest.fn(),
+  editClass: jest.fn(),
 }));
 
-describe("ClassScheduler", () => {
+// Mock components
+jest.mock("@/components/Navbar", () => ({
+  Navbar: () => <div data-testid="navbar">Navbar</div>,
+}));
+
+const mockedGetClasses = getClasses as jest.MockedFunction<typeof getClasses>;
+const mockedGetTeachers = getTeachers as jest.MockedFunction<
+  typeof getTeachers
+>;
+
+describe("SchulklassenVerwaltung Page", () => {
   beforeEach(() => {
-    render(<ClassScheduler />);
+    // Setup mock data using the properly typed mock functions
+    mockedGetClasses.mockResolvedValue([
+      {
+        id: 1,
+        name: "Test Class 1",
+        year: "1-3",
+        track: "A",
+        primary_teacher_id: 1,
+        secondary_teacher_id: null,
+      },
+      {
+        id: 2,
+        name: "Test Class 2",
+        year: "4-6",
+        track: "B",
+        primary_teacher_id: 2,
+        secondary_teacher_id: null,
+      },
+    ]);
+    mockedGetTeachers.mockResolvedValue([
+      {
+        id: 1,
+        first_name: "John",
+        last_name: "Doe",
+        email: "john@test.com",
+        phone: "1234567890",
+        priority: 1,
+        weekly_capacity: 40,
+        color: "blue",
+      },
+      {
+        id: 2,
+        first_name: "Jane",
+        last_name: "Smith",
+        email: "jane@test.com",
+        phone: "0987654321",
+        priority: 1,
+        weekly_capacity: 40,
+        color: "red",
+      },
+    ]);
   });
 
-  it("renders the table", () => {
-    expect(screen.getByRole("table")).toBeInTheDocument();
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
-  it("renders weekday headers", () => {
-    const weekdays = [
-      "Montag",
-      "Dienstag",
-      "Mittwoch",
-      "Donnerstag",
-      "Freitag",
-      "Samstag",
+  it("renders loading state initially", () => {
+    render(<SchulklassenVerwaltung />);
+    expect(screen.getByText("Laden...")).toBeInTheDocument();
+  });
+
+  it("renders the page title", async () => {
+    render(<SchulklassenVerwaltung />);
+    expect(
+      await screen.findByText("Schulklassen-Verwaltung"),
+    ).toBeInTheDocument();
+  });
+
+  it('shows "Klasse hinzufügen" button and opens dialog on click', async () => {
+    render(<SchulklassenVerwaltung />);
+    const addButton = await screen.findByText("Klasse hinzufügen");
+    expect(addButton).toBeInTheDocument();
+    fireEvent.click(addButton);
+    expect(
+      await screen.findByText("Neue Klasse hinzufügen"),
+    ).toBeInTheDocument();
+  });
+
+  it("renders the table headers correctly", async () => {
+    render(<SchulklassenVerwaltung />);
+    const headers = [
+      "Name",
+      "Jahrgang",
+      "Zug",
+      "Klassenlehrer",
+      "Co-Klassenlehrer",
+      "Aktionen",
     ];
-    weekdays.forEach((day) => {
-      expect(screen.getByText(day)).toBeInTheDocument();
-    });
+    for (const header of headers) {
+      expect(
+        await screen.findByRole("columnheader", { name: header }),
+      ).toBeInTheDocument();
+    }
   });
 
-  it("renders class headers", () => {
-    const classes = [
-      "Class1",
-      "Class2",
-      "Class3",
-      "Class4",
-      "Class5",
-      "Class6",
-      "Class7",
-      "Class8",
-      "Class9",
-      "Class10",
-    ];
-    classes.forEach((className) => {
-      expect(screen.getByText(className)).toBeInTheDocument();
-    });
+  it("displays class data in the table", async () => {
+    render(<SchulklassenVerwaltung />);
+    expect(await screen.findByText("Test Class 1")).toBeInTheDocument();
+    expect(await screen.findByText("Test Class 2")).toBeInTheDocument();
   });
 
-  it("renders week headers", () => {
-    expect(screen.getAllByText("Woche A")).toHaveLength(10);
-    expect(screen.getAllByText("Woche B")).toHaveLength(10);
+  it("displays edit and delete buttons for each class", async () => {
+    render(<SchulklassenVerwaltung />);
+    expect(await screen.findAllByText("Bearbeiten")).toHaveLength(2);
+    expect(await screen.findAllByText("Löschen")).toHaveLength(2);
   });
 });
