@@ -6,11 +6,12 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { Ablage } from '@/components/lehrplan/ablage';
 import { DroppableSlot } from '@/components/lehrplan/droppable-slot';
 import { Lesson, Teacher, SchoolClass, Blocker } from '@/db/types';
-import { getSchoolClasses, getTeachers, addCard, deleteCard, getBlockers, getScheduleCards, getAblageCards, saveSchedule, getAllTeacherBlockers } from '@/app/actions/classSchedulerActions';
+import { getSchoolClasses, getTeachers, deleteCard, getBlockers, getScheduleCards, getAblageCards, saveSchedule, getAllTeacherBlockers } from '@/app/actions/classSchedulerActions';
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
 import { Save } from 'lucide-react';
+import { set } from "lodash";
 
 
 
@@ -301,7 +302,7 @@ export default function ClassScheduler({
       };
 
       try {
-        await addCard(newLesson);
+        setHasUnsavedChanges(true);
         toast({
           title: isBlocker ? "Blocker hinzugefügt" : "Unterricht hinzugefügt",
           description: isBlocker ? "Der Zeitblock wurde erfolgreich hinzugefügt." : "Der neue Unterricht wurde erfolgreich hinzugefügt.",
@@ -330,7 +331,7 @@ export default function ClassScheduler({
         });
       }
     },
-    [toast, addCard, updateScheduleState],
+    [toast, updateScheduleState],
   );
 
   const editLessonHandler = useCallback(
@@ -476,7 +477,7 @@ export default function ClassScheduler({
           school_class_id: null, 
           timeslot: ablageLessons?.length ?? 0,
         };
-        await addCard(newLesson);
+        setHasUnsavedChanges(true);
         setAblageLessons((prevLessons) => [...(prevLessons || []), newLesson]);
       } else {
         // If the lesson is already in Ablage, just update its position
@@ -496,7 +497,7 @@ export default function ClassScheduler({
         variant: "destructive",
       });
     }
-  }, [ablageLessons, deleteCard, addCard, toast, updateScheduleState]);
+  }, [ablageLessons, deleteCard, toast, updateScheduleState]);
 
   const addLessonToAblage = useCallback(
     async (
@@ -517,7 +518,7 @@ export default function ClassScheduler({
         isBlocker: false,
       };
       try {
-        await addCard(newLesson);
+        setHasUnsavedChanges(true);
         setAblageLessons((prevLessons) => [...(prevLessons || []), newLesson]);
         setHasUnsavedChanges(true);
         console.log("Current ablage lessons:", ablageLessons);
@@ -535,7 +536,7 @@ export default function ClassScheduler({
         });
       }
     },
-    [ablageLessons, addCard, toast],
+    [ablageLessons, toast],
   );
 
   const handleSaveSchedule = useCallback(async () => {
@@ -644,8 +645,10 @@ export default function ClassScheduler({
                                   lesson={
                                     schedule[day]?.[schoolClass.id]?.[week]?.[slotIndex] || null
                                   }
+                                  // @ts-ignore
                                   moveLesson={moveLessonHandler}
                                   addLesson={addLessonHandler}
+                                  // @ts-ignore
                                   editLesson={editLessonHandler}
                                   deleteLesson={deleteLessonHandler}
                                   teachers={teachers}
@@ -669,11 +672,14 @@ export default function ClassScheduler({
         <Ablage 
           lessons={ablageLessons || []} 
           onDrop={handleDropToAblage} 
+          // @ts-ignore
           moveLesson={moveLessonHandler} 
           addLessonToAblage={addLessonToAblage}
+          // @ts-ignore
           editLesson={editLessonHandler}
           deleteLesson={deleteLessonHandler}
           teachers={teachers}
+          // @ts-ignore
           isTeacherAvailable={isTeacherAvailable}
           setDraggedLesson={setDraggedLesson}
         />

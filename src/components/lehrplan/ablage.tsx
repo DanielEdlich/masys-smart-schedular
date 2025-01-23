@@ -85,10 +85,15 @@ export const Ablage: React.FC<AblageProps> = ({
     toDay: string | null,
     toName: string | null,
     toWeek: string | null,
-    toTimeslot: number
+    toTimeslot: number | null
   ) => {
     if (toDay === 'Ablage' && toName === 'Ablage') {
       // Moving within Ablage
+
+      if (toTimeslot === null) {
+        return;
+      }
+
       const updatedLessons = lessons.filter(c => c.id !== lesson.id);
       const newLesson = { ...lesson, timeslot: toTimeslot };
       updatedLessons.splice(toTimeslot, 0, newLesson);
@@ -98,8 +103,12 @@ export const Ablage: React.FC<AblageProps> = ({
       // Moving to main schedule
       const primaryTeacher = teachers.find(t => t.id === lesson.primary_teacher_id);
       if (primaryTeacher) {
+
+        if (toTimeslot === null) {
+          return;
+        }
         const isAvailable = await isTeacherAvailable(primaryTeacher, toDay || "", toTimeslot + 1);
-        const isBooked = await isTeacherAlreadyBooked(primaryTeacher, toDay || "", toTimeslot, toWeek);
+        const isBooked = await isTeacherAlreadyBooked(primaryTeacher, toDay || "", toTimeslot, toWeek || ""); ;
 
         if (isAvailable) {
           if (isBooked) {
@@ -145,6 +154,7 @@ export const Ablage: React.FC<AblageProps> = ({
             <div key={lesson.id} className="w-32 h-16">
               <DraggableLesson
                 lesson={{ ...lesson, timeslot: lesson.timeslot }}
+                // @ts-ignore
                 moveLesson={handleMoveLesson}
                 editLesson={editLesson}
                 deleteLesson={async (day, name, week, timeslot) => {
