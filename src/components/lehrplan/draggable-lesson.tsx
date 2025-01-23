@@ -9,6 +9,8 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Lesson, Teacher } from '@/db/types';
 import { LessonForm } from '@/components/lehrplan/lesson-form';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { promises } from 'dns';
+
 
 type DraggableLessonProps = {
   lesson: Lesson;
@@ -18,23 +20,23 @@ type DraggableLessonProps = {
     toSchoolClassId: number | null,
     toWeek: string | null,
     toTimeslot: number | null,
-  ) => void;
+  ) => Promise<void>;
   editLesson: (
     day: string | null,
     schoolClassId: number | null,
     week: string | null,
-    timeslot: number,
+    timeslot: number | null,
     primaryTeacherId: number | null,
     name: string | null,
     secondaryTeacherId?: number | null,
     isBlocker?: boolean,
-  ) => void;
+  ) => Promise<void>;
   deleteLesson: (
     day: string | null,
     schoolClassId: number | null,
     week: string | null,
     timeslot: number | null,
-  ) => void;
+  ) => Promise<void>;
   isInAblage?: boolean;
   teachers: Teacher[];
   setDraggedLesson: (lesson: Lesson | null) => void;
@@ -93,11 +95,11 @@ export const DraggableLesson: React.FC<DraggableLessonProps> = ({
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (lesson.day === null) {
-      deleteLesson(null, null, null, lesson.timeslot);
+      await deleteLesson(null, null, null, lesson.timeslot);
     } else {
-      deleteLesson(lesson.day, lesson.school_class_id, lesson.week, lesson.timeslot);
+      await deleteLesson(lesson.day, lesson.school_class_id, lesson.week, lesson.timeslot);
     }
     setIsDeleteDialogOpen(false);
     setIsEditDialogOpen(false);
@@ -144,10 +146,10 @@ export const DraggableLesson: React.FC<DraggableLessonProps> = ({
                     day={lesson.day}
                     schoolClassId={lesson.school_class_id}
                     week={lesson.week}
-                    timeslot={lesson.timeslot}
-                    addLesson={() => {}}
-                    editLesson={(day, schoolClassId, week, timeslot, primaryTeacherId, name, secondaryTeacherId, isBlocker) => {
-                      editLesson(day, schoolClassId, week, timeslot, primaryTeacherId, name, secondaryTeacherId, isBlocker);
+                    timeslot={lesson.timeslot ?? 0}
+                    addLesson={async () => Promise.resolve()}
+                    editLesson={async (day, schoolClassId, week, timeslot, primaryTeacherId, name, secondaryTeacherId, isBlocker) => {
+                      await editLesson(day, schoolClassId, week, timeslot, primaryTeacherId, name, secondaryTeacherId, isBlocker);
                     }}
                     deleteLesson={handleDelete}
                     onClose={() => setIsEditDialogOpen(false)}

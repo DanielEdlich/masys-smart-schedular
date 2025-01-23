@@ -10,7 +10,7 @@ type DroppableSlotProps = {
   day: string;
   name: string;
   week: string;
-  timeslot: number;
+  timeslot: number | null;
   lesson: Lesson | null;
   moveLesson: (
     lesson: Lesson,
@@ -18,12 +18,12 @@ type DroppableSlotProps = {
     toSchoolClassId: number | null,
     toWeek: string | null,
     toTimeslot: number | null,
-  ) => void;
+  ) => Promise<void>;
   addLesson: (
     day: string,
     schoolClassId: number,
     week: string,
-    timeslot: number,
+    timeslot: number | null,
     primaryTeacherId: number | null,
     name: string | null,
     secondaryTeacherId?: number | null,
@@ -33,7 +33,7 @@ type DroppableSlotProps = {
     day: string | null,
     schoolClassId: number | null,
     week: string | null,
-    timeslot: number,
+    timeslot: number | null,
     primaryTeacherId: number | null,
     name: string | null,
     secondaryTeacherId?: number | null,
@@ -48,14 +48,12 @@ type DroppableSlotProps = {
   teachers: Teacher[];
   draggedLesson: Lesson | null;
   setDraggedLesson: (lesson: Lesson | null) => void;
-  onDrop: (lesson: Lesson) => void;
   schoolClassId: number;
   teacherBlockers: Blocker[];
 };
 
 export const DroppableSlot: React.FC<DroppableSlotProps> = ({
   day,
-  name,
   week,
   timeslot,
   lesson,
@@ -65,7 +63,6 @@ export const DroppableSlot: React.FC<DroppableSlotProps> = ({
   deleteLesson,
   teachers,
   setDraggedLesson,
-  onDrop,
   schoolClassId,
   teacherBlockers,
 }) => {
@@ -87,6 +84,8 @@ export const DroppableSlot: React.FC<DroppableSlotProps> = ({
 
       const checkTeacherAvailability = (teacher: Teacher | undefined) => {
         if (!teacher) return true;
+
+        if (timeslot === null) return true;
 
         // Does this teacher have a time-blocker here?
         const hasBlocker = teacherBlockers.some(
@@ -132,15 +131,10 @@ export const DroppableSlot: React.FC<DroppableSlotProps> = ({
 
         console.log("Moving lesson:", item, "to:", { day, schoolClassId, week, timeslot });
 
-        // If the item is coming from the "Ablage" (no day defined), remove it from there first
-        if (item.day === null) {
-          onDrop(item);
-        }
-
         moveLesson(item, day, schoolClassId, week, timeslot);
       }
     },
-    [day, schoolClassId, week, timeslot, lesson, canDrop, toast, onDrop, moveLesson]
+    [day, schoolClassId, week, timeslot, lesson, canDrop, toast, moveLesson]
   );
 
   const [, drop] = useDrop<Lesson, void>({
@@ -173,6 +167,7 @@ export const DroppableSlot: React.FC<DroppableSlotProps> = ({
   }, [day, schoolClassId, week, timeslot, lesson]);
 
   return (
+    // @ts-ignore
     <div ref={drop} className="w-32 h-16 relative rounded-md overflow-hidden">
       {lesson?.isBlocker ? (
         <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">

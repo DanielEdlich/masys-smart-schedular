@@ -32,7 +32,7 @@ type LessonFormProps = {
     day: string | null,
     schoolClassId: number | null,
     week: string | null,
-    timeslot: number,
+    timeslot: number | null,
     primaryTeacherId: number | null,
     name: string | null,
     secondaryTeacherId?: number | null,
