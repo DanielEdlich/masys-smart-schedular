@@ -645,10 +645,10 @@ export default function ClassScheduler({
                                   lesson={
                                     schedule[day]?.[schoolClass.id]?.[week]?.[slotIndex] || null
                                   }
-                                  // @ts-ignore
+                                  //  @ts-expect-error
                                   moveLesson={moveLessonHandler}
                                   addLesson={addLessonHandler}
-                                  // @ts-ignore
+                                  //  @ts-expect-error
                                   editLesson={editLessonHandler}
                                   deleteLesson={deleteLessonHandler}
                                   teachers={teachers}
@@ -672,14 +672,14 @@ export default function ClassScheduler({
         <Ablage 
           lessons={ablageLessons || []} 
           onDrop={handleDropToAblage} 
-          // @ts-ignore
+          //  @ts-expect-error - argument mismatch, but safe to ignore
           moveLesson={moveLessonHandler} 
           addLessonToAblage={addLessonToAblage}
-          // @ts-ignore
+          //  @ts-expect-error - argument mismatch, but safe to ignore
           editLesson={editLessonHandler}
           deleteLesson={deleteLessonHandler}
           teachers={teachers}
-          // @ts-ignore
+          //  @ts-expect-error - argument mismatch, but safe to ignore 
           isTeacherAvailable={isTeacherAvailable}
           setDraggedLesson={setDraggedLesson}
         />

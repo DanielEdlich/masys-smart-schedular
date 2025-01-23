@@ -167,7 +167,7 @@ export const DroppableSlot: React.FC<DroppableSlotProps> = ({
   }, [day, schoolClassId, week, timeslot, lesson]);
 
   return (
-    // @ts-ignore
+    // @ts-expect-error - ref is deprecated but still used in DnD 
     <div ref={drop} className="w-32 h-16 relative rounded-md overflow-hidden">
       {lesson?.isBlocker ? (
         <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">

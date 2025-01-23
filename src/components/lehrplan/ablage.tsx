@@ -136,7 +136,7 @@ export const Ablage: React.FC<AblageProps> = ({
 
   return (
     <div
-      // @ts-ignore
+      // @ts-expect-error - ref is deprecated but still used in DnD
       ref={drop}
       className="fixed bottom-4 left-4 right-4 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden z-50"
       style={{ height: '180px' }}
@@ -154,7 +154,7 @@ export const Ablage: React.FC<AblageProps> = ({
             <div key={lesson.id} className="w-32 h-16">
               <DraggableLesson
                 lesson={{ ...lesson, timeslot: lesson.timeslot }}
-                // @ts-ignore
+                // @ts-expect-error - ref is deprecated but still used in DnD
                 moveLesson={handleMoveLesson}
                 editLesson={editLesson}
                 deleteLesson={async (day, name, week, timeslot) => {

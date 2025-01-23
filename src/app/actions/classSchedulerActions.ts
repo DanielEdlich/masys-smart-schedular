@@ -1,6 +1,6 @@
 "use server"
 
-import { Lesson, Weekday, Week, Teacher, SchoolClass, Blocker, Timetable } from '@/db/types'
+import { Lesson, Teacher, SchoolClass, Blocker } from '@/db/types'
 import { TeacherRepository } from "@/repositories/teacherRepository";
 import { SchoolClassRepository } from "@/repositories/schoolClassRepository";
 import { TimetableRepository } from '@/repositories/timetableRepository';
@@ -165,7 +165,7 @@ export async function getAllTeacherBlockers(): Promise<Blocker[]> {
   return teacherBlockerRepository.getAll();
 }
 
-export async function getAvailableTeachersForEdit(day: string, timeslot: number, week: string, currentPrimaryTeacherId?: number, currentSecondaryTeacherId?: number): Promise<Teacher[]> {
+export async function getAvailableTeachersForEdit(day: string, timeslot: number): Promise<Teacher[]> {
   const availableTeachers = teacherRepository.getAvailableTeachers(day, timeslot);
   return availableTeachers;
 }
