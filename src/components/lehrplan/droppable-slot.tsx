@@ -3,7 +3,7 @@ import { useDrop } from 'react-dnd';
 import { Button } from "@/components/ui/button";
 import { Ban, X } from 'lucide-react';
 import { DraggableLesson } from './draggable-lesson';
-import { Lesson, Teacher, Blocker } from '@/db/types';
+import { Lesson, Teacher, TeacherAvailability } from '@/db/types';
 import { useToast } from "@/hooks/use-toast";
 
 type DroppableSlotProps = {
@@ -50,7 +50,7 @@ type DroppableSlotProps = {
   setDraggedLesson: (lesson: Lesson | null) => void;
   onDrop: (lesson: Lesson) => void;
   schoolClassId: number;
-  teacherBlockers: Blocker[];
+  teacherAvailabilities: TeacherAvailability[];
 };
 
 export const DroppableSlot: React.FC<DroppableSlotProps> = ({
@@ -67,7 +67,7 @@ export const DroppableSlot: React.FC<DroppableSlotProps> = ({
   setDraggedLesson,
   onDrop,
   schoolClassId,
-  teacherBlockers,
+  teacherAvailabilities,
 }) => {
   const { toast } = useToast();
 
@@ -88,25 +88,25 @@ export const DroppableSlot: React.FC<DroppableSlotProps> = ({
       const checkTeacherAvailability = (teacher: Teacher | undefined) => {
         if (!teacher) return true;
 
-        // Does this teacher have a time-blocker here?
-        const hasBlocker = teacherBlockers.some(
-          blocker =>
-            blocker.teacher_id === teacher.id &&
-            blocker.day === day &&
-            blocker.timeslot_from <= timeslot &&
-            blocker.timeslot_to >= timeslot
+        // Is teacher available here?
+        const hasAvailability = teacherAvailabilities.some(
+          availability =>
+            availability.teacher_id === teacher.id &&
+            availability.day === day &&
+            availability.timeslot_from <= timeslot &&
+            availability.timeslot_to >= timeslot
         );
 
         // It's still okay if this teacher is already the one in this slot
         const isCurrentTeacher =
           teacher.id === lesson?.primary_teacher_id || teacher.id === lesson?.secondary_teacher_id;
 
-        return !hasBlocker || isCurrentTeacher;
+        return !hasAvailability || isCurrentTeacher;
       };
 
       return checkTeacherAvailability(primaryTeacher) && checkTeacherAvailability(secondaryTeacher);
     },
-    [day, week, timeslot, lesson, teachers, teacherBlockers]
+    [day, week, timeslot, lesson, teachers, teacherAvailabilities]
   );
 
   const handleDrop = useCallback(

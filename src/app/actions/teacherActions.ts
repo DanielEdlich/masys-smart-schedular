@@ -2,23 +2,23 @@
 
 import { db } from "@/db/db";
 import { TeacherRepository } from "@/repositories/teacherRepository";
-import { TeacherBlockerRepository } from "@/repositories/teacherBlockerRepository";
+import { TeacherAvailabilityRepository } from "@/repositories/teacherAvailabilityRepository";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
 const teacherRepository = new TeacherRepository(db);
-const blockerRepository = new TeacherBlockerRepository(db);
+const teacherAvailabilityRepo = new TeacherAvailabilityRepository(db);
 
 export async function createTeacher(data: any) {
-  const { blocker: blockerData, ...teacherData } = data;
+  const { availability: availabilityData, ...teacherData } = data;
   const newTeacher = await teacherRepository.create(teacherData);
   if (!newTeacher) {
     throw new Error("Failed to create teacher");
   }
 
-  if (blockerData && blockerData.length > 0) {
-    blockerRepository.create(
-      blockerData.map((singleBlock: any) => ({
+  if (availabilityData && availabilityData.length > 0) {
+    teacherAvailabilityRepo.create(
+      availabilityData.map((singleBlock: any) => ({
         ...singleBlock,
         teacher_id: newTeacher.id,
       })),
@@ -28,26 +28,26 @@ export async function createTeacher(data: any) {
 }
 
 export async function updateTeacher(data: any) {
-  const { id, blocker: blockerData, ...teacherData } = data;
+  const { id, availability: availabilityData, ...teacherData } = data;
 
   // 1: Update teacher
   await teacherRepository.update(id, teacherData);
 
-  // 2: Delete existing blocker
-  await blockerRepository.deleteByTeacherId(id);
+  // 2: Delete existing availability
+  await teacherAvailabilityRepo.deleteByTeacherId(id);
 
-  // 3: Insert new blocker
-  if (blockerData && blockerData.length > 0) {
-    blockerData.forEach((block: any) => {
-      blockerRepository.create({ ...block, teacher_id: id });
+  // 3: Insert new availability
+  if (availabilityData && availabilityData.length > 0) {
+    availabilityData.forEach((block: any) => {
+      teacherAvailabilityRepo.create({ ...block, teacher_id: id });
     });
   }
   revalidatePath("/lehrer-verwaltung");
 }
 
 export async function deleteTeacher(id: number) {
-  // 1: delete blocker for teacher
-  await blockerRepository.deleteByTeacherId(id);
+  // 1: delete availability for teacher
+  await teacherAvailabilityRepo.deleteByTeacherId(id);
 
   // 2: delete teacher
   await teacherRepository.delete(id);
@@ -60,16 +60,16 @@ export async function getAllTeachers() {
   // disable cache for this server action
   const teachers = await teacherRepository.getAll();
 
-  // Use Promise.all to wait for all blocker data to be fetched
-  const teachersWithBlocker = await Promise.all(
+  // Use Promise.all to wait for all availability data to be fetched
+  const teachersWithAvailabilities = await Promise.all(
     teachers.map(async (teacher) => {
-      const blocker = await blockerRepository.getForTeacher(teacher.id);
+      const availability = await teacherAvailabilityRepo.getForTeacher(teacher.id);
       return {
         ...teacher,
-        blocker: blocker || [], // Provide empty array as fallback
+        availability: availability || [], // Provide empty array as fallback
       };
     }),
   );
 
-  return teachersWithBlocker;
+  return teachersWithAvailabilities;
 }

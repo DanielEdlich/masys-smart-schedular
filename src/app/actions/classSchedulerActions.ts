@@ -1,18 +1,18 @@
 "use server"
 
-import { Lesson, Weekday, Week, Teacher, SchoolClass, Blocker, Timetable } from '@/db/types'
+import { Lesson, Weekday, Week, Teacher, SchoolClass, TeacherAvailability, Timetable } from '@/db/types'
 import { TeacherRepository } from "@/repositories/teacherRepository";
 import { SchoolClassRepository } from "@/repositories/schoolClassRepository";
 import { TimetableRepository } from '@/repositories/timetableRepository';
 import { LessonRepository } from "@/repositories/lessonRepository";
 import { db } from "@/db/db";
-import { TeacherBlockerRepository } from '@/repositories/teacherBlockerRepository';
+import { TeacherAvailabilityRepository } from '@/repositories/teacherAvailabilityRepository';
 
 const teacherRepository = new TeacherRepository(db);
 const schoolClassRepository = new SchoolClassRepository(db);
 const timetableRepository = new TimetableRepository(db);
 const lessonRepository = new LessonRepository(db);
-const teacherBlockerRepository = new TeacherBlockerRepository(db);
+const teacherAvailabilityRepository = new TeacherAvailabilityRepository(db);
 
 
 export async function saveSchedule(lessons: Lesson[], ablageLessons: Lesson[]): Promise<void> {
@@ -150,8 +150,8 @@ export async function getTeachers(): Promise<Teacher[]> {
   return Promise.resolve(teacherRepository.getAll());
 }
 
-export async function getBlockers(): Promise<Blocker[]> {
-  return Promise.resolve(teacherBlockerRepository.getAll());
+export async function getTeacherAvailabilities(): Promise<TeacherAvailability[]> {
+  return Promise.resolve(teacherAvailabilityRepository.getAll());
 }
 
 
@@ -161,8 +161,8 @@ export async function getAvailableTeachersForTimeslot(day: string, timeslot: num
   return availableTeachers;
 }
 
-export async function getAllTeacherBlockers(): Promise<Blocker[]> {
-  return teacherBlockerRepository.getAll();
+export async function getAllTeacherAvailabilites(): Promise<TeacherAvailability[]> {
+  return teacherAvailabilityRepository.getAll();
 }
 
 export async function getAvailableTeachersForEdit(day: string, timeslot: number, week: string, currentPrimaryTeacherId?: number, currentSecondaryTeacherId?: number): Promise<Teacher[]> {

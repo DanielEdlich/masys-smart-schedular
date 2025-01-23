@@ -23,8 +23,8 @@ jest.mock("@/components/lehrer-verwaltung/DeleteTeacherDialog", () => ({
   DeleteTeacherDialog: () => <div>Delete Teacher</div>,
 }));
 
-jest.mock("@/components/lehrer-verwaltung/TeacherBlocker", () => ({
-  TeacherBlocker: () => <div>Teacher Blocker</div>,
+jest.mock("@/components/lehrer-verwaltung/TeacherAvailability", () => ({
+  TeacherAvailability: () => <div>Teacher Availability</div>,
 }));
 
 jest.mock("@/app/actions/teacherActions", () => ({
@@ -38,7 +38,7 @@ jest.mock("@/app/actions/teacherActions", () => ({
         phone: "123456",
         priority: "High",
         color: "#37EB5B",
-        blocker: [],
+        availability: [],
       },
     ]),
 }));

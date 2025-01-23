@@ -7,20 +7,20 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-type Blocker = {
+type Availability = {
   day: string;
   timeslot_from: number;
   timeslot_to: number;
 };
 
-export function TeacherBlocker({ blocker }: { blocker: Blocker[] }) {
+export function TeacherAvailability({ availability: availability }: { availability: Availability[] }) {
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger>{blocker.map((a) => a.day).join(", ")}</TooltipTrigger>
+        <TooltipTrigger>{availability.map((a) => a.day).join(", ")}</TooltipTrigger>
         <TooltipContent>
           <ul>
-            {blocker.map((a, index) => (
+            {availability.map((a, index) => (
               <li key={index}>
                 {a.day}: Block {a.timeslot_from} - {a.timeslot_to}
               </li>

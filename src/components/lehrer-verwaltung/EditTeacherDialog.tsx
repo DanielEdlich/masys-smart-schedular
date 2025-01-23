@@ -15,7 +15,7 @@ import { updateTeacher } from "@/app/actions/teacherActions";
 import { useToast } from "@/hooks/use-toast";
 import { TeacherForm, TeacherFormData } from "./TeacherForm";
 
-type Blocker = {
+type Availability = {
   id?: number;
   day: string;
   timeslot_from: number;
@@ -31,7 +31,7 @@ type Teacher = {
   priority: number;
   weekly_capacity: number;
   color: string;
-  blocker: Blocker[];
+  availability: Availability[];
 };
 
 export function EditTeacherDialog({ teacher }: { teacher: Teacher }) {
@@ -49,7 +49,7 @@ export function EditTeacherDialog({ teacher }: { teacher: Teacher }) {
     priority: teacher.priority,
     weekly_capacity: teacher.weekly_capacity,
     color: teacher.color || "#37EB5B",
-    blocker: teacher.blocker || [],
+    availability: teacher.availability || [],
   };
 
   const onSubmit = async (data: TeacherFormData) => {

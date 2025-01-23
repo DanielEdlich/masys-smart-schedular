@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Trash2 } from "lucide-react";
 
-type Blocker = {
+type Availability = {
   id?: number;
   day: string;
   timeslot_from: number;
@@ -28,7 +28,7 @@ export interface TeacherFormData {
   phone: string;
   priority: number;
   weekly_capacity: number;
-  blocker: Blocker[];
+  availability: Availability[];
   color: string;
 }
 
@@ -75,30 +75,30 @@ export function TeacherForm({
     setFormData((prev) => ({ ...prev, [key]: value }));
   };
 
-  // Blocker-Methoden
-  const handleBlockerChange = (
+  // Availability-Methoden
+  const handleAvailabilityChange = (
     index: number,
-    field: keyof Blocker,
+    field: keyof Availability,
     value: any,
   ) => {
-    const newBlocker = [...formData.blocker];
-    newBlocker[index] = { ...newBlocker[index], [field]: value };
-    setFormData({ ...formData, blocker: newBlocker });
+    const newAvailability = [...formData.availability];
+    newAvailability[index] = { ...newAvailability[index], [field]: value };
+    setFormData({ ...formData, availability: newAvailability });
   };
 
-  const addBlocker = () => {
+  const addAvailability = () => {
     setFormData({
       ...formData,
-      blocker: [
-        ...formData.blocker,
+      availability: [
+        ...formData.availability,
         { day: "Montag", timeslot_from: 1, timeslot_to: 2 },
       ],
     });
   };
 
-  const removeBlocker = (index: number) => {
-    const newBlocker = formData.blocker.filter((_, i) => i !== index);
-    setFormData({ ...formData, blocker: newBlocker });
+  const removeAvailability = (index: number) => {
+    const newAvailability = formData.availability.filter((_, i) => i !== index);
+    setFormData({ ...formData, availability: newAvailability });
   };
 
   // Validierung
@@ -243,14 +243,14 @@ export function TeacherForm({
           </div>
         </div>
 
-        {/* Blocker */}
+        {/* Availability */}
         <div className="space-y-2">
-          <Label>Verfügbarkeit (Blocker)</Label>
-          {formData.blocker.map((b, index) => (
+          <Label>Verfügbarkeit</Label>
+          {formData.availability.map((b, index) => (
             <div key={index} className="grid grid-cols-4 items-center gap-4">
               <Select
                 value={b.day}
-                onValueChange={(val) => handleBlockerChange(index, "day", val)}
+                onValueChange={(val) => handleAvailabilityChange(index, "day", val)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Tag" />
@@ -268,7 +268,7 @@ export function TeacherForm({
                 type="number"
                 value={b.timeslot_from}
                 onChange={(e) =>
-                  handleBlockerChange(
+                  handleAvailabilityChange(
                     index,
                     "timeslot_from",
                     parseInt(e.target.value),
@@ -281,7 +281,7 @@ export function TeacherForm({
                 type="number"
                 value={b.timeslot_to}
                 onChange={(e) =>
-                  handleBlockerChange(
+                  handleAvailabilityChange(
                     index,
                     "timeslot_to",
                     parseInt(e.target.value),
@@ -294,15 +294,15 @@ export function TeacherForm({
                 type="button"
                 variant="outline"
                 size="icon"
-                onClick={() => removeBlocker(index)}
+                onClick={() => removeAvailability(index)}
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
             </div>
           ))}
 
-          <Button type="button" variant="outline" onClick={addBlocker}>
-            Blocker hinzufügen
+          <Button type="button" variant="outline" onClick={addAvailability}>
+            Verfügbarkeit hinzufügen
           </Button>
         </div>
       </div>

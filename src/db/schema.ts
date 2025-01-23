@@ -20,10 +20,10 @@ export const teacher = sqliteTable("teacher", {
 });
 
 // ---------------------------------------
-// BLOCKER
+// Teacher Availability
 // ---------------------------------------
-export const blocker = sqliteTable(
-  "blocker",
+export const teacher_availability = sqliteTable(
+  "teacher_availability",
   {
     id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
     day: text("day").notNull(), // Day (e.g. Monday, Tuesday...)

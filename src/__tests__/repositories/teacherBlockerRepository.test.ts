@@ -2,15 +2,15 @@
  * @jest-environment node
  */
 
-import { teacher, blocker } from "@/db/schema";
-import { NewBlocker } from "@/db/types";
-import { TeacherBlockerRepository } from "@/repositories/teacherBlockerRepository";
+import { teacher, teacher_availability } from "@/db/schema";
+import { NewTeacherAvailability } from "@/db/types";
+import { TeacherAvailabilityRepository } from "@/repositories/teacherAvailabilityRepository";
 
-describe("blockerRepository", () => {
-  let repo: TeacherBlockerRepository;
+describe("teacherAvailabilityRepository", () => {
+  let repo: TeacherAvailabilityRepository;
   beforeAll(async () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    repo = new TeacherBlockerRepository((global as any).db);
+    repo = new TeacherAvailabilityRepository((global as any).db);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await (global as any).db.delete(teacher);
@@ -36,18 +36,18 @@ describe("blockerRepository", () => {
   });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  afterAll(async () => await (global as any).db.delete(blocker));
+  afterAll(async () => await (global as any).db.delete(teacher_availability));
 
   describe("create", () => {
-    it("should create a new teacher blocker and return it", async () => {
-      const newblocker: NewBlocker = {
+    it("should create a new teacher availability and return it", async () => {
+      const teacherAvailability: NewTeacherAvailability = {
         teacher_id: 1,
         day: "Monday",
         timeslot_from: 1,
         timeslot_to: 2,
       };
 
-      const created = await repo.create(newblocker);
+      const created = await repo.create(teacherAvailability);
       expect(created).toBeDefined();
       expect(created?.id).toBeDefined();
       expect(created?.teacher_id).toBe(1);
@@ -69,7 +69,7 @@ describe("blockerRepository", () => {
       createdId = created!.id;
     });
 
-    it("should return the correct blocker by id", async () => {
+    it("should return the correct availability by id", async () => {
       const result = await repo.getById(createdId);
       expect(result).toBeDefined();
       expect(result?.id).toBe(createdId);
@@ -79,7 +79,7 @@ describe("blockerRepository", () => {
       expect(result?.timeslot_to).toBe(4);
     });
 
-    it("should return undefined if blocker not found", async () => {
+    it("should return undefined if availability not found", async () => {
       const result = await repo.getById(999);
       expect(result).toBeUndefined();
     });
@@ -128,7 +128,7 @@ describe("blockerRepository", () => {
     });
   });
 
-  describe("isblockerAtTimeslot", () => {
+  describe("isAvailableAtTimeslot", () => {
     beforeAll(async () => {
       await repo.create({
         teacher_id: 2,
@@ -139,7 +139,7 @@ describe("blockerRepository", () => {
     });
 
     it("should return true if teacher is available at the given timeslot and day", async () => {
-      const isAvailable = await repo.isTeacherBlockerAtTimeslot(
+      const isAvailable = await repo.isTeacherAvailableAtTimeslot(
         2,
         11,
         "Saturday",
@@ -148,7 +148,7 @@ describe("blockerRepository", () => {
     });
 
     it("should return false if teacher is not available at the given timeslot and day", async () => {
-      const isAvailable = await repo.isTeacherBlockerAtTimeslot(
+      const isAvailable = await repo.isTeacherAvailableAtTimeslot(
         2,
         13,
         "Saturday",
@@ -158,7 +158,7 @@ describe("blockerRepository", () => {
   });
 
   describe("update", () => {
-    let blockerId: number;
+    let teacherAvailabilityId: number;
     beforeAll(async () => {
       const created = await repo.create({
         teacher_id: 1,
@@ -166,24 +166,24 @@ describe("blockerRepository", () => {
         timeslot_from: 13,
         timeslot_to: 14,
       });
-      blockerId = created!.id;
+      teacherAvailabilityId = created!.id;
     });
 
-    it("should update an existing teacher blocker", async () => {
-      const updated = await repo.update(blockerId, { day: "Tuesday" });
+    it("should update an existing teacher availability", async () => {
+      const updated = await repo.update(teacherAvailabilityId, { day: "Tuesday" });
       expect(updated).toBeDefined();
-      expect(updated?.id).toBe(blockerId);
+      expect(updated?.id).toBe(teacherAvailabilityId);
       expect(updated?.day).toBe("Tuesday");
     });
 
-    it("should return undefined if trying to update non-existing blocker", async () => {
+    it("should return undefined if trying to update non-existing availability", async () => {
       const updated = await repo.update(999, { day: "Sunday" });
       expect(updated).toBeUndefined();
     });
   });
 
   describe("delete", () => {
-    let blockerId: number;
+    let teacherAvailabilityId: number;
     beforeAll(async () => {
       const created = await repo.create({
         teacher_id: 1,
@@ -191,20 +191,20 @@ describe("blockerRepository", () => {
         timeslot_from: 15,
         timeslot_to: 16,
       });
-      blockerId = created!.id;
+      teacherAvailabilityId = created!.id;
     });
 
-    it("should delete an existing teacher blocker and return it", async () => {
-      const deleted = await repo.delete(blockerId);
+    it("should delete an existing teacher availability and return it", async () => {
+      const deleted = await repo.delete(teacherAvailabilityId);
       expect(deleted).toBeDefined();
-      expect(deleted?.id).toBe(blockerId);
+      expect(deleted?.id).toBe(teacherAvailabilityId);
       expect(deleted?.day).toBe("Monday");
 
-      const afterDelete = await repo.getById(blockerId);
+      const afterDelete = await repo.getById(teacherAvailabilityId);
       expect(afterDelete).toBeUndefined();
     });
 
-    it("should return undefined if trying to delete non-existing blocker", async () => {
+    it("should return undefined if trying to delete non-existing availability", async () => {
       const deleted = await repo.delete(999);
       expect(deleted).toBeUndefined();
     });

@@ -5,8 +5,8 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Ablage } from '@/components/lehrplan/ablage';
 import { DroppableSlot } from '@/components/lehrplan/droppable-slot';
-import { Lesson, Teacher, SchoolClass, Blocker } from '@/db/types';
-import { getSchoolClasses, getTeachers, addCard, deleteCard, getBlockers, getScheduleCards, getAblageCards, saveSchedule, getAllTeacherBlockers } from '@/app/actions/classSchedulerActions';
+import { Lesson, Teacher, SchoolClass, TeacherAvailability } from '@/db/types';
+import { getSchoolClasses, getTeachers, addCard, deleteCard, getTeacherAvailabilities, getScheduleCards, getAblageCards, saveSchedule, getAllTeacherAvailabilites } from '@/app/actions/classSchedulerActions';
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
@@ -47,11 +47,11 @@ export default function ClassScheduler({
   const [ablageLessons, setAblageLessons] = useState<Lesson[]>([]);
   const [schoolClasses, setSchoolClasses] = useState<SchoolClass[]>([]);
   const [teachers, setTeachers] = useState<Teacher[]>([]);
-  const [blockers, setBlockers] = useState<Blocker[]>([]);
+  const [availabilities, setAvailabilities] = useState<TeacherAvailability[]>([]);
   const [draggedLesson, setDraggedLesson] = useState<Lesson | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  const [teacherBlockers ] = useState<Blocker[]>([]);
+  const [teacherAvailabilities ] = useState<TeacherAvailability[]>([]);
 
   const { toast } = useToast();
 
@@ -72,17 +72,17 @@ export default function ClassScheduler({
         const [fetchedClasses, fetchedTeachers, fetchedBlockers, fetchedLessons, fetchedAblageLessons, teacherBlockers] = await Promise.all([
           getSchoolClasses(),
           getTeachers(),
-          getBlockers(),
+          getTeacherAvailabilities(),
           getScheduleCards(),
           getAblageCards(),
-          getAllTeacherBlockers()
+          getAllTeacherAvailabilites()
         ]);
 
         if (!controller.signal.aborted) {
           setSchoolClasses(fetchedClasses);
           setTeachers(fetchedTeachers);
-          setBlockers(fetchedBlockers);
-          setBlockers(teacherBlockers);
+          setAvailabilities(fetchedBlockers);
+          setAvailabilities(teacherBlockers);
 
           const newSchedule = initializeSchedule(fetchedClasses, fetchedLessons);
           
@@ -168,7 +168,7 @@ export default function ClassScheduler({
     setHasUnsavedChanges(true);
   }, []);
 
-  //check teacherBlockers for the given teacherId and return true or false
+  //check teacherAvailabilites for the given teacherId and return true or false
   const isTeacherAvailable = async (
     teacher: Teacher | undefined,
     day: string,
@@ -180,14 +180,14 @@ export default function ClassScheduler({
     if (!teacher) return true;
   
     // Find all blockers for this teacher
-    const teacherBlockers = blockers.filter(
-      blocker => 
-        blocker.teacher_id === teacher.id && 
-        blocker.day === day
+    const teacherAvailabilities = availabilities.filter(
+      availability => 
+        availability.teacher_id === teacher.id && 
+        availability.day === day
     );
   
     // Check if any blocker covers the requested timeslot
-    const isBlocked = teacherBlockers.some(blocker => 
+    const isAvailable = teacherAvailabilities.some(blocker => 
       timeslot >= blocker.timeslot_from && 
       timeslot <= blocker.timeslot_to
     );
@@ -205,7 +205,7 @@ export default function ClassScheduler({
       )
     );
     
-    return !isBlocked && !isBooked;
+    return isAvailable && !isBooked;
   };
 
   const moveLessonHandler = useCallback(
@@ -273,7 +273,7 @@ export default function ClassScheduler({
         });
       }
     },
-    [teachers, moveCard, updateScheduleState, setAblageLessons, toast]
+    [teachers, updateScheduleState, setAblageLessons, toast]
   );
 
   const addLessonHandler = useCallback(
@@ -625,7 +625,7 @@ export default function ClassScheduler({
                                   draggedLesson={draggedLesson}
                                   setDraggedLesson={setDraggedLesson}
                                   onDrop={handleDropToAblage}
-                                  teacherBlockers={teacherBlockers}
+                                  teacherAvailabilities={teacherAvailabilities}
                                 />
                               </td>
                             )),

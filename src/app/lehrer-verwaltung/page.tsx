@@ -11,12 +11,12 @@ import { TeacherAvatar } from "@/components/lehrer-verwaltung/TeacherAvatar";
 import { CreateTeacherDialog } from "@/components/lehrer-verwaltung/CreateTeacherDialog";
 import { EditTeacherDialog } from "@/components/lehrer-verwaltung/EditTeacherDialog";
 import { DeleteTeacherDialog } from "@/components/lehrer-verwaltung/DeleteTeacherDialog";
-import { TeacherBlocker } from "@/components/lehrer-verwaltung/TeacherBlocker";
+import { TeacherAvailability } from "@/components/lehrer-verwaltung/TeacherAvailability";
 import { getAllTeachers } from "@/app/actions/teacherActions";
 import { Navbar } from "@/components/Navbar";
 
 export default async function Lehrerverwaltung() {
-  const teachersWithBlocker = await getAllTeachers();
+  const teachersWithAvailability = await getAllTeachers();
 
   return (
     <>
@@ -46,7 +46,7 @@ export default async function Lehrerverwaltung() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {teachersWithBlocker.map((teacher) => (
+              {teachersWithAvailability.map((teacher) => (
                 <TableRow key={teacher.id}>
                   <TableCell>
                     <TeacherAvatar
@@ -60,7 +60,7 @@ export default async function Lehrerverwaltung() {
                   <TableCell>{teacher.phone}</TableCell>
                   <TableCell>{teacher.priority}</TableCell>
                   <TableCell>
-                    <TeacherBlocker blocker={teacher.blocker} />
+                    <TeacherAvailability availability={teacher.availability} />
                   </TableCell>
                   <TableCell>
                     <div className="flex space-x-2">

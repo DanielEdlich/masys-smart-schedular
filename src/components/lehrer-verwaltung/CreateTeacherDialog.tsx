@@ -29,7 +29,7 @@ export function CreateTeacherDialog() {
     priority: 1,
     weekly_capacity: 40,
     color: "#37EB5B",
-    blocker: [{ day: "Montag", timeslot_from: 1, timeslot_to: 2 }],
+    availability: [{ day: "Montag", timeslot_from: 1, timeslot_to: 2 }],
   };
 
   const onSubmit = async (data: TeacherFormData) => {
