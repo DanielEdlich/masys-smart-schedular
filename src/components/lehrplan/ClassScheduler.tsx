@@ -139,7 +139,7 @@ export default function ClassScheduler({
   
         const { day, school_class_id, week, timeslot } = lesson;
   
-        if (!day || !school_class_id || !week || timeslot === undefined) {
+        if (!day || !school_class_id || !week || timeslot == undefined) {
           console.warn('Skipping invalid lesson:', lesson);
           return;
         }
@@ -188,8 +188,8 @@ export default function ClassScheduler({
   
     // Check if any Availability covers the requested timeslot
     const isAvailable = teacherAvailabilities.some(availability => 
-      timeslot >= availability.timeslot_from && 
-      timeslot <= availability.timeslot_to
+      timeslot+1 >= availability.timeslot_from && 
+      timeslot+1 <= availability.timeslot_to
     );
 
     // check if the teacher is already booked for this timeslot on the same day in the week(A or B)
@@ -244,7 +244,7 @@ export default function ClassScheduler({
         // Finally update UI state
         updateScheduleState((prevSchedule) => {
           const newSchedule = { ...prevSchedule };
-          if (lesson.day && lesson.school_class_id !== null && lesson.week) {
+          if (lesson.day && lesson.school_class_id !== null && lesson.week && lesson.timeslot !== null) {
             newSchedule[lesson.day][lesson.school_class_id][lesson.week][lesson.timeslot] = null;
           }
           if (!newSchedule[toDay][toSchoolClassId][toWeek]) {
@@ -308,6 +308,12 @@ export default function ClassScheduler({
         });
 
         updateScheduleState((prevSchedule) => {
+
+          if (!day || !timeslot || !week) {
+            setAblageLessons((prevLessons) => [...(prevLessons || []), newLesson]);
+            return prevSchedule;
+          }
+
           const newSchedule = { ...prevSchedule };
           if (!newSchedule[day]) newSchedule[day] = {};
           if (!newSchedule[day][schoolClassId]) newSchedule[day][schoolClassId] = {};
@@ -368,6 +374,16 @@ export default function ClassScheduler({
           );
         } else {
           updateScheduleState((prevSchedule) => {
+
+            if (!day || !timeslot || !week || !schoolClassId) {
+              setAblageLessons((prevLessons) => 
+                prevLessons.map((lesson) => 
+                  lesson.timeslot === timeslot ? updatedLesson : lesson
+                )
+              );
+              return prevSchedule;
+            }
+
             const newSchedule = { ...prevSchedule };
             if (!newSchedule[day]) newSchedule[day] = {};
             if (!newSchedule[day][schoolClassId]) newSchedule[day][schoolClassId] = {};
@@ -403,6 +419,11 @@ export default function ClassScheduler({
         } else {
           updateScheduleState((prevSchedule) => {
             const newSchedule = { ...prevSchedule };
+
+            if (!day || !timeslot || !week || !schoolClassId) {
+              return prevSchedule;
+            }
+
             if (newSchedule[day]?.[schoolClassId]?.[week]) {
               const lessonToDelete = newSchedule[day][schoolClassId][week][timeslot];
               if (lessonToDelete) {
@@ -437,6 +458,11 @@ export default function ClassScheduler({
         updateScheduleState((prevSchedule) => {
           const newSchedule = { ...prevSchedule };
           if (lesson.day && lesson.school_class_id !== null && lesson.week !== null) {
+
+            if(!lesson.timeslot) {
+              return prevSchedule;
+            }
+
             if (newSchedule[lesson.day]?.[lesson.school_class_id]?.[lesson.week]) {
               newSchedule[lesson.day][lesson.school_class_id][lesson.week][lesson.timeslot] = null;
             }
@@ -456,6 +482,7 @@ export default function ClassScheduler({
         // If the lesson is already in Ablage, just update its position
         setAblageLessons((prevLessons) => {
           if (!prevLessons) return [lesson];
+          if (!lesson.timeslot) return prevLessons;
           const updatedLessons = prevLessons.filter((l) => l.id !== lesson.id);
           updatedLessons.splice(lesson.timeslot, 0, lesson);
           return updatedLessons.map((l, index) => ({ ...l, timeslot: index, day: null }));

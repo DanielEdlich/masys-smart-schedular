@@ -20,33 +20,33 @@ type AblageProps = {
   lessons: Lesson[];
   onDrop: (lesson: Lesson) => void;
   moveLesson: (
-    lesson: Lesson | null,
+    lesson: Lesson,
     toDay: string | null,
     toName: string | null,
     toWeek: string | null,
     toTimeslot: number | null
-  ) => void;
+  ) => Promise<void>;
   addLessonToAblage: (
     primary_teacher_id: number | null,
     type: string | null,
     secondary_teacher_id?: number | null
-  ) => void;
+  ) => Promise<void>;
   editLesson: (
-    day: string,
-    name: string,
-    week: string,
-    timeslot: number,
-    teacher: Teacher,
-    type: string,
-    color: string,
-    secondaryTeacher?: Teacher,
-  ) => void;
+    day: string | null,
+    schoolClassId: number | null,
+    week: string | null,
+    timeslot: number | null,
+    primaryTeacherId: number | null,
+    name: string | null,
+    secondaryTeacherId?: number | null,
+    isBlocker?: boolean,
+  ) => Promise<void>;
   deleteLesson: (
     day: string | null,
-    name: string | null,
+    schoolClassId: number | null,
     week: string | null,
     timeslot: number | null
-  ) => void;
+  ) => Promise<void>;
   teachers: Teacher[];
   isTeacherAvailable: (teacher: Teacher, day: string, timeslot: number) => Promise<boolean>;
   isTeacherAlreadyBooked: (teacher: Teacher, day: string, timeslot: number, week: string) => Promise<boolean>;
@@ -82,9 +82,9 @@ export const Ablage: React.FC<AblageProps> = ({
 
   const handleMoveLesson = async (
     lesson: Lesson,
-    toDay: string,
-    toName: string,
-    toWeek: string,
+    toDay: string | null,
+    toName: string | null,
+    toWeek: string | null,
     toTimeslot: number
   ) => {
     if (toDay === 'Ablage' && toName === 'Ablage') {
@@ -98,8 +98,8 @@ export const Ablage: React.FC<AblageProps> = ({
       // Moving to main schedule
       const primaryTeacher = teachers.find(t => t.id === lesson.primary_teacher_id);
       if (primaryTeacher) {
-        const isAvailable = await isTeacherAvailable(primaryTeacher, toDay, toTimeslot + 1);
-        const isBooked = await isTeacherAlreadyBooked(primaryTeacher, toDay, toTimeslot, toWeek);
+        const isAvailable = await isTeacherAvailable(primaryTeacher, toDay || "", toTimeslot + 1);
+        const isBooked = await isTeacherAlreadyBooked(primaryTeacher, toDay || "", toTimeslot, toWeek);
 
         if (isAvailable) {
           if (isBooked) {
@@ -127,6 +127,7 @@ export const Ablage: React.FC<AblageProps> = ({
 
   return (
     <div
+      // @ts-ignore
       ref={drop}
       className="fixed bottom-4 left-4 right-4 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden z-50"
       style={{ height: '180px' }}
@@ -146,10 +147,10 @@ export const Ablage: React.FC<AblageProps> = ({
                 lesson={{ ...lesson, timeslot: lesson.timeslot }}
                 moveLesson={handleMoveLesson}
                 editLesson={editLesson}
-                deleteLesson={(day, name, week, timeslot) => {
+                deleteLesson={async (day, name, week, timeslot) => {
                   const lessonToDelete = lessons.find((l) => l.timeslot === timeslot);
                   if (lessonToDelete) {
-                    deleteLesson(null, null, null, timeslot);
+                    await deleteLesson(null, null, null, timeslot);
                   }
                 }}
                 isInAblage={true}
@@ -170,8 +171,8 @@ export const Ablage: React.FC<AblageProps> = ({
             schoolClassId={null}
             week={null}
             timeslot={lessons.length}
-            addLesson={(_, __, ___, ____, primaryTeacherId, name, secondaryTeacherId) => {
-              addLessonToAblage(primaryTeacherId, name, secondaryTeacherId);
+            addLesson={async (_, __, ___, ____, primaryTeacherId, name, secondaryTeacherId) => {
+              await addLessonToAblage(primaryTeacherId, name, secondaryTeacherId);
               setIsNewLessonDialogOpen(false);
             }}
             editLesson={editLesson}
