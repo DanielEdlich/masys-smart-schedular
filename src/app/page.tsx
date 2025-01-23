@@ -6,12 +6,6 @@ import { Button } from "@/components/ui/button";
 export default function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="bg-yellow-300 text-black p-2 text-center">
-        <p className="text-sm font-medium">
-          🚧 Diese Anwendung befindet sich noch im Aufbau. Wir arbeiten hart
-          daran, sie für Sie fertigzustellen! 🚧
-        </p>
-      </div>
       <Navbar />
       <main className="flex-1">
         <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-gradient-to-r from-blue-500 to-purple-600">
