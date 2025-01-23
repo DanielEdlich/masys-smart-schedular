@@ -18,8 +18,11 @@ const teacherBlockerRepository = new TeacherBlockerRepository(db);
 export async function saveSchedule(lessons: Lesson[], ablageLessons: Lesson[]): Promise<void> {
   try {
     // Step 1: Ensure timetable exists (later we can support multiple timetables)
-    await timetableRepository.getById(1) || await timetableRepository.create({ id: 1, name: "Default Timetable" });
-
+    const timetable = await timetableRepository.getById(1);
+    if (!timetable) {
+      await timetableRepository.create({ id: 1, name: "Default Timetable" });
+    }
+    
     // Step 2: Get all existing lessons to track duplicates
     const existingLessons = await lessonRepository.getAll();
     console.log('Existing lessons:', existingLessons.length);

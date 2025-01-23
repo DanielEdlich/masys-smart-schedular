@@ -645,10 +645,10 @@ export default function ClassScheduler({
                                   lesson={
                                     schedule[day]?.[schoolClass.id]?.[week]?.[slotIndex] || null
                                   }
-                                  //  @ts-expect-error
+                                  //  @ts-expect-error - argument mismatch, but safe to ignore
                                   moveLesson={moveLessonHandler}
                                   addLesson={addLessonHandler}
-                                  //  @ts-expect-error
+                                  //  @ts-expect-error - argument mismatch, but safe to ignore
                                   editLesson={editLessonHandler}
                                   deleteLesson={deleteLessonHandler}
                                   teachers={teachers}
