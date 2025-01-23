@@ -37,10 +37,8 @@ export enum Weekday {
   "Dienstag",
   "Mittwoch",
   "Donnerstag",
-  "Freitag"
+  "Freitag",
 }
-
-
 
 // Update other types that used className
 export type ClassSchedule = {
@@ -54,4 +52,3 @@ export type Schedule = {
 export type WeekSchedule = {
   [week in Week]: (Lesson | null)[];
 };
-

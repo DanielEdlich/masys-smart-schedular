@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect } from 'react';
-import { useDrop } from 'react-dnd';
+import React, { useCallback, useEffect } from "react";
+import { useDrop } from "react-dnd";
 import { Button } from "@/components/ui/button";
-import { Ban, X } from 'lucide-react';
-import { DraggableLesson } from './draggable-lesson';
-import { Lesson, Teacher, Blocker } from '@/db/types';
+import { Ban, X } from "lucide-react";
+import { DraggableLesson } from "./draggable-lesson";
+import { Lesson, Teacher, Blocker } from "@/db/types";
 import { useToast } from "@/hooks/use-toast";
 
 type DroppableSlotProps = {
@@ -74,13 +74,21 @@ export const DroppableSlot: React.FC<DroppableSlotProps> = ({
       if (lesson?.isBlocker) return false;
 
       // Same slot is always allowed (e.g., to allow editing in place)
-      if (item.day === day && item.week === week && item.timeslot === timeslot) {
+      if (
+        item.day === day &&
+        item.week === week &&
+        item.timeslot === timeslot
+      ) {
         return true;
       }
 
       // Check teacher availability
-      const primaryTeacher = teachers.find(t => t.id === item.primary_teacher_id);
-      const secondaryTeacher = teachers.find(t => t.id === item.secondary_teacher_id);
+      const primaryTeacher = teachers.find(
+        (t) => t.id === item.primary_teacher_id,
+      );
+      const secondaryTeacher = teachers.find(
+        (t) => t.id === item.secondary_teacher_id,
+      );
 
       const checkTeacherAvailability = (teacher: Teacher | undefined) => {
         if (!teacher) return true;
@@ -89,23 +97,27 @@ export const DroppableSlot: React.FC<DroppableSlotProps> = ({
 
         // Does this teacher have a time-blocker here?
         const hasBlocker = teacherBlockers.some(
-          blocker =>
+          (blocker) =>
             blocker.teacher_id === teacher.id &&
             blocker.day === day &&
             blocker.timeslot_from <= timeslot &&
-            blocker.timeslot_to >= timeslot
+            blocker.timeslot_to >= timeslot,
         );
 
         // It's still okay if this teacher is already the one in this slot
         const isCurrentTeacher =
-          teacher.id === lesson?.primary_teacher_id || teacher.id === lesson?.secondary_teacher_id;
+          teacher.id === lesson?.primary_teacher_id ||
+          teacher.id === lesson?.secondary_teacher_id;
 
         return !hasBlocker || isCurrentTeacher;
       };
 
-      return checkTeacherAvailability(primaryTeacher) && checkTeacherAvailability(secondaryTeacher);
+      return (
+        checkTeacherAvailability(primaryTeacher) &&
+        checkTeacherAvailability(secondaryTeacher)
+      );
     },
-    [day, week, timeslot, lesson, teachers, teacherBlockers]
+    [day, week, timeslot, lesson, teachers, teacherBlockers],
   );
 
   const handleDrop = useCallback(
@@ -123,18 +135,24 @@ export const DroppableSlot: React.FC<DroppableSlotProps> = ({
         if (!dropCheck) {
           toast({
             title: "Lehrer nicht verfügbar",
-            description: "Einer oder beide Lehrer sind nicht verfügbar für diese Zeit",
+            description:
+              "Einer oder beide Lehrer sind nicht verfügbar für diese Zeit",
             variant: "destructive",
           });
           return;
         }
 
-        console.log("Moving lesson:", item, "to:", { day, schoolClassId, week, timeslot });
+        console.log("Moving lesson:", item, "to:", {
+          day,
+          schoolClassId,
+          week,
+          timeslot,
+        });
 
         moveLesson(item, day, schoolClassId, week, timeslot);
       }
     },
-    [day, schoolClassId, week, timeslot, lesson, canDrop, toast, moveLesson]
+    [day, schoolClassId, week, timeslot, lesson, canDrop, toast, moveLesson],
   );
 
   const [, drop] = useDrop<Lesson, void>({
@@ -152,7 +170,16 @@ export const DroppableSlot: React.FC<DroppableSlotProps> = ({
         description: "Der Zeitblock wurde erfolgreich entfernt.",
       });
     } else {
-      await addLesson(day, schoolClassId, week, timeslot, null, "Blocker", null, true);
+      await addLesson(
+        day,
+        schoolClassId,
+        week,
+        timeslot,
+        null,
+        "Blocker",
+        null,
+        true,
+      );
       toast({
         title: "Blocker hinzugefügt",
         description: "Der Zeitblock wurde erfolgreich hinzugefügt.",
@@ -162,12 +189,12 @@ export const DroppableSlot: React.FC<DroppableSlotProps> = ({
 
   useEffect(() => {
     console.log(
-      `DroppableSlot updated: day=${day}, class=${schoolClassId}, week=${week}, timeslot=${timeslot}, hasLesson=${!!lesson}`
+      `DroppableSlot updated: day=${day}, class=${schoolClassId}, week=${week}, timeslot=${timeslot}, hasLesson=${!!lesson}`,
     );
   }, [day, schoolClassId, week, timeslot, lesson]);
 
   return (
-    // @ts-expect-error - ref is deprecated but still used in DnD 
+    // @ts-expect-error - ref is deprecated but still used in DnD
     <div ref={drop} className="w-32 h-16 relative rounded-md overflow-hidden">
       {lesson?.isBlocker ? (
         <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">

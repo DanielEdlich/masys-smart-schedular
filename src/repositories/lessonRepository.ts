@@ -29,11 +29,7 @@ export class LessonRepository {
     return this.dbClient
       .select()
       .from(lesson)
-      .where(
-        and(
-          isNull(lesson.day),
-        ),
-      );
+      .where(and(isNull(lesson.day)));
   }
 
   //get lesson on schedule (day, week and timeslot are not empty)
@@ -45,7 +41,7 @@ export class LessonRepository {
         or(
           isNotNull(lesson.day),
           isNotNull(lesson.week),
-          isNotNull(lesson.timeslot)
+          isNotNull(lesson.timeslot),
         ),
       );
   }

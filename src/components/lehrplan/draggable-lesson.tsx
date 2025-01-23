@@ -1,16 +1,36 @@
-import React, { useCallback, useState, useEffect } from 'react';
-import { useDrag, useDrop } from 'react-dnd';
+import React, { useCallback, useState, useEffect } from "react";
+import { useDrag, useDrop } from "react-dnd";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Slot } from "@radix-ui/react-slot";
-import { PencilRuler, Ban } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Lesson, Teacher } from '@/db/types';
-import { LessonForm } from '@/components/lehrplan/lesson-form';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { promises } from 'dns';
-
+import { PencilRuler, Ban } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Lesson, Teacher } from "@/db/types";
+import { LessonForm } from "@/components/lehrplan/lesson-form";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { promises } from "dns";
 
 type DraggableLessonProps = {
   lesson: Lesson;
@@ -43,13 +63,17 @@ type DraggableLessonProps = {
 };
 
 const getTeacherInitials = (teacherId: number | null, teachers: Teacher[]) => {
-  const teacher = teachers.find(t => t.id === teacherId);
-  return teacher ? `${teacher.first_name[0]}${teacher.last_name[0]}`.toUpperCase() : '';
+  const teacher = teachers.find((t) => t.id === teacherId);
+  return teacher
+    ? `${teacher.first_name[0]}${teacher.last_name[0]}`.toUpperCase()
+    : "";
 };
 
 const getTeacherFullName = (teacherId: number | null, teachers: Teacher[]) => {
-  const teacher = teachers.find(t => t.id === teacherId);
-  return teacher ? `${teacher.first_name} ${teacher.last_name}` : 'No teacher assigned';
+  const teacher = teachers.find((t) => t.id === teacherId);
+  return teacher
+    ? `${teacher.first_name} ${teacher.last_name}`
+    : "No teacher assigned";
 };
 
 export const DraggableLesson: React.FC<DraggableLessonProps> = ({
@@ -65,19 +89,25 @@ export const DraggableLesson: React.FC<DraggableLessonProps> = ({
     type: "LESSON",
     item: () => {
       setDraggedLesson(lesson);
-      return { 
-        ...lesson, 
-        day: isInAblage ? null : (lesson.day || null),
+      return {
+        ...lesson,
+        day: isInAblage ? null : lesson.day || null,
         school_class_id: isInAblage ? null : lesson.school_class_id,
         primary_teacher_id: lesson.primary_teacher_id,
-        secondary_teacher_id: lesson.secondary_teacher_id
+        secondary_teacher_id: lesson.secondary_teacher_id,
       };
     },
     end: (item, monitor) => {
       setDraggedLesson(null);
       if (!monitor.didDrop()) {
         // If the item was not dropped on a valid target, reset its position
-        moveLesson(item, item.day, item.school_class_id, item.week, item.timeslot);
+        moveLesson(
+          item,
+          item.day,
+          item.school_class_id,
+          item.week,
+          item.timeslot,
+        );
       }
     },
     collect: (monitor) => ({
@@ -99,7 +129,12 @@ export const DraggableLesson: React.FC<DraggableLessonProps> = ({
     if (lesson.day === null) {
       await deleteLesson(null, null, null, lesson.timeslot);
     } else {
-      await deleteLesson(lesson.day, lesson.school_class_id, lesson.week, lesson.timeslot);
+      await deleteLesson(
+        lesson.day,
+        lesson.school_class_id,
+        lesson.week,
+        lesson.timeslot,
+      );
     }
     setIsDeleteDialogOpen(false);
     setIsEditDialogOpen(false);
@@ -108,11 +143,14 @@ export const DraggableLesson: React.FC<DraggableLessonProps> = ({
   return (
     <Card
       ref={dragRef}
-      style={{ 
-        opacity: isDragging ? 0.5 : 1, 
-        backgroundColor: lesson.isBlocker 
-          ? '#ff0000' 
-          : (lesson.primary_teacher_id && teachers.find(t => t.id === lesson.primary_teacher_id)?.color) || '#FAFAFA'
+      style={{
+        opacity: isDragging ? 0.5 : 1,
+        backgroundColor: lesson.isBlocker
+          ? "#ff0000"
+          : (lesson.primary_teacher_id &&
+              teachers.find((t) => t.id === lesson.primary_teacher_id)
+                ?.color) ||
+            "#FAFAFA",
       }}
       className="shadow-sm border-none w-full h-full"
     >
@@ -124,8 +162,13 @@ export const DraggableLesson: React.FC<DraggableLessonProps> = ({
         ) : (
           <>
             <div className="flex items-center w-full justify-between">
-              <span className="font-bold truncate w-20">{lesson.name || 'Unnamed'}</span>
-              <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+              <span className="font-bold truncate w-20">
+                {lesson.name || "Unnamed"}
+              </span>
+              <Dialog
+                open={isEditDialogOpen}
+                onOpenChange={setIsEditDialogOpen}
+              >
                 <DialogTrigger asChild>
                   <Button
                     variant="ghost"
@@ -148,8 +191,26 @@ export const DraggableLesson: React.FC<DraggableLessonProps> = ({
                     week={lesson.week}
                     timeslot={lesson.timeslot ?? 0}
                     addLesson={async () => Promise.resolve()}
-                    editLesson={async (day, schoolClassId, week, timeslot, primaryTeacherId, name, secondaryTeacherId, isBlocker) => {
-                      await editLesson(day, schoolClassId, week, timeslot, primaryTeacherId, name, secondaryTeacherId, isBlocker);
+                    editLesson={async (
+                      day,
+                      schoolClassId,
+                      week,
+                      timeslot,
+                      primaryTeacherId,
+                      name,
+                      secondaryTeacherId,
+                      isBlocker,
+                    ) => {
+                      await editLesson(
+                        day,
+                        schoolClassId,
+                        week,
+                        timeslot,
+                        primaryTeacherId,
+                        name,
+                        secondaryTeacherId,
+                        isBlocker,
+                      );
                     }}
                     deleteLesson={handleDelete}
                     onClose={() => setIsEditDialogOpen(false)}
@@ -176,19 +237,25 @@ export const DraggableLesson: React.FC<DraggableLessonProps> = ({
           </>
         )}
       </CardContent>
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+      <AlertDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Sind Sie sicher?</AlertDialogTitle>
             <AlertDialogDescription>
-              Diese Aktion kann nicht rückgängig gemacht werden. Dies wird den Unterricht dauerhaft aus dem Stundenplan entfernen.
+              Diese Aktion kann nicht rückgängig gemacht werden. Dies wird den
+              Unterricht dauerhaft aus dem Stundenplan entfernen.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Abbrechen</AlertDialogCancel>
-            <AlertDialogAction onClick={() => {
-              handleDelete();
-            }}>
+            <AlertDialogAction
+              onClick={() => {
+                handleDelete();
+              }}
+            >
               Löschen
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -197,4 +264,3 @@ export const DraggableLesson: React.FC<DraggableLessonProps> = ({
     </Card>
   );
 };
-

@@ -45,10 +45,11 @@ export class TeacherRepository {
     return result;
   }
 
-
   // get all teachers that are NOT blocked at the given timeslot
-  async getAvailableTeachers(day: string, timeslot: number): Promise<Teacher[]> {
-
+  async getAvailableTeachers(
+    day: string,
+    timeslot: number,
+  ): Promise<Teacher[]> {
     const query = this.dbClient
       .select()
       .from(blocker)
@@ -65,11 +66,17 @@ export class TeacherRepository {
 
     const allTeachers = await this.dbClient.select().from(teacher);
 
-    return allTeachers.filter((teacher) => !blockedTeacherIds.includes(teacher.id));
+    return allTeachers.filter(
+      (teacher) => !blockedTeacherIds.includes(teacher.id),
+    );
   }
 
   // check if teacher is available at the given timeslot
-  async isTeacherAvailable(teacherId: number, day: string, timeslot: number): Promise<boolean> {
+  async isTeacherAvailable(
+    teacherId: number,
+    day: string,
+    timeslot: number,
+  ): Promise<boolean> {
     const query = this.dbClient
       .select()
       .from(blocker)

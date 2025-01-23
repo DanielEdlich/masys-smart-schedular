@@ -100,7 +100,9 @@ export const lesson = sqliteTable(
     school_class_id: integer("school_class_id"),
     primary_teacher_id: integer("primary_teacher_id"),
     secondary_teacher_id: integer("secondary_teacher_id"),
-    isBlocker: integer("is_blocker", { mode: "boolean" }).notNull().default(false)
+    isBlocker: integer("is_blocker", { mode: "boolean" })
+      .notNull()
+      .default(false),
   },
   (table) => {
     return {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,8 +9,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Teacher, Lesson } from '@/db/types';
-import { getAvailableTeachersForTimeslot } from '@/app/actions/classSchedulerActions';
+import { Teacher, Lesson } from "@/db/types";
+import { getAvailableTeachersForTimeslot } from "@/app/actions/classSchedulerActions";
 
 type LessonFormProps = {
   day: string | null;
@@ -69,15 +69,20 @@ export const LessonForm: React.FC<LessonFormProps> = ({
   );
   const [name, setName] = useState<string | null>(existingLesson?.name || null);
   const [secondaryTeacherId, setSecondaryTeacherId] = useState<number | null>(
-    existingLesson?.secondary_teacher_id || null
+    existingLesson?.secondary_teacher_id || null,
   );
-  const [isBlocker, setIsBlocker] = useState<boolean>(existingLesson?.isBlocker || false);
+  const [isBlocker, setIsBlocker] = useState<boolean>(
+    existingLesson?.isBlocker || false,
+  );
   const [availableTeachers, setAvailableTeachers] = useState<Teacher[]>([]);
 
   useEffect(() => {
     const fetchAvailableTeachers = async () => {
       if (day && week && !isForAblage) {
-        const available = await getAvailableTeachersForTimeslot(day, timeslot + 1);
+        const available = await getAvailableTeachersForTimeslot(
+          day,
+          timeslot + 1,
+        );
         setAvailableTeachers(available);
       } else {
         setAvailableTeachers(teachers);
@@ -90,7 +95,11 @@ export const LessonForm: React.FC<LessonFormProps> = ({
   useEffect(() => {
     if (primaryTeacherId === null) {
       setSecondaryTeacherId(null);
-    } else if (primaryTeacherId && secondaryTeacherId && primaryTeacherId === secondaryTeacherId) {
+    } else if (
+      primaryTeacherId &&
+      secondaryTeacherId &&
+      primaryTeacherId === secondaryTeacherId
+    ) {
       setSecondaryTeacherId(null);
     }
   }, [primaryTeacherId, secondaryTeacherId]);
@@ -106,7 +115,7 @@ export const LessonForm: React.FC<LessonFormProps> = ({
         primaryTeacherId,
         name,
         secondaryTeacherId,
-        isBlocker
+        isBlocker,
       );
     } else {
       if (isForAblage) {
@@ -118,7 +127,7 @@ export const LessonForm: React.FC<LessonFormProps> = ({
           primaryTeacherId,
           name,
           secondaryTeacherId,
-          isBlocker
+          isBlocker,
         );
       } else if (day && schoolClassId && week) {
         await addLesson(
@@ -129,7 +138,7 @@ export const LessonForm: React.FC<LessonFormProps> = ({
           primaryTeacherId,
           name,
           secondaryTeacherId,
-          isBlocker
+          isBlocker,
         );
       }
     }
@@ -137,12 +146,7 @@ export const LessonForm: React.FC<LessonFormProps> = ({
   };
 
   const handleDelete = async () => {
-    await deleteLesson(
-      day,
-      schoolClassId,
-      week,
-      timeslot
-    );
+    await deleteLesson(day, schoolClassId, week, timeslot);
     onDelete();
     onClose();
   };
@@ -156,8 +160,8 @@ export const LessonForm: React.FC<LessonFormProps> = ({
             {isForAblage
               ? "In der Ablage"
               : day && week && schoolClassId
-              ? `${timeslot + 1}. Stunde, ${day}, Klasse ${schoolClassId}, Woche ${week}`
-              : "Nicht zugewiesen"}
+                ? `${timeslot + 1}. Stunde, ${day}, Klasse ${schoolClassId}, Woche ${week}`
+                : "Nicht zugewiesen"}
           </div>
         </div>
         {!isBlocker && (
@@ -167,7 +171,7 @@ export const LessonForm: React.FC<LessonFormProps> = ({
               <Input
                 type="text"
                 id="name"
-                value={name || ''}
+                value={name || ""}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="z.B. Mathematik, Deutsch, etc."
               />
@@ -175,8 +179,10 @@ export const LessonForm: React.FC<LessonFormProps> = ({
             <div className="space-y-2">
               <Label htmlFor="teacher">Lehrer</Label>
               <Select
-                value={primaryTeacherId?.toString() || 'none'}
-                onValueChange={(value: string) => setPrimaryTeacherId(value === 'none' ? null : parseInt(value))}
+                value={primaryTeacherId?.toString() || "none"}
+                onValueChange={(value: string) =>
+                  setPrimaryTeacherId(value === "none" ? null : parseInt(value))
+                }
                 required
               >
                 <SelectTrigger>
@@ -199,11 +205,15 @@ export const LessonForm: React.FC<LessonFormProps> = ({
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="secondaryTeacher">Zweiter Lehrer (Optional)</Label>
+              <Label htmlFor="secondaryTeacher">
+                Zweiter Lehrer (Optional)
+              </Label>
               <Select
                 value={secondaryTeacherId?.toString() || "none"}
                 onValueChange={(value: string) =>
-                  setSecondaryTeacherId(value !== "none" ? parseInt(value) : null)
+                  setSecondaryTeacherId(
+                    value !== "none" ? parseInt(value) : null,
+                  )
                 }
               >
                 <SelectTrigger>
@@ -212,7 +222,9 @@ export const LessonForm: React.FC<LessonFormProps> = ({
                 <SelectContent>
                   <SelectItem value="none">None</SelectItem>
                   {availableTeachers
-                    .filter(t => !primaryTeacherId || t.id !== primaryTeacherId)
+                    .filter(
+                      (t) => !primaryTeacherId || t.id !== primaryTeacherId,
+                    )
                     .map((t) => (
                       <SelectItem key={t.id} value={t.id.toString()}>
                         <div className="flex items-center">
@@ -243,4 +255,3 @@ export const LessonForm: React.FC<LessonFormProps> = ({
     </form>
   );
 };
-
