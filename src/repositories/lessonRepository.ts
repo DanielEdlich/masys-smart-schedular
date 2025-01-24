@@ -1,5 +1,5 @@
 import { lesson } from "@/db/schema";
-import { eq, or } from "drizzle-orm";
+import { eq, or, and, isNull, isNotNull } from "drizzle-orm";
 import { DbClient, Lesson, NewLesson } from "@/db/types";
 export class LessonRepository {
   constructor(private readonly dbClient: DbClient) {}
@@ -22,6 +22,28 @@ export class LessonRepository {
 
   async getAll(): Promise<Lesson[]> {
     return this.dbClient.select().from(lesson);
+  }
+
+  //get lessons with empty day field and empty week field and empty timeslot field
+  async getLessonsInAblage(): Promise<Lesson[]> {
+    return this.dbClient
+      .select()
+      .from(lesson)
+      .where(and(isNull(lesson.day)));
+  }
+
+  //get lesson on schedule (day, week and timeslot are not empty)
+  async getLessonsOnSchedule(): Promise<Lesson[]> {
+    return this.dbClient
+      .select()
+      .from(lesson)
+      .where(
+        or(
+          isNotNull(lesson.day),
+          isNotNull(lesson.week),
+          isNotNull(lesson.timeslot),
+        ),
+      );
   }
 
   async getLessonsByTeacher(teacherId: number): Promise<Lesson[]> {

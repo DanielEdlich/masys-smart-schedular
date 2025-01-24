@@ -73,7 +73,7 @@ jobs:
 
       - name: Build Docker Image
         env:
-            NPM_REGISTRY: ${{ secrets.NPM_REGISTRY }}
+          NPM_REGISTRY: ${{ secrets.NPM_REGISTRY }}
         run: |
           docker build \
             --tag ${{ secrets.HARBOR_REGISTRY }}:${{ env.tag }} \
