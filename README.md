@@ -1,10 +1,13 @@
 # Willkommen bei SmartSchedular!
 
-Diese Repository dient als die Code-Basis für die Entwicklung von SmartSchedular. SmartSchedular ist ein Tool, das die Erstellung von Stundenplänen für Schüler und Lehrer erleichtert. Es bietet eine einfache und intuitive Benutzeroberfläche, die es ermöglicht, Stundenpläne zu erstellen, zu bearbeiten und zu verwalten. Sm
+Diese Repository dient als die Code-Basis für die Entwicklung von SmartSchedular. SmartSchedular ist ein Tool, das die Erstellung von Stundenplänen für Schüler und Lehrer erleichtert. Es bietet eine einfache und intuitive Benutzeroberfläche, die es ermöglicht, Stundenpläne zu erstellen, zu bearbeiten und zu verwalten.
 
-## Erste Schritte - Anwendung starten
+## Projekt Aufsetzen
 
-Zuerst sollte der Entwicklungsserver gestartet werden:
+Bevor die Packages installiert werden können muss eine `.npmrc` Datei im root Verzeichnis des Projektes anglgt werden, in der die npm Registry von Hitabis configuriert werden muss.
+Ohne die Registry lässt sich `@oaklean/cli` und `@oaklean/profiler-jest-environment` nicht installieren.
+
+Nach dem Configurieren der Registry könnnen die Packages mit
 
 ```bash
 npm install
@@ -12,13 +15,19 @@ npm install
 pnpm install
 ```
 
+installiert werden.
+
+## Anwendung starten
+
+Zuerst sollte eine `.env` Datei mit den, wie in [.env.example](.env.example) beschrieben, Umgebungsvariablen angelegt werden.
+
+Danach kann der Entwicklungsserver gestartet werden:
+
 ```bash
 npm run dev
 # oder
 pnpm dev
 ```
-
-Zudem sollte eine `.env` Datei mit den, wie in [.env.example](.env.example) beschrieben, Umgebungsvariablen angelegt werden.
 
 [http://localhost:3000](http://localhost:3000) sollte in deinem Browser geöffnet werden, um das Ergebnis zu sehen.
 
@@ -61,7 +70,7 @@ Die Seite kann bearbeitet werden, indem `app/page.tsx` modifiziert wird. Die Sei
 
 ### `.example.env`
 
-- Konfigurationsdatei für Secrets und Datenbankverbindungen  
+- Konfigurationsdatei für Secrets und Datenbankverbindungen
   Die [`.env.example`](.env.example) sollte kopiert und in `.env.local` umbenannt werden für die lokale Entwicklung.
 
 ## ✏️ Neue Seite hinzufügen
@@ -193,8 +202,8 @@ _Komponentendiagramm_
 
 ### Deployment
 
-Die Anwendung wird auf einer VPS in Docker Containern deployed werden und über Traefik als Reverse Proxy im Internet erreichbar sein.  
-![Deploymentdiagramm](docs/deployment.drawio.svg)  
+Die Anwendung wird auf einer VPS in Docker Containern deployed werden und über Traefik als Reverse Proxy im Internet erreichbar sein.
+![Deploymentdiagramm](docs/deployment.drawio.svg)
 _Deploymentdiagramm_
 
 ## Infrastruktur
@@ -211,3 +220,37 @@ Die Zugangsdaten dafür liegen auf der VM unter `/home/htw/harbor-registry-hitab
 ### Reverse Proxy
 
 Für die Verbinding ins Internet mit einem gültigen SSL-Zertifikat sollen wir `Traefik` nutzen, ein Container, sowie ein [Template](docker-compose.yml) wurde uns zur Verfügung gestellt.
+
+## Oaklean
+
+[Oaklen](https://github.com/hitabisgmbh/oaklean) ist ein Software-Tool, welches hift die Performance von Software zu Visualliseren und zu optimieren.
+
+### Konfiguration
+
+Im Projekt eingechecked ist die Konfiguation für MacOS.
+Damit Oaklean auf Windows oder Linux läuf muss die `.oaklean` Datei mir `npx oak init` neu generiert werden.
+
+Der Profiler für die live Applikation läuft 30 Sekunden. Dise Zeit ist in der [Instrumentsation](./src/instrumentation.ts) Datei definiert.
+
+Für eine Energiemessung auf MacOS muss der Test mit root Rechte ausgeführt werden.
+
+### Testen
+
+Die Tests können mit
+
+```shell
+npm run test:measure
+```
+
+geporfiled werden.
+
+Um die Anwendung zu profilen muss diese zunächst gebaut werden und im prod Modus gestartet werden.
+
+```shell
+npm run build
+npm run start
+```
+
+Hinweis: Das Profiling der Applikation im Dev modus ist nicht sinnvoll.
+
+Die Messergebnisse können in dem [profiles](./profiles) Ordner gefunden werden und mit der [Oaklean Extension](https://marketplace.visualstudio.com/items?itemName=HitabisGmbH.oaklean) in VSCode analysiert werden.

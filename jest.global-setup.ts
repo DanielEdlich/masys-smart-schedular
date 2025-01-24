@@ -1,7 +1,8 @@
 import { drizzle } from "drizzle-orm/libsql";
 import { createClient } from "@libsql/client";
+import setup from "@oaklean/profiler-jest-environment/setup";
 
-export default function globalSetup() {
+export default async function globalSetup() {
   console.log("Setting up global SQLite DB");
 
   // Erstelle eine Datenbank-Datei (kann auch in-memory ':memory:' sein)
@@ -15,4 +16,6 @@ export default function globalSetup() {
   // Repository bereitstellen (global zugänglich)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (global as any).db = db;
+
+  await setup();
 }
