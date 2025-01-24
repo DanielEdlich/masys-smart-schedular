@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Table,
@@ -17,10 +17,10 @@ import { EditClassDialog } from "@/components/klassen-verwaltung/EditClassDialog
 import { DeleteConfirmDialog } from "@/components/klassen-verwaltung/DeleteClassDialog";
 import { useToast } from "@/hooks/use-toast";
 import {
-  getClasses,
-  getTeachers,
   addClass,
   editClass,
+  getClasses,
+  getTeachers,
 } from "@/app/actions/classActions";
 import { SchoolClass, Teacher } from "@/db/types";
 import { Navbar } from "@/components/Navbar";
@@ -140,7 +140,10 @@ export default function SchulklassenVerwaltung() {
           Schulklassen-Verwaltung
         </h1>
         <div className="mb-4">
-          <Button onClick={() => setIsAddDialogOpen(true)}>
+          <Button
+            data-cy="create-button"
+            onClick={() => setIsAddDialogOpen(true)}
+          >
             Klasse hinzufügen
           </Button>
           {isAddDialogOpen && (
@@ -182,6 +185,7 @@ export default function SchulklassenVerwaltung() {
                 <TableCell className="text-right">
                   <div className="flex justify-end space-x-2">
                     <Button
+                      data-cy="edit-dialog-button"
                       variant="outline"
                       size="sm"
                       onClick={() => setEditingClass(cls)}
@@ -191,6 +195,7 @@ export default function SchulklassenVerwaltung() {
                       Bearbeiten
                     </Button>
                     <Button
+                      data-cy="delete-dialog-button"
                       variant="destructive"
                       size="sm"
                       onClick={() => setDeletingClass(cls)}

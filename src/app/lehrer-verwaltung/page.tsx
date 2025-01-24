@@ -31,7 +31,7 @@ export default async function Lehrerverwaltung() {
             Lehrer-Daten.
           </p>
 
-          <CreateTeacherDialog />
+          <CreateTeacherDialog data-cy="create-teacher-dialog" />
 
           <Table>
             <TableHeader>

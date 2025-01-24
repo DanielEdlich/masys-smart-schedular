@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -55,7 +55,10 @@ export function ClassDialog<T extends SchoolClass | Omit<SchoolClass, "id">>({
   }, [initialClass]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setClassData({ ...classData, [e.target.name]: e.target.value } as T);
+    setClassData({
+      ...classData,
+      [e.target.name]: e.target.value,
+    } as T);
   };
 
   const handleSelectChange = (name: string, value: string) => {
@@ -64,7 +67,10 @@ export function ClassDialog<T extends SchoolClass | Omit<SchoolClass, "id">>({
         ? null
         : parseInt(value)
       : value;
-    setClassData({ ...classData, [name]: parsedValue } as T);
+    setClassData({
+      ...classData,
+      [name]: parsedValue,
+    } as T);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -90,6 +96,7 @@ export function ClassDialog<T extends SchoolClass | Omit<SchoolClass, "id">>({
           <div>
             <p className="text-xs text-gray-500">Klassenname</p>
             <Input
+              data-cy="klassenname"
               name="name"
               placeholder="Klassenname"
               value={classData.name}
@@ -100,13 +107,14 @@ export function ClassDialog<T extends SchoolClass | Omit<SchoolClass, "id">>({
           <div>
             <p className="text-xs text-gray-500">Jahrgang (z.B. 1-3, 4-6)</p>
             <Input
+              data-cy="year"
               name="year"
               placeholder="Jahrgang (z.B. 1-3, 4-6)"
               value={classData.year ?? ""}
               onChange={handleInputChange}
             />
           </div>
-          <div>
+          <div data-cy="zug">
             <p className="text-xs text-gray-500">Zug</p>
             <Select
               name="track"
@@ -122,7 +130,7 @@ export function ClassDialog<T extends SchoolClass | Omit<SchoolClass, "id">>({
               </SelectContent>
             </Select>
           </div>
-          <div>
+          <div data-cy="primary-teacher">
             <p className="text-xs text-gray-500">Klassenlehrer</p>
             <Select
               name="primary_teacher_id"
@@ -146,7 +154,7 @@ export function ClassDialog<T extends SchoolClass | Omit<SchoolClass, "id">>({
               </SelectContent>
             </Select>
           </div>
-          <div>
+          <div data-cy="secondary-teacher">
             <p className="text-xs text-gray-500">Co-Klassenlehrer (optional)</p>
             <Select
               name="secondary_teacher_id"
@@ -174,7 +182,11 @@ export function ClassDialog<T extends SchoolClass | Omit<SchoolClass, "id">>({
             <Button type="button" variant="outline" onClick={onCancel}>
               Abbrechen
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button
+              data-cy="submit-button"
+              type="submit"
+              disabled={isSubmitting}
+            >
               {isSubmitting
                 ? isEditing
                   ? "Speichert..."

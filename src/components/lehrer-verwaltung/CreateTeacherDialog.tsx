@@ -29,7 +29,13 @@ export function CreateTeacherDialog() {
     priority: 1,
     weekly_capacity: 40,
     color: "#37EB5B",
-    blocker: [{ day: "Montag", timeslot_from: 1, timeslot_to: 2 }],
+    blocker: [
+      {
+        day: "Montag",
+        timeslot_from: 1,
+        timeslot_to: 2,
+      },
+    ],
   };
 
   const onSubmit = async (data: TeacherFormData) => {
@@ -49,7 +55,10 @@ export function CreateTeacherDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="mb-6 bg-primary hover:bg-primary/90">
+        <Button
+          data-cy="create-button"
+          className="mb-6 bg-primary hover:bg-primary/90"
+        >
           <PlusCircle className="mr-2 h-4 w-4" />
           Lehrerin/Lehrer anlegen
         </Button>

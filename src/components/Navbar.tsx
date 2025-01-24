@@ -38,7 +38,7 @@ export const Navbar = () => {
           </Link>
           <Link
             className="text-sm font-medium text-purple-1000 hover:text-purple-900 dark:text-gray-300 dark:hover:text-white"
-            href="/#green-code"
+            href="/green-code"
           >
             Green Code
           </Link>

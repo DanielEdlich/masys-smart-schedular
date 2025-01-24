@@ -71,7 +71,7 @@ export function EditTeacherDialog({ teacher }: { teacher: Teacher }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
+        <Button data-cy="edit-dialog-button" variant="outline" size="sm">
           <Pencil className="mr-2 h-4 w-4" />
           Bearbeiten
         </Button>

@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import { deleteClass } from "@/app/actions/classActions";
 import { useToast } from "@/hooks/use-toast";
@@ -66,6 +66,7 @@ export function DeleteConfirmDialog({
             Abbrechen
           </Button>
           <Button
+            data-cy="confirm-delete-button"
             variant="destructive"
             onClick={handleDelete}
             disabled={isDeleting}

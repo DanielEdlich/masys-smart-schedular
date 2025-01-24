@@ -1,15 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
-  SelectTrigger,
-  SelectValue,
   SelectContent,
   SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { Trash2 } from "lucide-react";
 
@@ -72,7 +72,10 @@ export function TeacherForm({
   }, [initialData]);
 
   const handleChange = (key: keyof TeacherFormData, value: any) => {
-    setFormData((prev) => ({ ...prev, [key]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
   };
 
   // Blocker-Methoden
@@ -82,8 +85,14 @@ export function TeacherForm({
     value: any,
   ) => {
     const newBlocker = [...formData.blocker];
-    newBlocker[index] = { ...newBlocker[index], [field]: value };
-    setFormData({ ...formData, blocker: newBlocker });
+    newBlocker[index] = {
+      ...newBlocker[index],
+      [field]: value,
+    };
+    setFormData({
+      ...formData,
+      blocker: newBlocker,
+    });
   };
 
   const addBlocker = () => {
@@ -91,14 +100,21 @@ export function TeacherForm({
       ...formData,
       blocker: [
         ...formData.blocker,
-        { day: "Montag", timeslot_from: 1, timeslot_to: 2 },
+        {
+          day: "Montag",
+          timeslot_from: 1,
+          timeslot_to: 2,
+        },
       ],
     });
   };
 
   const removeBlocker = (index: number) => {
     const newBlocker = formData.blocker.filter((_, i) => i !== index);
-    setFormData({ ...formData, blocker: newBlocker });
+    setFormData({
+      ...formData,
+      blocker: newBlocker,
+    });
   };
 
   // Validierung
@@ -186,7 +202,7 @@ export function TeacherForm({
         </div>
 
         {/* Priorität */}
-        <div className="grid grid-cols-4 items-center gap-4">
+        <div data-cy="priority" className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="priority" className="text-right">
             Priorität
           </Label>
@@ -244,7 +260,7 @@ export function TeacherForm({
         </div>
 
         {/* Blocker */}
-        <div className="space-y-2">
+        <div className="space-y-2" data-cy="blocker">
           <Label>Verfügbarkeit (Blocker)</Label>
           {formData.blocker.map((b, index) => (
             <div key={index} className="grid grid-cols-4 items-center gap-4">
@@ -265,6 +281,7 @@ export function TeacherForm({
               </Select>
 
               <Input
+                id={`blocker-min-${index}`}
                 type="number"
                 value={b.timeslot_from}
                 onChange={(e) =>
@@ -278,6 +295,7 @@ export function TeacherForm({
                 max={10}
               />
               <Input
+                id={`blocker-max-${index}`}
                 type="number"
                 value={b.timeslot_to}
                 onChange={(e) =>
@@ -291,6 +309,7 @@ export function TeacherForm({
                 max={10}
               />
               <Button
+                data-cy={`blocker-delete-${index}`}
                 type="button"
                 variant="outline"
                 size="icon"
@@ -309,7 +328,12 @@ export function TeacherForm({
 
       {/* Footer / Submit */}
       <div className="flex justify-end mt-4 pt-4 border-t space-x-2">
-        <Button type="submit" disabled={isSubmitting}>
+        <Button
+          data-cy="submit-button"
+          type="submit"
+          disabled={isSubmitting}
+          id="submit-form-button"
+        >
           {isSubmitting
             ? "Wird gesendet..."
             : isEditMode == false
