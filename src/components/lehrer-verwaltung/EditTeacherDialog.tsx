@@ -3,7 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Pencil } from "lucide-react";
 import { updateTeacher } from "@/app/actions/teacherActions";
 import { useToast } from "@/hooks/use-toast";
@@ -28,11 +34,11 @@ type Teacher = {
   blocker: Blocker[];
 };
 
-export function EditTeacherDialog({teacher}: { teacher: Teacher }) {
+export function EditTeacherDialog({ teacher }: { teacher: Teacher }) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
-  const {toast} = useToast();
-  
+  const { toast } = useToast();
+
   // Passende Konvertierung ins TeacherFormData-Format:
   const initialData: TeacherFormData = {
     id: teacher.id,
@@ -45,13 +51,13 @@ export function EditTeacherDialog({teacher}: { teacher: Teacher }) {
     color: teacher.color || "#37EB5B",
     blocker: teacher.blocker || [],
   };
-  
+
   const onSubmit = async (data: TeacherFormData) => {
     try {
       // updateTeacher erwartet i. d. R. { id, ... } =>
       // Achte darauf, dass du das id-Feld mitgibst
       await updateTeacher(data);
-      toast({title: "Lehrer erfolgreich aktualisiert!"});
+      toast({ title: "Lehrer erfolgreich aktualisiert!" });
       setOpen(false);
       router.refresh();
     } catch (error) {
@@ -61,12 +67,12 @@ export function EditTeacherDialog({teacher}: { teacher: Teacher }) {
       });
     }
   };
-  
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button data-cy="edit-dialog-button" variant="outline" size="sm">
-          <Pencil className="mr-2 h-4 w-4"/>
+          <Pencil className="mr-2 h-4 w-4" />
           Bearbeiten
         </Button>
       </DialogTrigger>

@@ -1,8 +1,7 @@
 import { defineConfig } from "cypress";
 import { configDotenv } from "dotenv";
 
-configDotenv()
-
+configDotenv();
 
 export default defineConfig({
   e2e: {
@@ -15,7 +14,7 @@ export default defineConfig({
     baseUrl: "http://localhost:3000/",
     env: {
       BASIC_AUTH_USERNAME: process.env.BASIC_AUTH_USERNAME,
-      BASIC_AUTH_PASSWORD: process.env.BASIC_AUTH_PASSWORD
-    }
+      BASIC_AUTH_PASSWORD: process.env.BASIC_AUTH_PASSWORD,
+    },
   },
 });
