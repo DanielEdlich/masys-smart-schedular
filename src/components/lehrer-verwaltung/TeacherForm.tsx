@@ -1,16 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from "@/components/ui/select";
 import { Trash2 } from "lucide-react";
 
 type Blocker = {
@@ -38,19 +32,19 @@ export interface TeacherFormProps {
    * oder Leeres Objekt (Create-Fall)
    */
   initialData: TeacherFormData;
-
+  
   /**
    * Wird aufgerufen, wenn das Formular abgesendet wird.
    * Hier kann das createTeacher oder updateTeacher kommen.
    */
   onSubmit: (data: TeacherFormData) => Promise<void> | void;
-
+  
   /**
    * Optional: Callback, wenn das Formular erfolgreich abgeschlossen/geschlossen ist.
    * (z.B. zum Schließen des Dialogs)
    */
   onFinished?: () => void;
-
+  
   /**
    * Optional: Unterscheidung, ob das Formular im Erstellen- oder Bearbeiten-Modus ist
    */
@@ -58,23 +52,26 @@ export interface TeacherFormProps {
 }
 
 export function TeacherForm({
-  initialData,
-  onSubmit,
-  onFinished,
-  isEditMode = false,
-}: TeacherFormProps) {
+                              initialData,
+                              onSubmit,
+                              onFinished,
+                              isEditMode = false,
+                            }: TeacherFormProps) {
   const [formData, setFormData] = useState<TeacherFormData>(initialData);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  
   // Falls initialData sich ändert (z. B. nachträglich edit), aktualisieren:
   useEffect(() => {
     setFormData(initialData);
   }, [initialData]);
-
+  
   const handleChange = (key: keyof TeacherFormData, value: any) => {
-    setFormData((prev) => ({ ...prev, [key]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      [key]: value
+    }));
   };
-
+  
   // Blocker-Methoden
   const handleBlockerChange = (
     index: number,
@@ -82,25 +79,38 @@ export function TeacherForm({
     value: any,
   ) => {
     const newBlocker = [...formData.blocker];
-    newBlocker[index] = { ...newBlocker[index], [field]: value };
-    setFormData({ ...formData, blocker: newBlocker });
+    newBlocker[index] = {
+      ...newBlocker[index],
+      [field]: value
+    };
+    setFormData({
+      ...formData,
+      blocker: newBlocker
+    });
   };
-
+  
   const addBlocker = () => {
     setFormData({
       ...formData,
       blocker: [
         ...formData.blocker,
-        { day: "Montag", timeslot_from: 1, timeslot_to: 2 },
+        {
+          day: "Montag",
+          timeslot_from: 1,
+          timeslot_to: 2
+        },
       ],
     });
   };
-
+  
   const removeBlocker = (index: number) => {
     const newBlocker = formData.blocker.filter((_, i) => i !== index);
-    setFormData({ ...formData, blocker: newBlocker });
+    setFormData({
+      ...formData,
+      blocker: newBlocker
+    });
   };
-
+  
   // Validierung
   const validate = (): boolean => {
     if (
@@ -115,7 +125,7 @@ export function TeacherForm({
     }
     return true;
   };
-
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
@@ -129,7 +139,7 @@ export function TeacherForm({
       setIsSubmitting(false);
     }
   };
-
+  
   return (
     <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto pr-4 p-1">
       <div className="space-y-4">
@@ -145,7 +155,7 @@ export function TeacherForm({
             className="col-span-3"
           />
         </div>
-
+        
         {/* Nachname */}
         <div className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="last_name" className="text-right">
@@ -158,7 +168,7 @@ export function TeacherForm({
             className="col-span-3"
           />
         </div>
-
+        
         {/* E-Mail */}
         <div className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="email" className="text-right">
@@ -171,7 +181,7 @@ export function TeacherForm({
             className="col-span-3"
           />
         </div>
-
+        
         {/* Telefon */}
         <div className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="phone" className="text-right">
@@ -184,9 +194,10 @@ export function TeacherForm({
             className="col-span-3"
           />
         </div>
-
+        
         {/* Priorität */}
-        <div className="grid grid-cols-4 items-center gap-4">
+        <div data-cy="priority"
+             className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="priority" className="text-right">
             Priorität
           </Label>
@@ -195,7 +206,7 @@ export function TeacherForm({
             onValueChange={(val) => handleChange("priority", parseInt(val))}
           >
             <SelectTrigger className="col-span-3">
-              <SelectValue placeholder="Priorität wählen" />
+              <SelectValue placeholder="Priorität wählen"/>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="1">1</SelectItem>
@@ -204,7 +215,7 @@ export function TeacherForm({
             </SelectContent>
           </Select>
         </div>
-
+        
         {/* Wöchentliche Kapazität */}
         <div className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="weekly_capacity" className="text-right">
@@ -220,7 +231,7 @@ export function TeacherForm({
             className="col-span-3"
           />
         </div>
-
+        
         {/* Farbe */}
         <div className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="color" className="text-right">
@@ -230,7 +241,7 @@ export function TeacherForm({
             <div className="relative w-6 h-6">
               <div
                 className="w-full h-full rounded-full"
-                style={{ backgroundColor: formData.color }}
+                style={{backgroundColor: formData.color}}
               />
             </div>
             <Input
@@ -242,9 +253,9 @@ export function TeacherForm({
             />
           </div>
         </div>
-
+        
         {/* Blocker */}
-        <div className="space-y-2">
+        <div className="space-y-2" data-cy="blocker">
           <Label>Verfügbarkeit (Blocker)</Label>
           {formData.blocker.map((b, index) => (
             <div key={index} className="grid grid-cols-4 items-center gap-4">
@@ -253,7 +264,7 @@ export function TeacherForm({
                 onValueChange={(val) => handleBlockerChange(index, "day", val)}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Tag" />
+                  <SelectValue placeholder="Tag"/>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Montag">Montag</SelectItem>
@@ -263,8 +274,9 @@ export function TeacherForm({
                   <SelectItem value="Freitag">Freitag</SelectItem>
                 </SelectContent>
               </Select>
-
+              
               <Input
+                id={`blocker-min-${index}`}
                 type="number"
                 value={b.timeslot_from}
                 onChange={(e) =>
@@ -278,6 +290,7 @@ export function TeacherForm({
                 max={10}
               />
               <Input
+                id={`blocker-max-${index}`}
                 type="number"
                 value={b.timeslot_to}
                 onChange={(e) =>
@@ -291,25 +304,26 @@ export function TeacherForm({
                 max={10}
               />
               <Button
+                data-cy={`blocker-delete-${index}`}
                 type="button"
                 variant="outline"
                 size="icon"
                 onClick={() => removeBlocker(index)}
               >
-                <Trash2 className="h-4 w-4" />
+                <Trash2 className="h-4 w-4"/>
               </Button>
             </div>
           ))}
-
+          
           <Button type="button" variant="outline" onClick={addBlocker}>
             Blocker hinzufügen
           </Button>
         </div>
       </div>
-
+      
       {/* Footer / Submit */}
       <div className="flex justify-end mt-4 pt-4 border-t space-x-2">
-        <Button type="submit" disabled={isSubmitting}>
+        <Button data-cy="submit-button" type="submit" disabled={isSubmitting} id="submit-form-button">
           {isSubmitting
             ? "Wird gesendet..."
             : isEditMode == false

@@ -1,37 +1,25 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
 import { AddClassDialog } from "@/components/klassen-verwaltung/CreateClassDialog";
 import { EditClassDialog } from "@/components/klassen-verwaltung/EditClassDialog";
 import { DeleteConfirmDialog } from "@/components/klassen-verwaltung/DeleteClassDialog";
 import { useToast } from "@/hooks/use-toast";
-import {
-  getClasses,
-  getTeachers,
-  addClass,
-  editClass,
-} from "@/app/actions/classActions";
+import { addClass, editClass, getClasses, getTeachers, } from "@/app/actions/classActions";
 import { SchoolClass, Teacher } from "@/db/types";
 import { Navbar } from "@/components/Navbar";
 
-const TeacherNameWithColor = ({ teacher }: { teacher: Teacher | null }) => {
+const TeacherNameWithColor = ({teacher}: { teacher: Teacher | null }) => {
   if (!teacher) return "-";
   return (
     <span>
       <span
         className="inline-block w-2.5 h-2.5 rounded-full mr-2"
-        style={{ backgroundColor: teacher.color }}
+        style={{backgroundColor: teacher.color}}
       ></span>
       {`${teacher.first_name} ${teacher.last_name}`}
     </span>
@@ -45,9 +33,9 @@ export default function SchulklassenVerwaltung() {
   const [deletingClass, setDeletingClass] = useState<SchoolClass | null>(null);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const { toast } = useToast();
+  const {toast} = useToast();
   const router = useRouter();
-
+  
   useEffect(() => {
     async function fetchData() {
       try {
@@ -66,10 +54,10 @@ export default function SchulklassenVerwaltung() {
         setIsLoading(false);
       }
     }
-
+    
     fetchData();
   }, [toast]);
-
+  
   const handleAddClass = async (newClass: Omit<SchoolClass, "id">) => {
     try {
       const addedClass = await addClass(newClass);
@@ -88,7 +76,7 @@ export default function SchulklassenVerwaltung() {
       });
     }
   };
-
+  
   const handleEditClass = async (updatedClass: SchoolClass) => {
     try {
       await editClass(updatedClass);
@@ -112,7 +100,7 @@ export default function SchulklassenVerwaltung() {
       });
     }
   };
-
+  
   const handleDeleteComplete = () => {
     setClasses((prevClasses) =>
       prevClasses.filter((cls) => cls.id !== deletingClass?.id),
@@ -120,27 +108,27 @@ export default function SchulklassenVerwaltung() {
     setDeletingClass(null);
     router.refresh();
   };
-
+  
   const getTeacherName = (id: number | null) => {
     if (id === null) return null;
     return teachers.find((t) => t.id === id) || null;
   };
-
+  
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">Laden...</div>
     );
   }
-
+  
   return (
     <>
-      <Navbar />
+      <Navbar/>
       <div className="container mx-auto p-4">
         <h1 className="text-4xl font-bold mb-16 mt-6">
           Schulklassen-Verwaltung
         </h1>
         <div className="mb-4">
-          <Button onClick={() => setIsAddDialogOpen(true)}>
+          <Button data-cy="create-button" onClick={() => setIsAddDialogOpen(true)}>
             Klasse hinzufügen
           </Button>
           {isAddDialogOpen && (
@@ -151,7 +139,7 @@ export default function SchulklassenVerwaltung() {
             />
           )}
         </div>
-
+        
         <Table>
           <TableHeader>
             <TableRow>
@@ -182,21 +170,23 @@ export default function SchulklassenVerwaltung() {
                 <TableCell className="text-right">
                   <div className="flex justify-end space-x-2">
                     <Button
+                      data-cy="edit-dialog-button"
                       variant="outline"
                       size="sm"
                       onClick={() => setEditingClass(cls)}
                       className="flex items-center"
                     >
-                      <Pencil className="h-4 w-4 mr-2" />
+                      <Pencil className="h-4 w-4 mr-2"/>
                       Bearbeiten
                     </Button>
                     <Button
+                      data-cy="delete-dialog-button"
                       variant="destructive"
                       size="sm"
                       onClick={() => setDeletingClass(cls)}
                       className="flex items-center"
                     >
-                      <Trash2 className="h-4 w-4 mr-2" />
+                      <Trash2 className="h-4 w-4 mr-2"/>
                       Löschen
                     </Button>
                   </div>
@@ -205,7 +195,7 @@ export default function SchulklassenVerwaltung() {
             ))}
           </TableBody>
         </Table>
-
+        
         {editingClass && (
           <EditClassDialog
             schoolClass={editingClass}
@@ -214,7 +204,7 @@ export default function SchulklassenVerwaltung() {
             teachers={teachers}
           />
         )}
-
+        
         {deletingClass && (
           <DeleteConfirmDialog
             schoolClass={deletingClass}

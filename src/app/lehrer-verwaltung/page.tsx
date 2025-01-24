@@ -1,12 +1,5 @@
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table";
 import { TeacherAvatar } from "@/components/lehrer-verwaltung/TeacherAvatar";
 import { CreateTeacherDialog } from "@/components/lehrer-verwaltung/CreateTeacherDialog";
 import { EditTeacherDialog } from "@/components/lehrer-verwaltung/EditTeacherDialog";
@@ -17,10 +10,10 @@ import { Navbar } from "@/components/Navbar";
 
 export default async function Lehrerverwaltung() {
   const teachersWithBlocker = await getAllTeachers();
-
+  
   return (
     <>
-      <Navbar />
+      <Navbar/>
       <div className="w-full max-w-6xl mx-auto">
         <CardHeader>
           <CardTitle className="text-5xl font-bold">Lehrerverwaltung</CardTitle>
@@ -30,9 +23,9 @@ export default async function Lehrerverwaltung() {
             Willkommen bei der Lehrerverwaltung. Verwalten Sie hier alle
             Lehrer-Daten.
           </p>
-
-          <CreateTeacherDialog />
-
+          
+          <CreateTeacherDialog data-cy="create-teacher-dialog"/>
+          
           <Table>
             <TableHeader>
               <TableRow>
@@ -60,12 +53,12 @@ export default async function Lehrerverwaltung() {
                   <TableCell>{teacher.phone}</TableCell>
                   <TableCell>{teacher.priority}</TableCell>
                   <TableCell>
-                    <TeacherBlocker blocker={teacher.blocker} />
+                    <TeacherBlocker blocker={teacher.blocker}/>
                   </TableCell>
                   <TableCell>
                     <div className="flex space-x-2">
-                      <EditTeacherDialog teacher={teacher} />
-                      <DeleteTeacherDialog teacher={teacher} />
+                      <EditTeacherDialog teacher={teacher}/>
+                      <DeleteTeacherDialog teacher={teacher}/>
                     </div>
                   </TableCell>
                 </TableRow>

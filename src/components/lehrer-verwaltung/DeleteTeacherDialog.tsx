@@ -3,14 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog";
 import { Trash2 } from "lucide-react";
 import { deleteTeacher } from "@/app/actions/teacherActions";
 import { useToast } from "@/hooks/use-toast";
@@ -21,11 +14,11 @@ type Teacher = {
   last_name: string;
 };
 
-export function DeleteTeacherDialog({ teacher }: { teacher: Teacher }) {
+export function DeleteTeacherDialog({teacher}: { teacher: Teacher }) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
-  const { toast } = useToast();
-
+  const {toast} = useToast();
+  
   const handleDelete = async () => {
     try {
       await deleteTeacher(teacher.id);
@@ -42,12 +35,12 @@ export function DeleteTeacherDialog({ teacher }: { teacher: Teacher }) {
     }
     router.refresh();
   };
-
+  
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="destructive" size="sm">
-          <Trash2 className="mr-2 h-4 w-4" />
+        <Button data-cy="delete-dialog-button" variant="destructive" size="sm">
+          <Trash2 className="mr-2 h-4 w-4"/>
           Löschen
         </Button>
       </DialogTrigger>
@@ -63,7 +56,7 @@ export function DeleteTeacherDialog({ teacher }: { teacher: Teacher }) {
           <Button variant="outline" onClick={() => setOpen(false)}>
             Abbrechen
           </Button>
-          <Button variant="destructive" onClick={handleDelete}>
+          <Button data-cy="confirm-delete-button" variant="destructive" onClick={handleDelete}>
             Löschen
           </Button>
         </DialogFooter>

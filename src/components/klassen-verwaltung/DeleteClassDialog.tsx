@@ -2,13 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, } from "@/components/ui/dialog";
 import { deleteClass } from "@/app/actions/classActions";
 import { useToast } from "@/hooks/use-toast";
 import { SchoolClass } from "@/db/types";
@@ -21,14 +15,14 @@ type DeleteConfirmDialogProps = {
 };
 
 export function DeleteConfirmDialog({
-  schoolClass,
-  isOpen,
-  onClose,
-  onDeleteComplete,
-}: DeleteConfirmDialogProps) {
+                                      schoolClass,
+                                      isOpen,
+                                      onClose,
+                                      onDeleteComplete,
+                                    }: DeleteConfirmDialogProps) {
   const [isDeleting, setIsDeleting] = useState(false);
-  const { toast } = useToast();
-
+  const {toast} = useToast();
+  
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
@@ -50,7 +44,7 @@ export function DeleteConfirmDialog({
       onClose();
     }
   };
-
+  
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
@@ -66,6 +60,7 @@ export function DeleteConfirmDialog({
             Abbrechen
           </Button>
           <Button
+            data-cy="confirm-delete-button"
             variant="destructive"
             onClick={handleDelete}
             disabled={isDeleting}

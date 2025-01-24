@@ -1,21 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { useEffect, useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from "@/components/ui/select";
 import { SchoolClass, Teacher } from "@/db/types";
 
 interface ClassDialogProps<T> {
@@ -27,12 +16,12 @@ interface ClassDialogProps<T> {
   isEditing: boolean;
 }
 
-function TeacherSelectItem({ teacher }: { teacher: Teacher }) {
+function TeacherSelectItem({teacher}: { teacher: Teacher }) {
   return (
     <SelectItem key={teacher.id} value={teacher.id.toString()}>
       <span
         className="inline-block w-2.5 h-2.5 rounded-full mr-2"
-        style={{ backgroundColor: teacher.color }}
+        style={{backgroundColor: teacher.color}}
       />
       {teacher.first_name} {teacher.last_name}
     </SelectItem>
@@ -40,33 +29,39 @@ function TeacherSelectItem({ teacher }: { teacher: Teacher }) {
 }
 
 export function ClassDialog<T extends SchoolClass | Omit<SchoolClass, "id">>({
-  initialClass,
-  onSubmit,
-  onCancel,
-  teachers,
-  title,
-  isEditing,
-}: ClassDialogProps<T>) {
+                                                                               initialClass,
+                                                                               onSubmit,
+                                                                               onCancel,
+                                                                               teachers,
+                                                                               title,
+                                                                               isEditing,
+                                                                             }: ClassDialogProps<T>) {
   const [classData, setClassData] = useState<T>(initialClass);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  
   useEffect(() => {
     setClassData(initialClass);
   }, [initialClass]);
-
+  
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setClassData({ ...classData, [e.target.name]: e.target.value } as T);
+    setClassData({
+      ...classData,
+      [e.target.name]: e.target.value
+    } as T);
   };
-
+  
   const handleSelectChange = (name: string, value: string) => {
     const parsedValue = name.includes("teacher")
       ? value === "null"
         ? null
         : parseInt(value)
       : value;
-    setClassData({ ...classData, [name]: parsedValue } as T);
+    setClassData({
+      ...classData,
+      [name]: parsedValue
+    } as T);
   };
-
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -79,7 +74,7 @@ export function ClassDialog<T extends SchoolClass | Omit<SchoolClass, "id">>({
       setIsSubmitting(false);
     }
   };
-
+  
   return (
     <Dialog open={true} onOpenChange={onCancel}>
       <DialogContent className="sm:max-w-[425px]">
@@ -90,6 +85,7 @@ export function ClassDialog<T extends SchoolClass | Omit<SchoolClass, "id">>({
           <div>
             <p className="text-xs text-gray-500">Klassenname</p>
             <Input
+              data-cy="klassenname"
               name="name"
               placeholder="Klassenname"
               value={classData.name}
@@ -100,13 +96,14 @@ export function ClassDialog<T extends SchoolClass | Omit<SchoolClass, "id">>({
           <div>
             <p className="text-xs text-gray-500">Jahrgang (z.B. 1-3, 4-6)</p>
             <Input
+              data-cy="year"
               name="year"
               placeholder="Jahrgang (z.B. 1-3, 4-6)"
               value={classData.year ?? ""}
               onChange={handleInputChange}
             />
           </div>
-          <div>
+          <div data-cy="zug">
             <p className="text-xs text-gray-500">Zug</p>
             <Select
               name="track"
@@ -114,7 +111,7 @@ export function ClassDialog<T extends SchoolClass | Omit<SchoolClass, "id">>({
               onValueChange={(value) => handleSelectChange("track", value)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Zug wählen" />
+                <SelectValue placeholder="Zug wählen"/>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="A">Zug A</SelectItem>
@@ -122,7 +119,7 @@ export function ClassDialog<T extends SchoolClass | Omit<SchoolClass, "id">>({
               </SelectContent>
             </Select>
           </div>
-          <div>
+          <div data-cy="primary-teacher">
             <p className="text-xs text-gray-500">Klassenlehrer</p>
             <Select
               name="primary_teacher_id"
@@ -136,17 +133,17 @@ export function ClassDialog<T extends SchoolClass | Omit<SchoolClass, "id">>({
               }
             >
               <SelectTrigger>
-                <SelectValue placeholder="Klassenlehrer" />
+                <SelectValue placeholder="Klassenlehrer"/>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="null">Keiner</SelectItem>
                 {teachers.map((teacher) => (
-                  <TeacherSelectItem key={teacher.id} teacher={teacher} />
+                  <TeacherSelectItem key={teacher.id} teacher={teacher}/>
                 ))}
               </SelectContent>
             </Select>
           </div>
-          <div>
+          <div data-cy="secondary-teacher">
             <p className="text-xs text-gray-500">Co-Klassenlehrer (optional)</p>
             <Select
               name="secondary_teacher_id"
@@ -160,12 +157,12 @@ export function ClassDialog<T extends SchoolClass | Omit<SchoolClass, "id">>({
               }
             >
               <SelectTrigger>
-                <SelectValue placeholder="Co-Klassenlehrer (optional)" />
+                <SelectValue placeholder="Co-Klassenlehrer (optional)"/>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="null">Keiner</SelectItem>
                 {teachers.map((teacher) => (
-                  <TeacherSelectItem key={teacher.id} teacher={teacher} />
+                  <TeacherSelectItem key={teacher.id} teacher={teacher}/>
                 ))}
               </SelectContent>
             </Select>
@@ -174,7 +171,7 @@ export function ClassDialog<T extends SchoolClass | Omit<SchoolClass, "id">>({
             <Button type="button" variant="outline" onClick={onCancel}>
               Abbrechen
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button data-cy="submit-button" type="submit" disabled={isSubmitting}>
               {isSubmitting
                 ? isEditing
                   ? "Speichert..."
