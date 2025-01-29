@@ -20,7 +20,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Lesson, Teacher } from "@/db/types";
 import { LessonForm } from "@/components/lehrplan/lesson-form";

@@ -176,7 +176,7 @@ export const Ablage: React.FC<AblageProps> = ({
             <div key={lesson.id} className="w-32 h-16">
               <DraggableLesson
                 lesson={{ ...lesson, timeslot: lesson.timeslot }}
-                // @ts-expect-error - ref is deprecated but still used in DnD
+                // @ts-expect-error - ref is deprecated but still used with DnD
                 moveLesson={handleMoveLesson}
                 editLesson={editLesson}
                 deleteLesson={async (day, name, week, timeslot) => {
