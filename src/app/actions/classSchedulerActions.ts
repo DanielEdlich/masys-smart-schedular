@@ -103,6 +103,7 @@ export async function loadSchedule(
   return { lessons, ablageLessons };
 }
 
+// Load all lessons from the database for the schedule container
 export async function loadAblageLessons(): Promise<Lesson[]> {
   console.log("Loading ablage cards...");
   const lessons = await lessonRepository.getLessonsInAblage();
@@ -172,6 +173,7 @@ export async function getAvailableTeachersForTimeslot(
   return availableTeachers;
 }
 
+//get Blockers for teachers
 export async function getAllTeacherBlockers(): Promise<Blocker[]> {
   return teacherBlockerRepository.getAll();
 }

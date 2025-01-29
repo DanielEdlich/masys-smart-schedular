@@ -108,7 +108,7 @@ Die Abhängigkeiten und Versionsnummern sind in der `package.json` Datei definie
 }
 ```
 
-## Mehr erfahren
+## Mehr über Next erfahren
 
 Um mehr über Next.js zu erfahren, sollten die folgenden Ressourcen angesehen werden:
 
@@ -177,11 +177,6 @@ pnpm format
 
 Die Regeln für Prettier können in der `.prettierrc` Datei konfiguriert werden. Weitere Informationen finden sich in der [Prettier Dokumentation](https://prettier.io/docs/en/index.html).
 
-## Auf Vercel bereitstellen
-
-Der einfachste Weg, die Next.js App bereitzustellen, ist die Verwendung der [Vercel Plattform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) von den Erstellern von Next.js.
-
-Die [Next.js Bereitstellungsdokumentation](https://nextjs.org/docs/app/building-your-application/deploying) sollte für weitere Details angesehen werden.
 
 ## Schema erstellen und deployen mit Drizzle
 
